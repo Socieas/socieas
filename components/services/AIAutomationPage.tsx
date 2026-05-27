@@ -1,647 +1,362 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import Testimonials from "@/components/Testimonials";
 
-const serviceSchema = {
-  "@context": "https://schema.org",
+const SITE_URL = "https://socieas.com";
+const PAGE_URL = `${SITE_URL}/services/ai-automation`;
 
-  "@type": "Service",
+const problemItems = [
+  "Manual workflows slowing teams down",
+  "Leads falling through the cracks",
+  "No real-time operational visibility",
+  "Repetitive tasks consuming strategic time",
+];
 
-  serviceType: "AI Automation Services",
-
-  provider: {
-    "@type": "Organization",
-
-    name: "Socieas",
-
-    url: "https://socieas.com",
+const systemTabs = [
+  {
+    title: "Workflow Automation",
+    desc: "Automated operational systems that eliminate repetitive manual execution and improve end-to-end business efficiency.",
+    items: ["Task routing", "Process triggers", "Multi-step workflows", "Error handling"],
   },
+  {
+    title: "AI Lead Routing",
+    desc: "Smart lead qualification and routing systems designed to improve response speed, conversion flow, and follow-up consistency.",
+    items: ["Lead scoring", "Auto-assignment", "Follow-up sequences", "CRM sync"],
+  },
+  {
+    title: "Reporting Infrastructure",
+    desc: "Centralized reporting systems that deliver real-time operational visibility and data-driven decision making.",
+    items: ["Live dashboards", "Automated reports", "Cross-platform data", "KPI tracking"],
+  },
+];
 
-  areaServed: "Worldwide",
+const processSteps = [
+  {
+    no: "01",
+    title: "Audit",
+    desc: "Map existing workflows, identify manual bottlenecks, repetitive tasks, and operational inefficiencies.",
+  },
+  {
+    no: "02",
+    title: "Architect",
+    desc: "Design automation systems around your business logic, integrations, triggers, and execution layers.",
+  },
+  {
+    no: "03",
+    title: "Deploy",
+    desc: "Build, test, and launch automation infrastructure with ongoing monitoring and continuous improvement.",
+  },
+];
 
-  description:
-    "Socieas helps businesses scale through AI automation systems, workflow infrastructure, reporting systems, lead routing, and operational optimization.",
+const capabilities = [
+  "Workflow automation",
+  "AI lead routing",
+  "Reporting infrastructure",
+  "AI communication systems",
+  "Zapier / Make / n8n builds",
+  "CRM automation",
+  "Notification systems",
+  "Operational dashboards",
+];
 
-  url: "https://socieas.com/services/ai-automation",
-};
+const faqs = [
+  {
+    question: "Why do businesses need AI automation?",
+    answer: "AI automation reduces repetitive work, improves operational speed, minimizes manual errors, and creates scalable execution systems that free teams to focus on strategic work.",
+  },
+  {
+    question: "Can AI automation improve lead management?",
+    answer: "Yes. AI systems can qualify leads automatically, route them to the right team member, trigger follow-up sequences, and sync data into your CRM without manual input.",
+  },
+  {
+    question: "What processes can be automated?",
+    answer: "Lead routing, notifications, reporting, communication, onboarding workflows, data syncing, and most repeatable operational tasks can all be automated strategically.",
+  },
+  {
+    question: "Does automation replace teams?",
+    answer: "No. Strong automation systems enhance operational efficiency and allow teams to focus on higher-value strategic work instead of repetitive execution.",
+  },
+];
 
 export default function AIAutomationPage() {
+  const [activeSystem, setActiveSystem] = useState(0);
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
-  const automationSystems = [
-    {
-      title: "Workflow Automation",
-
-      description:
-        "Automated operational systems that reduce repetitive manual execution and improve business efficiency.",
-    },
-
-    {
-      title: "AI Lead Routing",
-
-      description:
-        "Smart lead qualification and routing systems designed to improve response speed and conversion flow.",
-    },
-
-    {
-      title: "Reporting Infrastructure",
-
-      description:
-        "Centralized reporting systems that improve operational visibility and decision making.",
-    },
-
-    {
-      title: "AI Communication",
-
-      description:
-        "Automated messaging, notifications, and conversational systems designed for scalable interactions.",
-    },
-  ];
-
-  const process = [
-    {
-      title: "Operational Analysis",
-
-      description:
-        "Understanding workflow inefficiencies, repetitive tasks, and execution bottlenecks.",
-    },
-
-    {
-      title: "Automation Mapping",
-
-      description:
-        "Structuring automation systems around business operations and internal workflows.",
-    },
-
-    {
-      title: "AI Infrastructure Setup",
-
-      description:
-        "Building scalable automation systems with integrations, workflows, and execution layers.",
-    },
-
-    {
-      title: "Optimization & Scaling",
-
-      description:
-        "Monitoring operational performance and continuously improving automation efficiency.",
-    },
-  ];
-
-  const faqs = [
-    {
-      question: "Why do businesses need AI automation?",
-
-      answer:
-        "AI automation reduces repetitive work, improves operational speed, minimizes manual errors, and creates scalable execution systems.",
-    },
-
-    {
-      question: "Can AI automation improve lead management?",
-
-      answer:
-        "Yes. AI systems can qualify leads, automate routing, improve follow-ups, and create faster operational workflows.",
-    },
-
-    {
-      question: "What processes can be automated?",
-
-      answer:
-        "Lead routing, notifications, reporting, communication, onboarding workflows, and operational tasks can all be automated strategically.",
-    },
-
-    {
-      question: "Does automation replace teams?",
-
-      answer:
-        "No. Strong automation systems enhance operational efficiency while allowing teams to focus on strategic work.",
-    },
-  ];
-
-  const techStacks = [
-    "OpenAI",
-    "LangChain",
-    "Zapier",
-    "Make",
-    "n8n",
-    "HubSpot",
-    "Slack",
-    "Notion",
-    "Airtable",
-    "Python",
-    "Next.js",
-    "Supabase",
-  ];
+  const schema = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/services` },
+            { "@type": "ListItem", position: 3, name: "AI Automation", item: PAGE_URL },
+          ],
+        },
+        {
+          "@type": "Service",
+          name: "AI Automation Services for Businesses",
+          serviceType: "AI automation, workflow automation, lead routing, reporting infrastructure",
+          description: "Socieas helps businesses scale through AI automation systems, workflow infrastructure, reporting systems, lead routing, and operational optimization.",
+          provider: { "@type": "Organization", name: "Socieas", url: SITE_URL },
+          areaServed: ["India", "United States", "United Kingdom", "United Arab Emirates", "Australia"],
+          audience: { "@type": "Audience", audienceType: "Business owners, operations teams, founders, scaling companies" },
+          url: PAGE_URL,
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE_URL}/contact` },
+        },
+        {
+          "@type": "FAQPage",
+          mainEntity: faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: { "@type": "Answer", text: faq.answer },
+          })),
+        },
+      ],
+    }),
+    []
+  );
 
   return (
-
     <>
-    
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html:
-            JSON.stringify(
-              serviceSchema
-            ),
-        }}
-      />
-
-      <main className="overflow-x-hidden bg-white text-[var(--text)]">
-
+      <Script id="ai-automation-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <main className="overflow-x-hidden bg-white text-slate-900">
         <Navbar />
 
         {/* HERO */}
-
-        <section className="relative overflow-hidden bg-white pt-24 pb-14 md:pt-32 md:pb-20">
-
-          {/* BACKGROUND */}
-
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(139,92,246,0.05),transparent_30%)]" />
-
-          <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-[1fr_0.92fr] lg:gap-16">
-
-            {/* LEFT */}
-
+        <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_28%)]" />
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
             <FadeUp>
-
-              <div className="max-w-4xl">
-
-                <div className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-violet-700 md:text-sm">
-
-                  AI Automation Infrastructure
-
-                </div>
-
-                <h1 className="mt-6 text-4xl font-black leading-[0.95] tracking-[-0.05em] text-[#111111] md:text-6xl">
-
-                  AI systems that
-                  reduce repetitive
-                  operational work.
-
-                </h1>
-
-                <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-
-                  Modern businesses lose time and revenue through fragmented workflows and repetitive operational tasks.
-
-                  <br />
-                  <br />
-
-                  AI automation creates scalable systems that improve execution speed, consistency, and operational visibility.
-
-                </p>
-
-                <div className="mt-8 flex flex-wrap gap-3">
-
-                  <Link
-                    href="/contact"
-                    className="rounded-2xl bg-violet-600 px-7 py-4 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-700 md:text-base"
-                  >
-
-                    Build AI Systems
-
-                  </Link>
-
-                  <Link
-                    href="/insights/articles"
-                    className="rounded-2xl border border-[var(--border)] bg-white px-7 py-4 text-sm font-medium transition-all duration-300 hover:bg-[var(--soft-surface)] md:text-base"
-                  >
-
-                    Explore AI Infrastructure
-
-                  </Link>
-
-                </div>
-
+              <span className="inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
+                AI Automation Services
+              </span>
+              <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl">
+                AI Automation Systems That Reduce Manual Work and Scale Operations
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+                Socieas helps businesses build AI automation infrastructure through workflow systems, lead routing, reporting automation, and operational efficiency engines that compound over time.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/contact" className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-violet-800">Contact</Link>
+                <Link href="/insights" className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50">Insights</Link>
               </div>
-
+              <div className="mt-6 flex flex-wrap gap-3 text-sm">
+                {["Workflow Automation", "AI Lead Routing", "Reporting Systems", "Operational Efficiency"].map((item) => (
+                  <span key={item} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-600 shadow-sm">{item}</span>
+                ))}
+              </div>
             </FadeUp>
-
-            {/* RIGHT */}
-
             <FadeUp>
-
-              <div className="relative mx-auto w-full max-w-[520px]">
-
-                <div className="relative overflow-hidden rounded-[34px] border border-violet-100 bg-white p-6 shadow-[0_25px_80px_rgba(124,58,237,0.10)] md:p-8">
-
-                  <div className="absolute right-[-50px] top-[-50px] h-[180px] w-[180px] rounded-full bg-violet-100 blur-3xl" />
-
-                  <div className="relative">
-
-                    <div className="flex items-start justify-between gap-4">
-
-                      <div>
-
-                        <div className="text-xs uppercase tracking-[0.16em] text-[var(--muted)] md:text-sm">
-
-                          Workflow Efficiency
-
-                        </div>
-
-                        <div className="mt-2 text-4xl font-black tracking-[-0.04em] text-[#111111] md:text-5xl">
-
-                          +240%
-
-                        </div>
-
-                      </div>
-
-                      <div className="rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-xs font-semibold text-violet-700 md:text-sm">
-
-                        Automation Active
-
-                      </div>
-
-                    </div>
-
-                    <div className="mt-8 space-y-3">
-
-                      {[
-                        "Lead Qualification",
-                        "Workflow Routing",
-                        "AI Follow Ups",
-                        "Reporting Automation",
-                      ].map((item, index) => (
-
-                        <div
-                          key={index}
-                          className="group flex items-center justify-between rounded-2xl border border-violet-100 bg-[var(--soft-surface)] px-5 py-4 transition-all duration-300 hover:border-violet-300 hover:bg-violet-50"
-                        >
-
-                          <div className="text-sm font-medium md:text-base">
-
-                            {item}
-
-                          </div>
-
-                          <div className="h-3 w-3 rounded-full bg-violet-600 transition-all duration-300 group-hover:scale-125" />
-
-                        </div>
-
-                      ))}
-
-                    </div>
-
+              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
+                <div className="grid gap-4">
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                    <p className="text-sm font-medium text-slate-500">Before</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-900">Teams spend hours on repetitive tasks, leads are missed, and operations lack real-time visibility.</p>
                   </div>
-
+                  <div className="rounded-3xl bg-violet-50 p-5">
+                    <p className="text-sm font-medium text-violet-700">After</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-900">Automated systems handle execution, routing, and reporting so teams focus on strategic growth.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">Faster execution</div>
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">Less manual work</div>
+                  </div>
                 </div>
-
               </div>
-
             </FadeUp>
-
           </div>
-
         </section>
 
-        {/* TECH STACK */}
-
-        <section className="pb-14 md:pb-20">
-
+        {/* PROBLEM STRIP */}
+        <section className="py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
-
-            <FadeUp>
-
-              <div className="relative overflow-hidden rounded-[36px] border border-violet-100 bg-[linear-gradient(135deg,#FAF5FF_0%,#FFFFFF_55%,#F5F3FF_100%)] p-7 shadow-[0_25px_80px_rgba(124,58,237,0.06)] md:p-10">
-
-                <div className="absolute right-0 top-0 h-[240px] w-[240px] rounded-full bg-violet-100/60 blur-3xl" />
-
-                <div className="relative">
-
-                  <div className="max-w-4xl">
-
-                    <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-
-                      Technology Infrastructure
-
-                    </div>
-
-                    <h2 className="mt-5 text-4xl font-bold leading-[1.02] text-[#111111] md:text-5xl">
-
-                      Modern automation systems require connected technology ecosystems.
-
-                    </h2>
-
-                    <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-
-                      We use scalable automation infrastructure, integrations, workflow engines, AI models, and operational systems designed for long term execution efficiency.
-
-                    </p>
-
-                  </div>
-
-                  <div className="mt-10 flex flex-wrap gap-4">
-
-                    {techStacks.map((tech, index) => (
-
-                      <div
-                        key={index}
-                        className="group relative overflow-hidden rounded-2xl border border-violet-100 bg-white px-5 py-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_18px_40px_rgba(124,58,237,0.10)]"
-                      >
-
-                        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(139,92,246,0.06),transparent)] opacity-0 transition-all duration-300 group-hover:opacity-100" />
-
-                        <div className="relative flex items-center gap-3">
-
-                          <div className="h-3 w-3 rounded-full bg-violet-600" />
-
-                          <div className="text-sm font-semibold text-[#111111] md:text-base">
-
-                            {tech}
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    ))}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </FadeUp>
-
-          </div>
-
-        </section>
-
-        {/* AUTOMATION SYSTEMS */}
-
-        <section className="py-14 md:py-20">
-
-          <div className="mx-auto max-w-7xl px-6">
-
-            <FadeUp>
-
-              <div className="max-w-5xl">
-
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-
-                  Automation Ecosystem
-
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-
-                  AI systems work best
-                  when infrastructure
-                  operates together.
-
-                </h2>
-
-              </div>
-
-            </FadeUp>
-
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
-
-              {automationSystems.map((item, index) => (
-
-                <FadeUp key={index}>
-
-                  <div className="group rounded-[32px] border border-violet-100 bg-white p-6 shadow-[0_20px_60px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-2 hover:border-violet-300 md:p-8">
-
-                    <div className="flex items-center justify-between">
-
-                      <div className="text-sm font-semibold uppercase tracking-[0.2em] text-violet-600">
-
-                        System 0{index + 1}
-
-                      </div>
-
-                      <div className="h-3 w-3 rounded-full bg-violet-600 transition-all duration-300 group-hover:scale-125"></div>
-
-                    </div>
-
-                    <h3 className="mt-6 text-2xl font-bold leading-tight md:text-3xl">
-
-                      {item.title}
-
-                    </h3>
-
-                    <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-
-                      {item.description}
-
-                    </p>
-
-                  </div>
-
-                </FadeUp>
-
-              ))}
-
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Why Growing Businesses Stay Stuck in Manual Operations</h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">Operational bottlenecks compound as businesses scale, making automation a strategic necessity rather than a convenience.</p>
             </div>
-
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {problemItems.map((item) => (
+                <div key={item} className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-600"><span className="text-base font-bold">!</span></div>
+                    <p className="text-base font-semibold text-slate-900">{item}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+        </section>
 
+        {/* SOLUTION PANEL */}
+        <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Our AI Automation Approach</h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">We build connected automation systems around your existing operations to improve speed, consistency, and visibility.</p>
+            </div>
+            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+              <article className="rounded-[32px] border border-rose-200 bg-white p-7 shadow-sm md:p-8">
+                <div className="inline-flex rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-700">Before</div>
+                <div className="mt-6 space-y-3">
+                  {["Manual lead follow-up processes", "Disconnected tools and platforms", "No automated reporting", "Operational errors from human execution"].map((item) => (
+                    <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">{item}</div>
+                  ))}
+                </div>
+              </article>
+              <article className="rounded-[32px] border border-violet-200 bg-white p-7 shadow-lg md:p-8">
+                <div className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">After</div>
+                <div className="mt-6 space-y-3">
+                  {["Automated lead routing and follow-ups", "Connected systems across all platforms", "Real-time reporting dashboards", "Consistent and reliable execution"].map((item) => (
+                    <div key={item} className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3 text-sm font-medium text-slate-800">{item}</div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
         </section>
 
         {/* PROCESS */}
-
-        <section className="bg-[var(--soft-surface)] py-14 md:py-20">
-
+        <section className="py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
-
-            <FadeUp>
-
-              <div className="max-w-5xl">
-
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-
-                  Implementation Process
-
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-
-                  AI automation requires
-                  structured operational planning.
-
-                </h2>
-
-              </div>
-
-            </FadeUp>
-
-            <div className="mt-12 space-y-6">
-
-              {process.map((item, index) => (
-
-                <FadeUp key={index}>
-
-                  <div className="rounded-[32px] border border-violet-100 bg-white p-6 shadow-[0_20px_60px_rgba(124,58,237,0.05)] md:p-8">
-
-                    <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-
-                      <div className="flex gap-5">
-
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-sm font-semibold text-white">
-
-                          {index + 1}
-
-                        </div>
-
-                        <div>
-
-                          <h3 className="text-2xl font-bold md:text-3xl">
-
-                            {item.title}
-
-                          </h3>
-
-                          <p className="mt-3 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-
-                            {item.description}
-
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </FadeUp>
-
-              ))}
-
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">How Socieas Builds AI Automation Systems</h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">A structured process from operational audit to deployed automation infrastructure.</p>
             </div>
-
+            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              {processSteps.map((step) => (
+                <article key={step.no} className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-violet-700">{step.no}</span>
+                    <div className="h-2 w-20 rounded-full bg-slate-100"><div className="h-2 w-12 rounded-full bg-violet-500 transition-all duration-500 group-hover:w-20" /></div>
+                  </div>
+                  <h3 className="mt-5 text-2xl font-bold text-slate-950">{step.title}</h3>
+                  <p className="mt-3 leading-7 text-slate-600">{step.desc}</p>
+                </article>
+              ))}
+            </div>
           </div>
+        </section>
 
+        {/* SYSTEM TABS */}
+        <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">AI Automation Systems Built for Real Operations</h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">Automation works best as a connected system rather than isolated tools running independently.</p>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {systemTabs.map((tab, index) => (
+                <button key={tab.title} onClick={() => setActiveSystem(index)} className={`rounded-full px-5 py-3 text-sm font-semibold transition ${activeSystem === index ? "bg-slate-950 text-white" : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400"}`}>{tab.title}</button>
+              ))}
+            </div>
+            <div className="mt-8 rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+              <h3 className="text-2xl font-bold text-slate-950">{systemTabs[activeSystem].title}</h3>
+              <p className="mt-2 max-w-3xl text-slate-600">{systemTabs[activeSystem].desc}</p>
+              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {systemTabs[activeSystem].items.map((item) => (
+                  <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center font-medium text-slate-800 transition hover:-translate-y-0.5 hover:bg-violet-50">{item}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CAPABILITIES */}
+        <section className="py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">AI Automation Needs Systems, Not Isolated Tools</h2>
+                <p className="mt-4 text-lg leading-8 text-slate-600">Automation becomes stronger when every workflow, trigger, and integration operates as one connected infrastructure.</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {capabilities.map((item) => (
+                  <div key={item} className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                    <div className="text-base font-semibold md:text-lg">{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* TESTIMONIALS */}
-
-        <section className="py-14 md:py-20">
-
+        <section className="py-12 md:py-16">
           <Testimonials />
-
         </section>
 
         {/* FAQ */}
-
-        <section className="bg-[var(--soft-surface)] py-14 md:py-20">
-
+        <section className="border-t border-slate-200 bg-slate-50 py-16 md:py-20">
           <div className="mx-auto max-w-5xl px-6">
-
             <FadeUp>
-
               <div className="text-center">
-
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-
-                  Frequently Asked Questions
-
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-
-                  Common questions
-                  about AI automation.
-
-                </h2>
-
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">AI Automation FAQs</h2>
+                <p className="mt-4 text-lg leading-8 text-slate-600">Clear answers for businesses evaluating AI automation support.</p>
               </div>
-
             </FadeUp>
-
-            <div className="mt-12 space-y-4">
-
+            <div className="mt-10 space-y-4">
               {faqs.map((faq, index) => (
-
-                <FadeUp key={index}>
-
-                  <div className="rounded-[28px] border border-violet-100 bg-white p-6 shadow-[0_20px_60px_rgba(124,58,237,0.04)] md:p-8">
-
-                    <h3 className="text-xl font-semibold md:text-2xl">
-
-                      {faq.question}
-
-                    </h3>
-
-                    <p className="mt-3 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-
-                      {faq.answer}
-
-                    </p>
-
-                  </div>
-
-                </FadeUp>
-
+                <div key={faq.question} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                  <button onClick={() => setActiveFaq(activeFaq === index ? null : index)} className="flex w-full items-center justify-between gap-4 p-6 text-left" aria-expanded={activeFaq === index}>
+                    <span className="text-base font-semibold text-slate-900 md:text-lg">{faq.question}</span>
+                    <span className="text-2xl text-slate-400">{activeFaq === index ? "−" : "+"}</span>
+                  </button>
+                  {activeFaq === index && (
+                    <div className="px-6 pb-6 leading-7 text-slate-600">{faq.answer}</div>
+                  )}
+                </div>
               ))}
-
             </div>
-
           </div>
-
         </section>
 
-        {/* FINAL CTA */}
-
-        <section className="py-14 md:py-20">
-
-          <div className="mx-auto max-w-5xl px-6 text-center">
-
-            <FadeUp>
-
-              <div className="rounded-[32px] border border-violet-100 bg-white px-6 py-10 shadow-[0_20px_60px_rgba(124,58,237,0.05)] md:px-10 md:py-14">
-
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-
-                  AI Infrastructure
-
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-
-                  Scalable businesses
-                  require scalable
-                  operational systems.
-
-                </h2>
-
-                <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-
-                  AI automation improves consistency, execution speed, operational visibility, and scalable business efficiency.
-
-                </p>
-
-                <Link
-                  href="/contact"
-                  className="mt-8 inline-flex rounded-2xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-700"
-                >
-
-                  Build AI Infrastructure
-
+        {/* INTERNAL LINKS */}
+        <section className="py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Explore More from Socieas</h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">Keep moving with direct paths to contact, services, and insights.</p>
+            </div>
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {[
+                { title: "Contact", desc: "Talk to Socieas about AI automation, workflow systems, and operational infrastructure.", href: "/contact" },
+                { title: "Services", desc: "Explore broader service capabilities across automation, CRM, development, and growth.", href: "/services" },
+                { title: "Insights", desc: "Read practical content on automation, operations, and business efficiency.", href: "/insights" },
+              ].map((item) => (
+                <Link key={item.title} href={item.href} className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-lg">
+                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
+                  <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">Explore →</span>
                 </Link>
-
-              </div>
-
-            </FadeUp>
-
+              ))}
+            </div>
           </div>
+        </section>
 
+        {/* CTA */}
+        <section className="py-16 md:py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="rounded-[36px] border border-violet-200 bg-[linear-gradient(180deg,#fdfbff_0%,#eef6ff_100%)] p-8 text-center shadow-lg md:p-14">
+              <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">Build Automation Systems That Scale With Your Business</h2>
+              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">Get AI automation support built around your workflows, tools, and operational goals.</p>
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Link href="/contact" className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-violet-800">Contact</Link>
+                <Link href="/insights" className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50">Insights</Link>
+              </div>
+            </div>
+          </div>
         </section>
 
         <Footer />
-
       </main>
-
     </>
-
   );
 }
