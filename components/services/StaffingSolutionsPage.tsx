@@ -10,87 +10,87 @@ import FadeUp from "@/components/FadeUp";
 import Testimonials from "@/components/Testimonials";
 
 const SITE_URL = "https://socieas.com";
-const PAGE_URL = `${SITE_URL}/services/personal-branding`;
+const PAGE_URL = `${SITE_URL}/services/staffing-solutions`;
 
 const problemItems = [
-  "Strong expertise, weak visibility",
-  "Profiles that do not build trust fast",
-  "Inconsistent founder messaging",
-  "Content without authority positioning",
+  "Slow hiring cycles that stall growth",
+  "Unclear role expectations and poor fit",
+  "Inconsistent interview processes",
+  "High effort with low hiring confidence",
 ];
 
-const platformTabs = [
+const hiringTabs = [
   {
-    title: "LinkedIn",
-    desc: "The strongest platform for founder credibility, authority, and trust-led professional visibility.",
-    items: ["Profile positioning", "Authority content", "Thought leadership", "Inbound trust"],
+    title: "Role Intake",
+    desc: "Strong hiring starts with clear role definition, aligned expectations, and a practical success profile.",
+    items: ["Role scorecards", "Hiring criteria", "Priority alignment", "Decision clarity"],
   },
   {
-    title: "Instagram",
-    desc: "A visual layer that adds familiarity, personality, and stronger audience connection when relevant.",
-    items: ["Visual identity", "Founder storytelling", "Audience familiarity", "Brand recall"],
+    title: "Pipeline Management",
+    desc: "A structured recruitment pipeline improves speed, coordination, and visibility across every hiring stage.",
+    items: ["Stage tracking", "Candidate flow", "Drop-off visibility", "Faster movement"],
   },
   {
-    title: "Content System",
-    desc: "A repeatable visibility engine that turns founder ideas into consistent and strategic content output.",
-    items: ["Content repurposing", "Narrative consistency", "Content themes", "Publishing structure"],
+    title: "Interview Systems",
+    desc: "Repeatable interview frameworks help teams evaluate fairly, compare consistently, and reduce guesswork.",
+    items: ["Structured interviews", "Feedback capture", "Evaluation consistency", "Team alignment"],
   },
 ];
 
 const processSteps = [
   {
     no: "01",
-    title: "Position",
-    desc: "Clarify founder narrative, expertise angle, audience signals, and trust-building message.",
+    title: "Define",
+    desc: "Clarify the role, candidate profile, hiring priorities, and success criteria before sourcing begins.",
   },
   {
     no: "02",
-    title: "Systemize",
-    desc: "Build profile structure, content themes, platform consistency, and visibility workflows.",
+    title: "Organize",
+    desc: "Build a consistent hiring workflow with better stage visibility, team coordination, and evaluation logic.",
   },
   {
     no: "03",
-    title: "Compound",
-    desc: "Grow recognition, authority, referrals, and inbound trust through repeated visibility.",
+    title: "Hire Better",
+    desc: "Improve decision quality, reduce delays, and build a staffing process that supports long-term growth.",
   },
 ];
 
 const capabilities = [
-  "Founder positioning",
-  "LinkedIn personal branding",
-  "Thought leadership content",
-  "Instagram founder visibility",
-  "Content repurposing systems",
-  "Narrative strategy",
-  "Audience research",
-  "Authority content planning",
+  "Role scorecards",
+  "Hiring process design",
+  "Candidate pipeline structuring",
+  "Interview systems",
+  "Evaluation frameworks",
+  "Recruitment workflow clarity",
+  "Hiring coordination",
+  "Decision support systems",
 ];
 
 const faqs = [
   {
-    question: "Why is personal branding important for founders?",
+    question: "Why do businesses need structured staffing systems?",
     answer:
-      "Personal branding helps founders build visibility, trust, and familiarity. Potential clients, partners, hires, and referrals often evaluate the founder before they evaluate the business in depth.",
+      "Structured staffing systems reduce hiring delays, improve candidate quality, and help teams make decisions with more clarity and consistency.",
   },
   {
-    question: "How long does founder branding take to show results?",
+    question: "Can staffing support improve hiring speed?",
     answer:
-      "Founder branding usually works through consistency rather than one viral moment. Many founders start noticing stronger profile perception, audience recognition, and trust signals within the first few months.",
+      "Yes. Better process design, role clarity, and pipeline visibility usually reduce bottlenecks and help hiring move faster.",
   },
   {
-    question: "Which platform is best for founder personal branding?",
+    question: "What makes a strong hiring process?",
     answer:
-      "LinkedIn is usually the strongest platform for founder authority and professional trust. Instagram can support familiarity and visual storytelling when it fits the founder’s audience and business context.",
+      "A strong hiring process combines role definition, stage clarity, structured interviews, and better decision-making criteria across the team.",
   },
   {
-    question: "Can personal branding help generate leads?",
+    question: "Does staffing process improvement help hiring quality?",
     answer:
-      "Yes. Strong founder visibility can improve trust before a sales conversation, which supports warmer inbound opportunities, stronger referrals, and better-quality business interactions.",
+      "Yes. When evaluation becomes clearer and more consistent, teams usually make stronger hiring decisions with less confusion and rework.",
   },
 ];
 
-export default function PersonalBrandingPage() {
-  const [activePlatform, setActivePlatform] = useState(0);
+export default function StaffingSolutionsPage() {
+  const [activeTab, setActiveTab] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
   const schema = useMemo(
@@ -115,18 +115,18 @@ export default function PersonalBrandingPage() {
             {
               "@type": "ListItem",
               position: 3,
-              name: "Personal Branding",
+              name: "Staffing Solutions",
               item: PAGE_URL,
             },
           ],
         },
         {
           "@type": "Service",
-          name: "Personal Branding Services for Founders",
+          name: "Staffing Solutions",
           serviceType:
-            "Founder personal branding, LinkedIn positioning, thought leadership, visibility strategy",
+            "Hiring systems, recruitment process improvement, interview operations, staffing support",
           description:
-            "Socieas helps founders build visibility, authority, and trust through personal branding, LinkedIn positioning, thought leadership, and content systems.",
+            "Socieas helps businesses improve staffing outcomes through hiring systems, structured recruitment workflows, interview process clarity, and better hiring decisions.",
           provider: {
             "@type": "Organization",
             name: "Socieas",
@@ -141,7 +141,7 @@ export default function PersonalBrandingPage() {
           ],
           audience: {
             "@type": "Audience",
-            audienceType: "Founders, entrepreneurs, business owners, startup leaders",
+            audienceType: "Businesses, startups, founders, hiring teams, operations leaders",
           },
           url: PAGE_URL,
           offers: {
@@ -169,7 +169,7 @@ export default function PersonalBrandingPage() {
   return (
     <>
       <Script
-        id="personal-branding-schema"
+        id="staffing-solutions-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
@@ -178,39 +178,39 @@ export default function PersonalBrandingPage() {
         <Navbar />
 
         <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_28%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.08),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(99,102,241,0.08),transparent_28%)]" />
           <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-22 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
             <FadeUp>
-              <span className="inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
-                Personal Branding Services
+              <span className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700">
+                Staffing Solutions
               </span>
 
               <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl">
-                Personal Branding for Founders Who Want Trust, Visibility, and Real Authority
+                Staffing Systems That Help Teams Hire Faster and Better
               </h1>
 
               <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-                Socieas helps founders build stronger digital authority through personal branding,
-                LinkedIn positioning, founder storytelling, and content systems that compound over time.
+                Socieas helps businesses improve hiring through structured staffing systems,
+                better recruitment workflows, interview clarity, and stronger decision-making.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
                   href="/contact"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-violet-800"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-sky-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-sky-800"
                 >
                   Contact
                 </Link>
                 <Link
-                  href="/insights"
+                  href="/services"
                   className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
                 >
-                  Insights
+                  Services
                 </Link>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm">
-                {["LinkedIn Authority", "Thought Leadership", "Founder Positioning", "Content Systems"].map(
+                {["Hiring Systems", "Interview Structure", "Pipeline Visibility", "Better Decisions"].map(
                   (item) => (
                     <span
                       key={item}
@@ -229,23 +229,23 @@ export default function PersonalBrandingPage() {
                   <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                     <p className="text-sm font-medium text-slate-500">Before</p>
                     <p className="mt-2 text-lg font-semibold text-slate-900">
-                      Strong expertise exists, but the founder is still hard to understand, trust, or remember online.
+                      Hiring feels inconsistent, slow, and difficult to manage across roles and stages.
                     </p>
                   </div>
 
-                  <div className="rounded-3xl bg-violet-50 p-5">
-                    <p className="text-sm font-medium text-violet-700">After</p>
+                  <div className="rounded-3xl bg-sky-50 p-5">
+                    <p className="text-sm font-medium text-sky-700">After</p>
                     <p className="mt-2 text-lg font-semibold text-slate-900">
-                      A visible founder presence that builds familiarity, credibility, and authority across touchpoints.
+                      A cleaner staffing system with more clarity, better evaluation, and stronger hiring confidence.
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
-                      Better recall
+                      Faster movement
                     </div>
                     <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
-                      Stronger trust
+                      Better fit
                     </div>
                   </div>
                 </div>
@@ -258,10 +258,10 @@ export default function PersonalBrandingPage() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Why Strong Founders Still Get Overlooked
+                Why Hiring Systems Break Down
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
-                Founder authority often gets lost when visibility, message consistency, and trust signals are weak.
+                Staffing struggles usually come from unclear process design, weak coordination, and inconsistent decision logic.
               </p>
             </div>
 
@@ -269,10 +269,10 @@ export default function PersonalBrandingPage() {
               {problemItems.map((item) => (
                 <div
                   key={item}
-                  className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg"
+                  className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-50 text-sky-600">
                       <span className="text-base font-bold">!</span>
                     </div>
                     <p className="text-base font-semibold text-slate-900">{item}</p>
@@ -287,10 +287,10 @@ export default function PersonalBrandingPage() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Our Founder Branding Approach
+                Our Staffing Approach
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
-                We turn scattered founder presence into a clear authority system that builds trust over time.
+                We help businesses turn reactive hiring into a more structured staffing system that improves speed and decision quality.
               </p>
             </div>
 
@@ -302,10 +302,10 @@ export default function PersonalBrandingPage() {
 
                 <div className="mt-6 space-y-3">
                   {[
-                    "Generic profiles and bios",
-                    "Random posting without narrative",
-                    "Low familiarity with the founder",
-                    "Trust built too slowly",
+                    "Reactive hiring decisions",
+                    "Unclear candidate flow",
+                    "Interview inconsistency",
+                    "Low confidence at final selection",
                   ].map((item) => (
                     <div
                       key={item}
@@ -317,21 +317,21 @@ export default function PersonalBrandingPage() {
                 </div>
               </article>
 
-              <article className="rounded-[32px] border border-violet-200 bg-white p-7 shadow-lg md:p-8">
-                <div className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">
+              <article className="rounded-[32px] border border-sky-200 bg-white p-7 shadow-lg md:p-8">
+                <div className="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
                   After
                 </div>
 
                 <div className="mt-6 space-y-3">
                   {[
-                    "Clear founder positioning",
-                    "Consistent thought leadership",
-                    "Stronger audience familiarity",
-                    "Trust that compounds over time",
+                    "Clear hiring structure",
+                    "More consistent interviews",
+                    "Better pipeline visibility",
+                    "Stronger hiring decisions",
                   ].map((item) => (
                     <div
                       key={item}
-                      className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3 text-sm font-medium text-slate-800"
+                      className="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-medium text-slate-800"
                     >
                       {item}
                     </div>
@@ -346,10 +346,10 @@ export default function PersonalBrandingPage() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                How Socieas Builds Founder Visibility
+                How Socieas Improves Staffing
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
-                A focused process that moves from positioning to content systems to long-term authority.
+                A practical process that moves from hiring clarity to workflow structure to better outcomes.
               </p>
             </div>
 
@@ -360,9 +360,9 @@ export default function PersonalBrandingPage() {
                   className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-violet-700">{step.no}</span>
+                    <span className="text-sm font-semibold text-sky-700">{step.no}</span>
                     <div className="h-2 w-20 rounded-full bg-slate-100">
-                      <div className="h-2 w-12 rounded-full bg-violet-500 transition-all duration-500 group-hover:w-20" />
+                      <div className="h-2 w-12 rounded-full bg-sky-500 transition-all duration-500 group-hover:w-20" />
                     </div>
                   </div>
                   <h3 className="mt-5 text-2xl font-bold text-slate-950">{step.title}</h3>
@@ -377,42 +377,38 @@ export default function PersonalBrandingPage() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Founder Visibility Across the Right Platforms
+                Better Staffing Across the Right Hiring Layers
               </h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
-                Personal branding works best as a connected system instead of isolated posting on one platform.
+                Strong staffing systems work best when role definition, candidate flow, and interviews work together.
               </p>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {platformTabs.map((platform, index) => (
+              {hiringTabs.map((tab, index) => (
                 <button
-                  key={platform.title}
-                  onClick={() => setActivePlatform(index)}
+                  key={tab.title}
+                  onClick={() => setActiveTab(index)}
                   className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
-                    activePlatform === index
+                    activeTab === index
                       ? "bg-slate-950 text-white"
                       : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400"
                   }`}
                 >
-                  {platform.title}
+                  {tab.title}
                 </button>
               ))}
             </div>
 
             <div className="mt-8 rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-              <h3 className="text-2xl font-bold text-slate-950">
-                {platformTabs[activePlatform].title}
-              </h3>
-              <p className="mt-2 max-w-3xl text-slate-600">
-                {platformTabs[activePlatform].desc}
-              </p>
+              <h3 className="text-2xl font-bold text-slate-950">{hiringTabs[activeTab].title}</h3>
+              <p className="mt-2 max-w-3xl text-slate-600">{hiringTabs[activeTab].desc}</p>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {platformTabs[activePlatform].items.map((item) => (
+                {hiringTabs[activeTab].items.map((item) => (
                   <div
                     key={item}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center font-medium text-slate-800 transition hover:-translate-y-0.5 hover:bg-violet-50"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center font-medium text-slate-800 transition hover:-translate-y-0.5 hover:bg-sky-50"
                   >
                     {item}
                   </div>
@@ -427,10 +423,10 @@ export default function PersonalBrandingPage() {
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                  Personal Branding Needs Systems, Not Random Posting
+                  Staffing Needs Systems, Not Just More Hiring Activity
                 </h2>
                 <p className="mt-4 text-lg leading-8 text-slate-600">
-                  Founder branding becomes stronger when visibility is supported by structure, clarity, and platform consistency.
+                  Better hiring outcomes come from process structure, role clarity, and stronger evaluation systems.
                 </p>
               </div>
 
@@ -467,28 +463,28 @@ export default function PersonalBrandingPage() {
               {[
                 {
                   title: "Contact",
-                  desc: "Talk to Socieas about founder branding, visibility strategy, and content systems.",
+                  desc: "Talk to Socieas about staffing systems, hiring process clarity, and workflow improvement.",
                   href: "/contact",
                 },
                 {
                   title: "Services",
-                  desc: "Explore broader service capabilities across branding, CRM, automation, and growth.",
+                  desc: "Explore broader service capabilities across staffing, CRM, automation, and growth.",
                   href: "/services",
                 },
                 {
                   title: "Insights",
-                  desc: "Read practical content on visibility, authority, and business growth.",
+                  desc: "Read practical content on hiring systems, business processes, and growth operations.",
                   href: "/insights",
                 },
               ].map((item) => (
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-lg"
+                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-sky-200 hover:bg-white hover:shadow-lg"
                 >
                   <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
                   <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
-                  <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
+                  <span className="mt-5 inline-flex text-sm font-semibold text-sky-700 transition group-hover:translate-x-1">
                     Explore →
                   </span>
                 </Link>
@@ -502,10 +498,10 @@ export default function PersonalBrandingPage() {
             <FadeUp>
               <div className="text-center">
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                  Personal Branding FAQs
+                  Staffing Solutions FAQs
                 </h2>
                 <p className="mt-4 text-lg leading-8 text-slate-600">
-                  Clear answers for founders evaluating personal branding support.
+                  Clear answers for businesses improving hiring systems and staffing outcomes.
                 </p>
               </div>
             </FadeUp>
@@ -543,26 +539,26 @@ export default function PersonalBrandingPage() {
 
         <section className="py-14 md:py-20">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="rounded-[36px] border border-violet-200 bg-[linear-gradient(180deg,#fdfbff_0%,#eef6ff_100%)] p-8 text-center shadow-lg md:p-14">
+            <div className="rounded-[36px] border border-sky-200 bg-[linear-gradient(180deg,#f8fdff_0%,#eef7ff_100%)] p-8 text-center shadow-lg md:p-14">
               <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
-                Build a Founder Brand People Trust Before the First Conversation
+                Build a Staffing System That Supports Better Hiring Decisions
               </h2>
               <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-                Get personal branding support built around your positioning, content systems, and long-term authority.
+                Get staffing support built around process clarity, candidate evaluation, and stronger hiring workflows.
               </p>
 
               <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Link
                   href="/contact"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-violet-800"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-sky-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-sky-800"
                 >
                   Contact
                 </Link>
                 <Link
-                  href="/insights"
+                  href="/services"
                   className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
                 >
-                  Insights
+                  Services
                 </Link>
               </div>
             </div>
