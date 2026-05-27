@@ -320,22 +320,21 @@ export default function FullStackDevelopmentPage() {
       <main className="overflow-x-hidden bg-white text-slate-900">
         <Navbar />
 
-        {/* HERO */}
         <section className="relative overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(139,92,246,0.10),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.08),_transparent_28%),linear-gradient(to_bottom,_#ffffff,_#f8fafc)]">
-          <div className="mx-auto grid max-w-7xl gap-14 px-6 py-20 md:py-28 lg:grid-cols-[1.06fr_0.94fr] lg:items-center">
+          <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:py-22 lg:grid-cols-[1.06fr_0.94fr] lg:items-center">
             <FadeUp>
               <span className="inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
                 Full Stack Development
               </span>
 
-              <h1 className="mt-6 max-w-5xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl">
+              <h1 className="mt-5 max-w-5xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl">
                 Full Stack Development for Products That Need Stronger Systems
               </h1>
 
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                Socieas builds full stack product systems across frontend,
-                backend, APIs, databases, and cloud deployment for businesses
-                that need scalability, stability, and better operational flow.
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+                Socieas builds full stack product systems across frontend, backend, APIs,
+                databases, and cloud deployment for businesses that need scalability,
+                stability, and better operational flow.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -354,22 +353,17 @@ export default function FullStackDevelopmentPage() {
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600">
-                {[
-                  "Next.js",
-                  "React",
-                  "Node.js",
-                  "APIs",
-                  "Databases",
-                  "Cloud Deployment",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-slate-200 bg-white px-4 py-2"
-                  >
-                    {item}
-                  </span>
-                ))}
+              <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
+                {["Next.js", "React", "Node.js", "APIs", "Databases", "Cloud Deployment"].map(
+                  (item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-slate-200 bg-white px-4 py-2"
+                    >
+                      {item}
+                    </span>
+                  )
+                )}
               </div>
             </FadeUp>
 
@@ -420,8 +414,7 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* PROBLEM / VALUE */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
               <FadeUp>
@@ -456,8 +449,7 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* INTERACTIVE LAYERS */}
-        <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-3xl">
@@ -539,7 +531,8 @@ export default function FullStackDevelopmentPage() {
                       Why this matters
                     </div>
                     <p className="mt-4 text-lg leading-8 text-slate-700">
-                      Better product systems improve usability, reduce technical friction, support cleaner releases, and make growth easier to manage.
+                      Better product systems improve usability, reduce technical friction,
+                      support cleaner releases, and make growth easier to manage.
                     </p>
                   </div>
                 </div>
@@ -548,8 +541,7 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* PROCESS */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -579,8 +571,7 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* USE CASES */}
-        <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -596,9 +587,7 @@ export default function FullStackDevelopmentPage() {
                 <div
                   key={card.title}
                   className={`rounded-[28px] border p-6 shadow-sm ${
-                    index === 1
-                      ? "border-violet-200 bg-violet-50"
-                      : "border-slate-200 bg-white"
+                    index === 1 ? "border-violet-200 bg-violet-50" : "border-slate-200 bg-white"
                   }`}
                 >
                   <div className="text-sm uppercase tracking-[0.18em] text-violet-700">
@@ -612,8 +601,7 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* CREATIVE HORIZONTAL STACK */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-3xl">
@@ -621,7 +609,7 @@ export default function FullStackDevelopmentPage() {
                   Technology Areas We Commonly Support
                 </h2>
                 <p className="mt-4 text-lg leading-8 text-slate-600">
-                  Explore the product stack through a horizontal system view built to feel more interactive, more visual, and easier to scan.
+                  Explore the product stack through a horizontal system view built to feel more interactive and easier to scan.
                 </p>
               </div>
 
@@ -652,7 +640,7 @@ export default function FullStackDevelopmentPage() {
                 onScroll={handleStackScroll}
                 className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
               >
-                {stack.map((item, index) => (
+                {stack.map((item) => (
                   <article
                     key={item.title}
                     className={`min-w-[290px] max-w-[290px] snap-start rounded-[30px] border border-slate-200 bg-gradient-to-br ${item.tone} p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md md:min-w-[330px] md:max-w-[330px]`}
@@ -668,9 +656,7 @@ export default function FullStackDevelopmentPage() {
                       {item.title}
                     </h3>
 
-                    <p className="mt-4 text-base leading-7 text-slate-600">
-                      {item.desc}
-                    </p>
+                    <p className="mt-4 text-base leading-7 text-slate-600">{item.desc}</p>
 
                     <div className="mt-8 inline-flex rounded-full border border-white/70 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur">
                       Product-ready systems
@@ -695,13 +681,56 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
         <section className="py-12 md:py-16">
           <Testimonials />
         </section>
 
-        {/* FAQ */}
-        <section className="border-t border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Explore More from Socieas
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Move directly into product, systems, and related service pathways.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {[
+                {
+                  title: "Contact Socieas",
+                  desc: "Discuss your application, platform, MVP, or rebuild project.",
+                  href: "/contact-us/",
+                },
+                {
+                  title: "CRM Solutions",
+                  desc: "Explore CRM and automation systems that can connect with your product workflows.",
+                  href: "/services/crm-solutions",
+                },
+                {
+                  title: "Insights & Case Studies",
+                  desc: "Read supporting business, systems, and implementation content from Socieas.",
+                  href: "/blogs/",
+                },
+              ].map((item) => (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-md"
+                >
+                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
+                  <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
+                    Explore →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-5xl px-6">
             <FadeUp>
               <div className="text-center">
@@ -745,54 +774,7 @@ export default function FullStackDevelopmentPage() {
           </div>
         </section>
 
-        {/* INTERNAL LINKS */}
-        <section className="py-16 md:py-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="max-w-3xl">
-              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Related Socieas Resources
-              </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Strengthen the next step for visitors through better internal navigation.
-              </p>
-            </div>
-
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {[
-                {
-                  title: "Contact Socieas",
-                  desc: "Discuss your application, platform, MVP, or rebuild project.",
-                  href: "/contact-us/",
-                },
-                {
-                  title: "CRM Solutions",
-                  desc: "Explore CRM and automation systems that can connect with your product workflows.",
-                  href: "/services/crm-solutions",
-                },
-                {
-                  title: "Insights & Case Studies",
-                  desc: "Read supporting business, systems, and implementation content from Socieas.",
-                  href: "/blogs/",
-                },
-              ].map((item) => (
-                <Link
-                  key={item.title}
-                  href={item.href}
-                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-md"
-                >
-                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
-                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
-                  <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
-                    Explore →
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="py-16 md:py-24">
+        <section className="py-14 md:py-20">
           <div className="mx-auto max-w-6xl px-6">
             <div className="rounded-[40px] border border-violet-100 bg-violet-50 p-10 text-center shadow-lg md:p-16">
               <h2 className="text-4xl font-bold text-slate-900 md:text-5xl">
@@ -800,8 +782,7 @@ export default function FullStackDevelopmentPage() {
               </h2>
 
               <p className="mx-auto mt-6 max-w-3xl text-xl text-slate-600">
-                Transform fragmented product infrastructure into a scalable,
-                connected system built for performance, reliability, and long-term growth.
+                Transform fragmented product infrastructure into a scalable, connected system built for performance, reliability, and long-term growth.
               </p>
 
               <div className="mt-10 flex flex-wrap justify-center gap-4">
