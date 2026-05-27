@@ -2,174 +2,153 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Script from "next/script";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import Testimonials from "@/components/Testimonials";
 
+const SITE_URL = "https://socieas.com";
+const PAGE_URL = `${SITE_URL}/services/personal-branding`;
+
+const problemItems = [
+  "Strong expertise, weak visibility",
+  "Profiles that do not build trust fast",
+  "Inconsistent founder messaging",
+  "Content without authority positioning",
+];
+
+const platformTabs = [
+  {
+    title: "LinkedIn",
+    desc: "The strongest platform for founder credibility, authority, and trust-led professional visibility.",
+    items: ["Profile positioning", "Authority content", "Thought leadership", "Inbound trust"],
+  },
+  {
+    title: "Instagram",
+    desc: "A visual layer that adds familiarity, personality, and stronger audience connection when relevant.",
+    items: ["Visual identity", "Founder storytelling", "Audience familiarity", "Brand recall"],
+  },
+  {
+    title: "Content System",
+    desc: "A repeatable visibility engine that turns founder ideas into consistent and strategic content output.",
+    items: ["Content repurposing", "Narrative consistency", "Content themes", "Publishing structure"],
+  },
+];
+
+const processSteps = [
+  {
+    no: "01",
+    title: "Position",
+    desc: "Clarify founder narrative, expertise angle, audience signals, and trust-building message.",
+  },
+  {
+    no: "02",
+    title: "Systemize",
+    desc: "Build profile structure, content themes, platform consistency, and visibility workflows.",
+  },
+  {
+    no: "03",
+    title: "Compound",
+    desc: "Grow recognition, authority, referrals, and inbound trust through repeated visibility.",
+  },
+];
+
+const capabilities = [
+  "Founder positioning",
+  "LinkedIn personal branding",
+  "Thought leadership content",
+  "Instagram founder visibility",
+  "Content repurposing systems",
+  "Narrative strategy",
+  "Audience research",
+  "Authority content planning",
+];
+
+const faqs = [
+  {
+    question: "Why is personal branding important for founders?",
+    answer:
+      "Personal branding helps founders build visibility, trust, and familiarity. Potential clients, partners, hires, and referrals often evaluate the founder before they evaluate the business in depth.",
+  },
+  {
+    question: "How long does founder branding take to show results?",
+    answer:
+      "Founder branding usually works through consistency rather than one viral moment. Many founders start noticing stronger profile perception, audience recognition, and trust signals within the first few months.",
+  },
+  {
+    question: "Which platform is best for founder personal branding?",
+    answer:
+      "LinkedIn is usually the strongest platform for founder authority and professional trust. Instagram can support familiarity and visual storytelling when it fits the founder’s audience and business context.",
+  },
+  {
+    question: "Can personal branding help generate leads?",
+    answer:
+      "Yes. Strong founder visibility can improve trust before a sales conversation, which supports warmer inbound opportunities, stronger referrals, and better-quality business interactions.",
+  },
+];
+
 export default function PersonalBrandingPage() {
-  const [activeTab, setActiveTab] = useState(0);
-  const [activeHiringSlide, setActiveHiringSlide] = useState(0);
-
-  const ecosystem = [
-    {
-      title: "LinkedIn Authority",
-      description:
-        "Professional visibility designed to position founders as credible industry voices instead of overlooked operators.",
-      content: [
-        "Thought leadership systems",
-        "Founder positioning",
-        "Authority storytelling",
-        "Inbound trust architecture",
-      ],
-    },
-    {
-      title: "Instagram Positioning",
-      description:
-        "Audience familiarity built through visual storytelling and consistent founder visibility.",
-      content: [
-        "Visual storytelling",
-        "Audience familiarity",
-        "Founder lifestyle narrative",
-        "Trust psychology",
-      ],
-    },
-    {
-      title: "Content Infrastructure",
-      description:
-        "Structured content systems designed to create strategic visibility across multiple digital touchpoints.",
-      content: [
-        "Content repurposing",
-        "Strategic hooks",
-        "Attention systems",
-        "Platform consistency",
-      ],
-    },
-    {
-      title: "Authority Compounding",
-      description:
-        "Long-term visibility systems that compound trust, opportunities, credibility, and recognition.",
-      content: [
-        "Audience recognition",
-        "Founder credibility",
-        "Partnership trust",
-        "Inbound opportunities",
-      ],
-    },
-  ];
-
-  const hiringSlides = [
-    {
-      eyebrow: "Candidate Intake",
-      title: "Every strong hiring system starts with structured intake.",
-      description:
-        "Before sourcing begins, define role clarity, candidate criteria, hiring priorities, and process ownership so every later step feels aligned instead of reactive.",
-      points: [
-        "Role scorecards",
-        "Hiring briefs",
-        "Decision clarity",
-        "Process alignment",
-      ],
-    },
-    {
-      eyebrow: "Pipeline Flow",
-      title: "A clean pipeline makes hiring easier to manage and improve.",
-      description:
-        "When applicants move through clear stages, your team can reduce delays, avoid confusion, and understand where conversion begins to drop.",
-      points: [
-        "Stage visibility",
-        "Pipeline tracking",
-        "Drop-off review",
-        "Faster movement",
-      ],
-    },
-    {
-      eyebrow: "Interview Ops",
-      title: "Interviewing should feel consistent, not improvised.",
-      description:
-        "A repeatable interview structure helps teams evaluate candidates fairly, compare feedback properly, and reduce random decision-making.",
-      points: [
-        "Structured interviews",
-        "Feedback capture",
-        "Evaluation consistency",
-        "Team coordination",
-      ],
-    },
-    {
-      eyebrow: "Hiring Signals",
-      title: "Better operations create better hiring decisions.",
-      description:
-        "Good systems reveal the signals that matter most, from response rates and speed to quality indicators and final hiring confidence.",
-      points: [
-        "Response quality",
-        "Decision confidence",
-        "Process speed",
-        "Hiring insights",
-      ],
-    },
-  ];
-
-  const techStack = [
-    "LinkedIn Positioning",
-    "Instagram Growth Systems",
-    "Content Repurposing",
-    "SEO Content Structuring",
-    "AI Content Assistance",
-    "Audience Research",
-    "Analytics Infrastructure",
-    "Founder Narrative Systems",
-  ];
-
-  const faqs = [
-    {
-      question: "Why is personal branding important for founders?",
-      answer:
-        "Personal branding increases visibility, trust, credibility, and audience familiarity. Modern buyers often research founders online before making decisions.",
-    },
-    {
-      question: "How long does personal branding take to show results?",
-      answer:
-        "Consistency compounds over time. Most founders begin noticing audience recognition and engagement improvements within the first few months.",
-    },
-    {
-      question: "Which platforms are best for founder personal branding?",
-      answer:
-        "LinkedIn builds professional authority while Instagram strengthens familiarity and audience connection through visual storytelling.",
-    },
-    {
-      question: "Does personal branding help generate leads?",
-      answer:
-        "Strong visibility improves trust and increases inbound opportunities, partnerships, referrals, and audience engagement naturally.",
-    },
-  ];
-
-  const nextHiringSlide = () => {
-    setActiveHiringSlide((prev) => (prev + 1) % hiringSlides.length);
-  };
-
-  const prevHiringSlide = () => {
-    setActiveHiringSlide(
-      (prev) => (prev - 1 + hiringSlides.length) % hiringSlides.length
-    );
-  };
+  const [activePlatform, setActivePlatform] = useState(0);
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
   const schema = useMemo(
     () => ({
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: SITE_URL,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Services",
+              item: `${SITE_URL}/services`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: "Personal Branding",
+              item: PAGE_URL,
+            },
+          ],
+        },
+        {
           "@type": "Service",
-          name: "Personal Branding for Founders",
-          serviceType: "Founder personal branding and visibility strategy",
+          name: "Personal Branding Services for Founders",
+          serviceType:
+            "Founder personal branding, LinkedIn positioning, thought leadership, visibility strategy",
           description:
-            "Personal branding services for founders focused on authority building, visibility, trust, content systems, and inbound credibility.",
+            "Socieas helps founders build visibility, authority, and trust through personal branding, LinkedIn positioning, thought leadership, and content systems.",
           provider: {
             "@type": "Organization",
             name: "Socieas",
-            url: "https://example.com",
+            url: SITE_URL,
           },
-          url: "https://example.com/personal-branding",
+          areaServed: [
+            "India",
+            "United States",
+            "United Kingdom",
+            "United Arab Emirates",
+            "Australia",
+          ],
+          audience: {
+            "@type": "Audience",
+            audienceType: "Founders, entrepreneurs, business owners, startup leaders",
+          },
+          url: PAGE_URL,
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE_URL}/contact`,
+          },
         },
         {
           "@type": "FAQPage",
@@ -184,515 +163,409 @@ export default function PersonalBrandingPage() {
         },
       ],
     }),
-    [faqs]
+    []
   );
 
   return (
     <>
-      <script
+      <Script
+        id="personal-branding-schema"
         type="application/ld+json"
-        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <main className="overflow-x-hidden bg-white text-[var(--text)]">
+      <main className="overflow-x-hidden bg-white text-slate-900">
         <Navbar />
 
-        {/* HERO */}
-        <section className="relative overflow-hidden bg-white pt-28 pb-12 md:pt-34 md:pb-16">
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(139,92,246,0.04),transparent_28%)]" />
-
-          <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 lg:grid-cols-[1fr_0.88fr] lg:gap-10">
+        <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_28%)]" />
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-22 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
             <FadeUp>
-              <div className="max-w-4xl">
-                <div className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-violet-700 md:text-sm">
-                  Founder Visibility Infrastructure
-                </div>
+              <span className="inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
+                Personal Branding Services
+              </span>
 
-                <h1 className="mt-6 text-[56px] font-black leading-[0.92] tracking-[-0.06em] text-[#111111] sm:text-6xl xl:text-7xl">
-                  Personal Branding
-                  <br />
-                  for Founders
-                  <br />
-                  Who Want Real
-                  <br />
-                  Authority
-                </h1>
+              <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl">
+                Personal Branding for Founders Who Want Trust, Visibility, and Real Authority
+              </h1>
 
-                <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                  Exceptional founders stay overlooked because the internet
-                  rewards familiarity before expertise.
-                </p>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+                Socieas helps founders build stronger digital authority through personal branding,
+                LinkedIn positioning, founder storytelling, and content systems that compound over time.
+              </p>
 
-                <p className="mt-4 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                  Visibility changes how people perceive trust, credibility, and
-                  authority.
-                </p>
-
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Link
-                    href="/contact"
-                    className="rounded-2xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-700 md:px-7 md:py-4 md:text-base"
-                  >
-                    Build Your Personal Brand
-                  </Link>
-
-                  <Link
-                    href="/insights/articles"
-                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-medium transition-all duration-300 hover:bg-[var(--soft-surface)] md:px-7 md:py-4 md:text-base"
-                  >
-                    Explore Visibility Systems
-                  </Link>
-                </div>
-              </div>
-            </FadeUp>
-
-            <FadeUp>
-              <div className="relative mx-auto w-full max-w-[480px]">
-                <div className="relative overflow-hidden rounded-[28px] border border-violet-100 bg-white p-5 shadow-[0_20px_60px_rgba(124,58,237,0.08)] md:p-7">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-xs font-medium uppercase tracking-[0.12em] text-[var(--muted)] md:text-sm">
-                        Founder Visibility Growth
-                      </div>
-
-                      <div className="mt-2 text-4xl font-black tracking-[-0.05em] text-[#111111] md:text-5xl">
-                        +312%
-                      </div>
-                    </div>
-
-                    <div className="rounded-full bg-violet-100 px-3 py-1.5 text-xs font-semibold text-violet-700 md:px-4 md:py-2 md:text-sm">
-                      Authority
-                    </div>
-                  </div>
-
-                  <div className="mt-10 flex h-[180px] items-end gap-2 md:h-[200px] md:gap-3">
-                    <div
-                      className="w-full rounded-t-[14px] bg-violet-100"
-                      style={{ height: "18%" }}
-                    />
-                    <div
-                      className="w-full rounded-t-[14px] bg-violet-200"
-                      style={{ height: "34%" }}
-                    />
-                    <div
-                      className="w-full rounded-t-[14px] bg-violet-300"
-                      style={{ height: "48%" }}
-                    />
-                    <div
-                      className="w-full rounded-t-[14px] bg-violet-400"
-                      style={{ height: "68%" }}
-                    />
-                    <div
-                      className="w-full rounded-t-[14px] bg-violet-600"
-                      style={{ height: "92%" }}
-                    />
-                  </div>
-
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
-                      <div className="text-xs text-[var(--muted)] md:text-sm">
-                        Inbound Opportunities
-                      </div>
-
-                      <div className="mt-2 text-xl font-black text-[#111111] md:text-2xl">
-                        4.2X
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-violet-100 bg-[#111111] p-4 text-white">
-                      <div className="text-xs text-violet-200 md:text-sm">
-                        Audience Trust
-                      </div>
-
-                      <div className="mt-2 text-xl font-black md:text-2xl">
-                        Compounding
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </FadeUp>
-          </div>
-        </section>
-
-        {/* TRANSFORMATION */}
-        <section className="py-12 md:py-16">
-          <div className="mx-auto max-w-7xl px-6">
-            <FadeUp>
-              <div className="max-w-5xl">
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-                  Founder Transformation
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-                  Visibility compounds authority over time.
-                </h2>
-              </div>
-            </FadeUp>
-
-            <div className="relative mt-12">
-              <div className="absolute left-[18px] top-0 h-full w-[2px] bg-violet-200" />
-
-              <div className="space-y-8">
-                {[
-                  {
-                    title: "Invisible Expertise",
-                    desc: "Strong founders often remain digitally invisible despite deep execution and expertise.",
-                  },
-                  {
-                    title: "Consistent Visibility",
-                    desc: "Strategic content begins creating audience familiarity and recognition.",
-                  },
-                  {
-                    title: "Authority Recognition",
-                    desc: "The visible founder becomes associated with credibility, trust, and leadership.",
-                  },
-                  {
-                    title: "Compounding Opportunities",
-                    desc: "Visibility influences partnerships, inbound leads, hiring, and long term positioning.",
-                  },
-                ].map((item, index) => (
-                  <div key={index} className="relative pl-16 md:pl-20">
-                    <div className="absolute left-0 top-1 flex h-9 w-9 items-center justify-center rounded-full bg-violet-600 text-xs font-semibold text-white md:h-11 md:w-11 md:text-sm">
-                      {index + 1}
-                    </div>
-
-                    <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] md:p-8">
-                      <h3 className="text-2xl font-bold md:text-3xl">
-                        {item.title}
-                      </h3>
-
-                      <p className="mt-3 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* VISIBILITY ECOSYSTEM */}
-        <section className="bg-[var(--soft-surface)] py-12 md:py-16">
-          <div className="mx-auto max-w-7xl px-6">
-            <FadeUp>
-              <div className="max-w-5xl">
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-                  Visibility Ecosystem
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-                  Strong personal brands operate like connected systems.
-                </h2>
-              </div>
-            </FadeUp>
-
-            <div className="mt-10 grid gap-6 lg:grid-cols-[0.42fr_1fr]">
-              <div className="space-y-3">
-                {ecosystem.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveTab(index)}
-                    className={`w-full cursor-pointer rounded-[22px] border p-5 text-left transition-all duration-300 ${
-                      activeTab === index
-                        ? "border-violet-200 bg-[var(--surface)] shadow-[0_20px_40px_rgba(124,58,237,0.10)]"
-                        : "border-[var(--border)] bg-[var(--surface)]"
-                    }`}
-                  >
-                    <div className="text-xl font-semibold md:text-2xl">
-                      {item.title}
-                    </div>
-
-                    <div className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-                      {item.description}
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] md:p-8">
-                <div className="text-sm uppercase tracking-[0.2em] text-violet-600">
-                  Visibility Layer
-                </div>
-
-                <h3 className="mt-5 text-3xl font-bold leading-[1.02] md:text-5xl">
-                  {ecosystem[activeTab].title}
-                </h3>
-
-                <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                  {ecosystem[activeTab].description}
-                </p>
-
-                <div className="mt-8 grid gap-3 md:grid-cols-2">
-                  {ecosystem[activeTab].content.map((point, index) => (
-                    <div
-                      key={index}
-                      className="rounded-2xl border border-[var(--border)] bg-[var(--soft-surface)] px-5 py-4 text-sm md:text-base"
-                    >
-                      {point}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* HIRING OPERATIONS STACK */}
-        <section className="py-12 md:py-16">
-          <div className="mx-auto max-w-7xl px-6">
-            <FadeUp>
-              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div className="max-w-4xl">
-                  <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-                    Hiring Operations Stack
-                  </div>
-
-                  <h2 className="mt-4 text-4xl font-bold leading-[1.02] text-[#111111] md:text-6xl">
-                    Clear hiring systems make better hiring decisions.
-                  </h2>
-
-                  <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                    A strong hiring operation is not just about filling roles
-                    faster. It is about building clarity across intake,
-                    pipeline movement, interviews, and decision-making.
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={prevHiringSlide}
-                    className="rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-sm font-medium text-[#111111] transition-all duration-300 hover:bg-[var(--surface)]"
-                    aria-label="Previous hiring operations slide"
-                  >
-                    Prev
-                  </button>
-
-                  <button
-                    onClick={nextHiringSlide}
-                    className="rounded-full bg-violet-600 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-violet-700"
-                    aria-label="Next hiring operations slide"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            </FadeUp>
-
-            <div className="mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-              <FadeUp>
-                <div className="rounded-[28px] border border-[var(--border)] bg-white p-6 shadow-[var(--card-shadow)] md:p-8">
-                  <div className="text-xs uppercase tracking-[0.22em] text-violet-600">
-                    System Overview
-                  </div>
-
-                  <h3 className="mt-4 text-2xl font-bold leading-[1.08] text-[#111111] md:text-3xl">
-                    Four connected layers of hiring operations.
-                  </h3>
-
-                  <p className="mt-4 max-w-lg text-base leading-relaxed text-[var(--muted)]">
-                    Each layer supports the next one. When the system is
-                    structured properly, your team hires with better speed,
-                    better coordination, and better confidence.
-                  </p>
-
-                  <div className="mt-8 space-y-3">
-                    {hiringSlides.map((item, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setActiveHiringSlide(index)}
-                        className={`flex w-full items-center justify-between rounded-[20px] border px-4 py-4 text-left transition-all duration-300 ${
-                          activeHiringSlide === index
-                            ? "border-violet-200 bg-violet-50"
-                            : "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--soft-surface)]"
-                        }`}
-                      >
-                        <div>
-                          <div className="text-base font-semibold text-[#111111] md:text-lg">
-                            {item.eyebrow}
-                          </div>
-
-                          <div className="mt-1 text-sm text-[var(--muted)]">
-                            {item.points[0]}
-                          </div>
-                        </div>
-
-                        <div
-                          className={`h-3 w-3 rounded-full ${
-                            activeHiringSlide === index
-                              ? "bg-violet-600"
-                              : "bg-violet-200"
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </FadeUp>
-
-              <FadeUp>
-                <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] md:p-8">
-                  <div className="inline-flex rounded-full bg-violet-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">
-                    {hiringSlides[activeHiringSlide].eyebrow}
-                  </div>
-
-                  <h3 className="mt-5 text-3xl font-bold leading-[1.08] text-[#111111] md:text-5xl">
-                    {hiringSlides[activeHiringSlide].title}
-                  </h3>
-
-                  <p className="mt-5 max-w-2xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                    {hiringSlides[activeHiringSlide].description}
-                  </p>
-
-                  <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                    {hiringSlides[activeHiringSlide].points.map(
-                      (point, index) => (
-                        <div
-                          key={index}
-                          className="rounded-2xl border border-[var(--border)] bg-white px-5 py-4 text-sm font-medium text-[#111111] md:text-base"
-                        >
-                          {point}
-                        </div>
-                      )
-                    )}
-                  </div>
-
-                  <div className="mt-8 rounded-[24px] border border-violet-100 bg-violet-50 p-5">
-                    <div className="text-xs uppercase tracking-[0.16em] text-violet-700">
-                      Operational Signal
-                    </div>
-
-                    <div className="mt-4 flex h-[140px] items-end gap-3 md:h-[165px]">
-                      {[25, 42, 63, 88].map((height, index) => (
-                        <div
-                          key={index}
-                          className={`w-full rounded-t-[16px] ${
-                            index === activeHiringSlide
-                              ? "bg-violet-600"
-                              : "bg-violet-200"
-                          }`}
-                          style={{ height: `${height}%` }}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
-                      Better systems improve consistency across every stage of
-                      hiring.
-                    </div>
-                  </div>
-                </div>
-              </FadeUp>
-            </div>
-          </div>
-        </section>
-
-        {/* TECH STACK */}
-        <section className="py-12 md:py-16">
-          <div className="mx-auto max-w-7xl px-6">
-            <FadeUp>
-              <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
-                <div>
-                  <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-                    Strategic Infrastructure
-                  </div>
-
-                  <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-                    Personal branding requires systems, not random posting.
-                  </h2>
-
-                  <p className="mt-5 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                    Strong founder positioning is built through structured
-                    visibility systems, audience psychology, platform
-                    consistency, and strategic content infrastructure.
-                  </p>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {techStack.map((item, index) => (
-                    <div
-                      key={index}
-                      className="rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)]"
-                    >
-                      <div className="text-base font-semibold md:text-lg">
-                        {item}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </FadeUp>
-          </div>
-        </section>
-
-        {/* TESTIMONIALS */}
-        <section className="py-12 md:py-16">
-          <Testimonials />
-        </section>
-
-        {/* FAQ */}
-        <section className="bg-[var(--soft-surface)] py-12 md:py-16">
-          <div className="mx-auto max-w-5xl px-6">
-            <FadeUp>
-              <div className="text-center">
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-                  Frequently Asked Questions
-                </div>
-
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-                  Common founder questions about personal branding.
-                </h2>
-              </div>
-            </FadeUp>
-
-            <div className="mt-10 space-y-3">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)]"
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href="/contact"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-violet-800"
                 >
-                  <h3 className="text-xl font-semibold md:text-2xl">
-                    {faq.question}
-                  </h3>
+                  Contact
+                </Link>
+                <Link
+                  href="/insights"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                >
+                  Insights
+                </Link>
+              </div>
 
-                  <p className="mt-3 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                    {faq.answer}
-                  </p>
+              <div className="mt-6 flex flex-wrap gap-3 text-sm">
+                {["LinkedIn Authority", "Thought Leadership", "Founder Positioning", "Content Systems"].map(
+                  (item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-600 shadow-sm"
+                    >
+                      {item}
+                    </span>
+                  )
+                )}
+              </div>
+            </FadeUp>
+
+            <FadeUp>
+              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
+                <div className="grid gap-4">
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                    <p className="text-sm font-medium text-slate-500">Before</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-900">
+                      Strong expertise exists, but the founder is still hard to understand, trust, or remember online.
+                    </p>
+                  </div>
+
+                  <div className="rounded-3xl bg-violet-50 p-5">
+                    <p className="text-sm font-medium text-violet-700">After</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-900">
+                      A visible founder presence that builds familiarity, credibility, and authority across touchpoints.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
+                      Better recall
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
+                      Stronger trust
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeUp>
+          </div>
+        </section>
+
+        <section className="py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Why Strong Founders Still Get Overlooked
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Founder authority often gets lost when visibility, message consistency, and trust signals are weak.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {problemItems.map((item) => (
+                <div
+                  key={item}
+                  className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
+                      <span className="text-base font-bold">!</span>
+                    </div>
+                    <p className="text-base font-semibold text-slate-900">{item}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="py-12 md:py-16">
-          <div className="mx-auto max-w-5xl px-6 text-center">
-            <FadeUp>
-              <div className="rounded-[32px] border border-[var(--border)] bg-[var(--soft-surface)] px-6 py-10 shadow-[var(--card-shadow)] md:px-10 md:py-14">
-                <div className="text-sm uppercase tracking-[0.28em] text-violet-600">
-                  Founder Positioning
+        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Our Founder Branding Approach
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                We turn scattered founder presence into a clear authority system that builds trust over time.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+              <article className="rounded-[32px] border border-rose-200 bg-white p-7 shadow-sm md:p-8">
+                <div className="inline-flex rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-700">
+                  Before
                 </div>
 
-                <h2 className="mt-5 text-4xl font-bold leading-[1.02] md:text-6xl">
-                  The founders who stay visible become the founders people trust
-                  first.
-                </h2>
+                <div className="mt-6 space-y-3">
+                  {[
+                    "Generic profiles and bios",
+                    "Random posting without narrative",
+                    "Low familiarity with the founder",
+                    "Trust built too slowly",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </article>
 
-                <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                  Strong visibility compounds for years. Strategic positioning
-                  changes how opportunities arrive.
-                </p>
+              <article className="rounded-[32px] border border-violet-200 bg-white p-7 shadow-lg md:p-8">
+                <div className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">
+                  After
+                </div>
 
-                <Link
-                  href="/contact"
-                  className="mt-8 inline-flex rounded-2xl bg-violet-600 px-7 py-3 text-base font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-700"
+                <div className="mt-6 space-y-3">
+                  {[
+                    "Clear founder positioning",
+                    "Consistent thought leadership",
+                    "Stronger audience familiarity",
+                    "Trust that compounds over time",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3 text-sm font-medium text-slate-800"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                How Socieas Builds Founder Visibility
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                A focused process that moves from positioning to content systems to long-term authority.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              {processSteps.map((step) => (
+                <article
+                  key={step.no}
+                  className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  Build Your Personal Brand
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-violet-700">{step.no}</span>
+                    <div className="h-2 w-20 rounded-full bg-slate-100">
+                      <div className="h-2 w-12 rounded-full bg-violet-500 transition-all duration-500 group-hover:w-20" />
+                    </div>
+                  </div>
+                  <h3 className="mt-5 text-2xl font-bold text-slate-950">{step.title}</h3>
+                  <p className="mt-3 leading-7 text-slate-600">{step.desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Founder Visibility Across the Right Platforms
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Personal branding works best as a connected system instead of isolated posting on one platform.
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              {platformTabs.map((platform, index) => (
+                <button
+                  key={platform.title}
+                  onClick={() => setActivePlatform(index)}
+                  className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
+                    activePlatform === index
+                      ? "bg-slate-950 text-white"
+                      : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400"
+                  }`}
+                >
+                  {platform.title}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+              <h3 className="text-2xl font-bold text-slate-950">
+                {platformTabs[activePlatform].title}
+              </h3>
+              <p className="mt-2 max-w-3xl text-slate-600">
+                {platformTabs[activePlatform].desc}
+              </p>
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {platformTabs[activePlatform].items.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center font-medium text-slate-800 transition hover:-translate-y-0.5 hover:bg-violet-50"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                  Personal Branding Needs Systems, Not Random Posting
+                </h2>
+                <p className="mt-4 text-lg leading-8 text-slate-600">
+                  Founder branding becomes stronger when visibility is supported by structure, clarity, and platform consistency.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {capabilities.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="text-base font-semibold md:text-lg">{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16">
+          <Testimonials />
+        </section>
+
+        <section className="py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Explore More from Socieas
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Keep visitors moving with direct paths to contact, services, and insights.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {[
+                {
+                  title: "Contact",
+                  desc: "Talk to Socieas about founder branding, visibility strategy, and content systems.",
+                  href: "/contact",
+                },
+                {
+                  title: "Services",
+                  desc: "Explore broader service capabilities across branding, CRM, automation, and growth.",
+                  href: "/services",
+                },
+                {
+                  title: "Insights",
+                  desc: "Read practical content on visibility, authority, and business growth.",
+                  href: "/insights",
+                },
+              ].map((item) => (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-lg"
+                >
+                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
+                  <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
+                    Explore →
+                  </span>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-slate-200 bg-slate-50 py-14 md:py-18">
+          <div className="mx-auto max-w-5xl px-6">
+            <FadeUp>
+              <div className="text-center">
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                  Personal Branding FAQs
+                </h2>
+                <p className="mt-4 text-lg leading-8 text-slate-600">
+                  Clear answers for founders evaluating personal branding support.
+                </p>
               </div>
             </FadeUp>
+
+            <div className="mt-10 space-y-4">
+              {faqs.map((faq, index) => (
+                <div
+                  key={faq.question}
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                >
+                  <button
+                    onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                    className="flex w-full items-center justify-between gap-4 p-6 text-left"
+                    aria-expanded={activeFaq === index}
+                    aria-controls={`faq-${index}`}
+                  >
+                    <span className="text-base font-semibold text-slate-900 md:text-lg">
+                      {faq.question}
+                    </span>
+                    <span className="text-2xl text-slate-400">
+                      {activeFaq === index ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  {activeFaq === index && (
+                    <div id={`faq-${index}`} className="px-6 pb-6 leading-7 text-slate-600">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-14 md:py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="rounded-[36px] border border-violet-200 bg-[linear-gradient(180deg,#fdfbff_0%,#eef6ff_100%)] p-8 text-center shadow-lg md:p-14">
+              <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
+                Build a Founder Brand People Trust Before the First Conversation
+              </h2>
+              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+                Get personal branding support built around your positioning, content systems, and long-term authority.
+              </p>
+
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Link
+                  href="/contact"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-violet-700 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-violet-800"
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/insights"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                >
+                  Insights
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
