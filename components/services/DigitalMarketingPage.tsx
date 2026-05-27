@@ -240,7 +240,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -269,7 +269,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -293,7 +293,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -324,7 +324,6 @@ export default function DigitalMarketingPage() {
                         }`}
                       />
                     </div>
-
                     <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-base">
                       {item.description}
                     </p>
@@ -375,7 +374,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="grid gap-10 lg:grid-cols-[0.9fr_1fr] lg:items-center">
               <div>
@@ -410,7 +409,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -428,7 +427,6 @@ export default function DigitalMarketingPage() {
                     <div className="text-sm uppercase tracking-[0.22em] text-violet-600">
                       {stack.title}
                     </div>
-
                     <div className="mt-8 flex flex-wrap gap-3">
                       {stack.tools.map((tool) => (
                         <div
@@ -446,7 +444,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -494,11 +492,56 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="py-14 md:py-20">
+        <section className="py-12 md:py-16">
           <Testimonials />
         </section>
 
-        <section className="border-t border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="py-14 md:py-18">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                Explore More from Socieas
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Move directly into strategy, services, and practical marketing insights.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {[
+                {
+                  title: "Contact",
+                  desc: "Talk to Socieas about digital marketing, SEO systems, and inbound growth strategy.",
+                  href: "/contact",
+                },
+                {
+                  title: "Services",
+                  desc: "Explore broader capabilities across marketing, automation, CRM, and development.",
+                  href: "/services",
+                },
+                {
+                  title: "Insights",
+                  desc: "Read practical thinking on search visibility, positioning, growth systems, and authority.",
+                  href: "/insights",
+                },
+              ].map((item) => (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-lg"
+                >
+                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
+                  <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
+                    Explore →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-5xl px-6">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -540,7 +583,7 @@ export default function DigitalMarketingPage() {
           </div>
         </section>
 
-        <section className="py-16 md:py-24">
+        <section className="py-14 md:py-20">
           <div className="mx-auto max-w-6xl px-6">
             <div className="rounded-[36px] border border-violet-200 bg-[linear-gradient(180deg,#fdfbff_0%,#eef6ff_100%)] p-8 text-center shadow-lg md:p-14">
               <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
