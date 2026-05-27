@@ -7,9 +7,10 @@ import { useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
+import Testimonials from "@/components/Testimonials";
 
 const SITE_URL = "https://socieas.com";
-const PAGE_URL = `${SITE_URL}/crm-solutions`;
+const PAGE_URL = `${SITE_URL}/services/crm-solutions`;
 
 const problemItems = [
   "Slow lead response",
@@ -55,6 +56,17 @@ const techCategories = [
   },
 ];
 
+const capabilities = [
+  "CRM implementation",
+  "CRM migration",
+  "Pipeline automation",
+  "Lead routing setup",
+  "Sales dashboards",
+  "Follow-up automation",
+  "CRM integrations",
+  "Reporting infrastructure",
+];
+
 const faqs = [
   {
     q: "How long does CRM implementation take?",
@@ -78,68 +90,69 @@ export default function CRMSolutionsClient() {
   const [activeTech, setActiveTech] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
-  const faqSchema = useMemo(
+  const schema = useMemo(
     () => ({
       "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.q,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.a,
-        },
-      })),
-    }),
-    []
-  );
-
-  const breadcrumbSchema = useMemo(
-    () => ({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
+      "@graph": [
         {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: SITE_URL,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Services",
-          item: `${SITE_URL}/services`,
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: SITE_URL,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Services",
+              item: `${SITE_URL}/services`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: "CRM Solutions",
+              item: PAGE_URL,
+            },
+          ],
         },
         {
-          "@type": "ListItem",
-          position: 3,
-          name: "CRM Solutions",
-          item: PAGE_URL,
+          "@type": "Service",
+          name: "CRM Implementation Services",
+          serviceType:
+            "CRM Implementation, CRM Automation, CRM Migration, CRM Integration, CRM Consulting",
+          description:
+            "Socieas provides CRM implementation services, CRM automation, CRM migration, CRM integration, and reporting dashboards for growing businesses.",
+          provider: {
+            "@type": "Organization",
+            name: "Socieas",
+            url: SITE_URL,
+          },
+          areaServed: ["India", "United States", "United Kingdom", "United Arab Emirates", "Australia"],
+          audience: {
+            "@type": "Audience",
+            audienceType: "Business owners, sales teams, founders, scaling companies",
+          },
+          url: PAGE_URL,
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE_URL}/contact`,
+          },
+        },
+        {
+          "@type": "FAQPage",
+          mainEntity: faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.q,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.a,
+            },
+          })),
         },
       ],
-    }),
-    []
-  );
-
-  const serviceSchema = useMemo(
-    () => ({
-      "@context": "https://schema.org",
-      "@type": "Service",
-      name: "CRM Implementation Services",
-      serviceType: "CRM Implementation, CRM Automation, CRM Migration, CRM Integration, CRM Consulting",
-      provider: {
-        "@type": "Organization",
-        name: "Socieas",
-        url: SITE_URL,
-      },
-      areaServed: {
-        "@type": "Country",
-        name: "India",
-      },
-      url: PAGE_URL,
-      description:
-        "Socieas provides CRM implementation services, CRM automation, CRM migration, CRM integration, and reporting dashboards for growing businesses.",
     }),
     []
   );
@@ -147,25 +160,14 @@ export default function CRMSolutionsClient() {
   return (
     <>
       <Script
-        id="crm-faq-schema"
+        id="crm-schema"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <Script
-        id="crm-breadcrumb-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <Script
-        id="crm-service-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
       <main className="overflow-x-hidden bg-white text-slate-900">
         <Navbar />
 
-        {/* HERO */}
         <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_28%)]" />
           <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
@@ -241,7 +243,6 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* PROBLEM STRIP */}
         <section className="py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
@@ -271,7 +272,6 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* SOLUTION PANEL */}
         <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
@@ -331,7 +331,6 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* 3-STEP PROCESS */}
         <section className="py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
@@ -363,7 +362,6 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* TECH STACK */}
         <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
@@ -413,7 +411,34 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* INTERNAL LINKS */}
+        <section className="py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                CRM Capabilities Built for Growth Teams
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Core CRM services designed to improve execution, visibility, and team coordination.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {capabilities.map((item) => (
+                <div
+                  key={item}
+                  className="rounded-[24px] border border-slate-200 bg-white px-5 py-5 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-lg"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 md:py-20">
+          <Testimonials />
+        </section>
+
         <section className="py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
@@ -459,7 +484,6 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* FAQ */}
         <section className="border-t border-slate-200 bg-slate-50 py-16 md:py-20">
           <div className="mx-auto max-w-5xl px-6">
             <div className="text-center">
@@ -502,7 +526,6 @@ export default function CRMSolutionsClient() {
           </div>
         </section>
 
-        {/* CTA */}
         <section className="py-16 md:py-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="rounded-[36px] border border-violet-200 bg-[linear-gradient(180deg,#fdfbff_0%,#eef6ff_100%)] p-8 text-center shadow-lg md:p-14">
