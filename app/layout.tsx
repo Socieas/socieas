@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
 import "./globals.css";
 
 /* =========================
@@ -17,89 +16,48 @@ const inter = Inter({
 ========================= */
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://socieas.com"),
 
-  metadataBase:
-    new URL("https://socieas.com"),
-
-  title:
-    "Socieas | Personal Branding Agency for Founders & Professionals",
+  title: "Socieas | AI Automation, CRM & IT Staffing Agency in India",
 
   description:
-    "Socieas helps brands build stronger positioning, visibility, SEO systems, automation, and scalable digital growth ecosystems.",
+    "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
 
   openGraph: {
-
-    title:
-      "Socieas | Personal Branding Agency for Founders & Professionals",
-
+    title: "Socieas | AI Automation, CRM & IT Staffing Agency in India",
     description:
-      "Socieas helps brands build stronger positioning, visibility, SEO systems, automation, and scalable digital growth ecosystems.",
-
-    url:
-      "https://socieas.com",
-
-    siteName:
-      "Socieas",
-
+      "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
+    url: "https://socieas.com",
+    siteName: "Socieas",
     images: [
       {
-        url:
-          "/og-image.jpg",
-
-        width:
-          1200,
-
-        height:
-          630,
-
-        alt:
-          "Socieas",
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Socieas - AI Automation, CRM & IT Staffing Agency",
       },
     ],
-
-    locale:
-      "en_US",
-
-    type:
-      "website",
+    locale: "en_US",
+    type: "website",
   },
 
   twitter: {
-
-    card:
-      "summary_large_image",
-
-    title:
-      "Socieas | Personal Branding Agency for Founders & Professionals",
-
+    card: "summary_large_image",
+    title: "Socieas | AI Automation, CRM & IT Staffing Agency in India",
     description:
-      "Socieas helps brands build stronger positioning, visibility, SEO systems, automation, and scalable digital growth ecosystems.",
-
-    images: [
-      "/og-image.jpg",
-    ],
+      "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
+    images: ["/og-image.jpg"],
   },
 
   robots: {
-
     index: true,
-
     follow: true,
-
     googleBot: {
-
       index: true,
-
       follow: true,
-
-      "max-video-preview":
-        -1,
-
-      "max-image-preview":
-        "large",
-
-      "max-snippet":
-        -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
 };
@@ -113,58 +71,33 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   const organizationSchema = {
-
-    "@context":
-      "https://schema.org",
-
-    "@type":
-      "Organization",
-
-    name:
-      "Socieas",
-
-    url:
-      "https://socieas.com",
-
-    logo:
-      "https://socieas.com/logo.png",
-
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Socieas",
+    url: "https://socieas.com",
+    logo: "https://socieas.com/logo.png",
     sameAs: [
-
       "https://www.linkedin.com/company/socieas",
-
+      "https://www.instagram.com/socieas",
+      "https://x.com/socieas",
+      "https://www.facebook.com/socieas",
     ],
-
     description:
-      "Socieas helps businesses scale through AI automation, CRM systems, digital marketing, staffing solutions, and founder visibility infrastructure.",
+      "Socieas helps businesses scale through AI automation, CRM systems, IT staffing, digital marketing, and full-stack development.",
   };
 
   return (
-
-    <html
-      lang="en"
-      className={`${inter.variable} h-full scroll-smooth antialiased`}
-    >
-
-      <body className="min-h-screen overflow-x-hidden bg-background text-foreground">
-
+    <html lang="en" className={inter.variable}>
+      <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html:
-              JSON.stringify(
-                organizationSchema
-              ),
+            __html: JSON.stringify(organizationSchema),
           }}
         />
-
-        {children}
-
-      </body>
-
+      </head>
+      <body className={inter.className}>{children}</body>
     </html>
-
   );
 }
