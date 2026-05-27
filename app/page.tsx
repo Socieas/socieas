@@ -18,10 +18,10 @@ export const metadata =
   generateSEOMetadata({
 
     title:
-      "Personal Branding & Growth Systems",
+            "AI Automation, CRM & IT Staffing Solutions for Growing Businesses",
 
     description:
-      "Socieas builds scalable visibility systems through personal branding, CRM implementation, SEO, AI automation, and growth-focused digital infrastructure.",
+            "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
 
     path: "/",
   });
