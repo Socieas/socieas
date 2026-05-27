@@ -177,10 +177,9 @@ export default function PersonalBrandingPage() {
       <main className="overflow-x-hidden bg-white text-slate-900">
         <Navbar />
 
-        {/* HERO */}
         <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_28%)]" />
-          <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-22 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
             <FadeUp>
               <span className="inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700">
                 Personal Branding Services
@@ -211,14 +210,16 @@ export default function PersonalBrandingPage() {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm">
-                {["LinkedIn Authority", "Thought Leadership", "Founder Positioning", "Content Systems"].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-600 shadow-sm"
-                  >
-                    {item}
-                  </span>
-                ))}
+                {["LinkedIn Authority", "Thought Leadership", "Founder Positioning", "Content Systems"].map(
+                  (item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-600 shadow-sm"
+                    >
+                      {item}
+                    </span>
+                  )
+                )}
               </div>
             </FadeUp>
 
@@ -253,8 +254,7 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* PROBLEM STRIP */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -283,8 +283,7 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* SOLUTION PANEL */}
-        <section className="border-y border-slate-200 bg-slate-50 py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -343,8 +342,7 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* 3-STEP PROCESS */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -375,8 +373,7 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* PLATFORM SYSTEM */}
-        <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-16 md:py-20">
+        <section className="border-y border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -425,8 +422,7 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* CAPABILITIES */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
               <div>
@@ -452,58 +448,11 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
         <section className="py-12 md:py-16">
           <Testimonials />
         </section>
 
-        {/* FAQ */}
-        <section className="border-t border-slate-200 bg-slate-50 py-16 md:py-20">
-          <div className="mx-auto max-w-5xl px-6">
-            <FadeUp>
-              <div className="text-center">
-                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                  Personal Branding FAQs
-                </h2>
-                <p className="mt-4 text-lg leading-8 text-slate-600">
-                  Clear answers for founders evaluating personal branding support.
-                </p>
-              </div>
-            </FadeUp>
-
-            <div className="mt-10 space-y-4">
-              {faqs.map((faq, index) => (
-                <div
-                  key={faq.question}
-                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-                >
-                  <button
-                    onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                    className="flex w-full items-center justify-between gap-4 p-6 text-left"
-                    aria-expanded={activeFaq === index}
-                    aria-controls={`faq-${index}`}
-                  >
-                    <span className="text-base font-semibold text-slate-900 md:text-lg">
-                      {faq.question}
-                    </span>
-                    <span className="text-2xl text-slate-400">
-                      {activeFaq === index ? "−" : "+"}
-                    </span>
-                  </button>
-
-                  {activeFaq === index && (
-                    <div id={`faq-${index}`} className="px-6 pb-6 leading-7 text-slate-600">
-                      {faq.answer}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* INTERNAL LINKS */}
-        <section className="py-16 md:py-20">
+        <section className="py-14 md:py-18">
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -548,8 +497,51 @@ export default function PersonalBrandingPage() {
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="py-16 md:py-24">
+        <section className="border-t border-slate-200 bg-slate-50 py-14 md:py-18">
+          <div className="mx-auto max-w-5xl px-6">
+            <FadeUp>
+              <div className="text-center">
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                  Personal Branding FAQs
+                </h2>
+                <p className="mt-4 text-lg leading-8 text-slate-600">
+                  Clear answers for founders evaluating personal branding support.
+                </p>
+              </div>
+            </FadeUp>
+
+            <div className="mt-10 space-y-4">
+              {faqs.map((faq, index) => (
+                <div
+                  key={faq.question}
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                >
+                  <button
+                    onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                    className="flex w-full items-center justify-between gap-4 p-6 text-left"
+                    aria-expanded={activeFaq === index}
+                    aria-controls={`faq-${index}`}
+                  >
+                    <span className="text-base font-semibold text-slate-900 md:text-lg">
+                      {faq.question}
+                    </span>
+                    <span className="text-2xl text-slate-400">
+                      {activeFaq === index ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  {activeFaq === index && (
+                    <div id={`faq-${index}`} className="px-6 pb-6 leading-7 text-slate-600">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-14 md:py-20">
           <div className="mx-auto max-w-6xl px-6">
             <div className="rounded-[36px] border border-violet-200 bg-[linear-gradient(180deg,#fdfbff_0%,#eef6ff_100%)] p-8 text-center shadow-lg md:p-14">
               <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
