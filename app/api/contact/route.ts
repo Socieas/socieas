@@ -51,7 +51,7 @@ export async function POST(
           "Socieas <onboarding@resend.dev>",
 
         to:
-        "YOUR_RESEND_ACCOUNT_EMAIL",
+          "hello@socieas.com",
 
         subject:
           `New Inquiry from ${name}`,
