@@ -5,8 +5,6 @@ import {
 
 import { client } from "@/sanity/lib/client";
 
-import { urlFor } from "@/sanity/lib/image";
-
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
 
 export const revalidate = 60;
@@ -14,11 +12,11 @@ export const revalidate = 60;
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{
+  params: {
     slug: string;
-  }>;
+  };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
 
   const post = await client.fetch(
     singlePostQuery,
@@ -49,24 +47,29 @@ export async function generateMetadata({
       description:
         post.seoDescription ||
         post.excerpt,
-type: "article",
-   images: [
-  `/og?title=${encodeURIComponent(
-    post.title
-  )}&category=${encodeURIComponent(
-    post.category?.title ||
-      "Insights"
-  )}`,
-],
+
+      type: "article",
+
+      images: [
+        `/og?title=${encodeURIComponent(
+          post.title
+        )}&category=${encodeURIComponent(
+          post.category?.title ||
+            "Insights"
+        )}`,
+      ],
+    },
+  };
+}
 
 export default async function CaseStudyPage({
   params,
 }: {
-  params: Promise<{
+  params: {
     slug: string;
-  }>;
+  };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
 
   const post = await client.fetch(
     singlePostQuery,

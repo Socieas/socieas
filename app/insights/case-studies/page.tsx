@@ -42,7 +42,7 @@ export default async function CaseStudiesPage({
     ...caseStudies
       .map((post: any) => post.category?.title)
       .filter(
-        (category): category is string => typeof category === "string"
+        (category: string | undefined): category is string => typeof category === "string"
       ),
   ] as string[];
 

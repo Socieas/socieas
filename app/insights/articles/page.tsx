@@ -7,7 +7,6 @@ import { generateSEOMetadata } from "@/lib/seo";
 
 export const metadata =
   generateSEOMetadata({
-
     title:
       "Strategic Articles",
 
@@ -29,7 +28,6 @@ export default async function ArticlesPage({
     page?: string;
   }>;
 }) {
-
   const params =
     await searchParams;
 
@@ -38,8 +36,6 @@ export default async function ArticlesPage({
       allPostsQuery
     );
 
-  /* ONLY ARTICLES */
-
   const articles =
     posts.filter(
       (post: any) =>
@@ -47,44 +43,36 @@ export default async function ArticlesPage({
         "article"
     );
 
-  /* SEARCH */
-
   const search =
     params.search
-      ?.toLowerCase() ||
-    "";
-
-  /* CATEGORY */
+      ?.toLowerCase() || "";
 
   const activeCategory =
     params.category ||
     "All";
 
-  /* DYNAMIC CATEGORIES */
-
-  const categories = [
-
-    "All",
-
-    ...new Set(
+  const categories: string[] =
+    Array<string>().concat(
+      "All",
       articles
         .map(
           (post: any) =>
             post.category
               ?.title
         )
-        .filter(Boolean)
-    ),
-  ];
-
-  /* FILTER ARTICLES */
+        .filter(
+        (
+  category: string | undefined
+): category is string =>
+            typeof category ===
+            "string"
+        )
+    );
 
   const filteredArticles =
     articles.filter(
       (post: any) => {
-
         const matchesSearch =
-
           post.title
             ?.toLowerCase()
             .includes(
@@ -98,7 +86,6 @@ export default async function ArticlesPage({
             );
 
         const matchesCategory =
-
           activeCategory ===
             "All" ||
 
@@ -113,8 +100,6 @@ export default async function ArticlesPage({
       }
     );
 
-  /* PAGINATION */
-
   const currentPage =
     Number(
       params.page || 1
@@ -126,15 +111,12 @@ export default async function ArticlesPage({
   const totalPages =
     Math.ceil(
       filteredArticles.length /
-      POSTS_PER_PAGE
+        POSTS_PER_PAGE
     );
 
   const paginatedArticles =
     filteredArticles.slice(
-
-      (
-        currentPage - 1
-      ) *
+      (currentPage - 1) *
         POSTS_PER_PAGE,
 
       currentPage *
@@ -142,37 +124,26 @@ export default async function ArticlesPage({
     );
 
   return (
-
     <InsightsListingTemplate
-
       title="Strategic Articles"
-
       label="SOCIEAS ARTICLES"
-
       description="Deep strategic insights, systems thinking, positioning frameworks, scalable growth systems, and business intelligence from Socieas."
-
       posts={
         paginatedArticles
       }
-
       categories={
         categories
       }
-
       activeCategory={
         activeCategory
       }
-
       search={search}
-
       currentPage={
         currentPage
       }
-
       totalPages={
         totalPages
       }
-
       basePath="/insights/articles"
     />
   );
