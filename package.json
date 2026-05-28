@@ -20,7 +20,7 @@
     "react": "^19.2.2",
     "react-dom": "^19.2.2",
     "react-simple-code-editor": "^0.14.1",
-    "resend": "^6.12.3",
+        "nodemailer": "^6.9.16",
     "sanity": "^5.24.0",
     "styled-components": "^6.4.1"
   },
@@ -29,6 +29,7 @@
     "@types/node": "^20.17.30",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+        "@types/nodemailer": "^6.4.17",
     "eslint": "^9.25.1",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4.1.7",
