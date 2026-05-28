@@ -361,10 +361,12 @@ function FormPanel() {
 
     setError("");
 
+    // Capture the form element BEFORE any await
+    // After await, e.currentTarget becomes null (React synthetic event cleanup)
+    const formEl = e.currentTarget;
+
     const formData =
-      new FormData(
-        e.currentTarget
-      );
+      new FormData(formEl);
 
     const payload = {
 
@@ -414,7 +416,7 @@ function FormPanel() {
         );
       }
 
-      e.currentTarget.reset();
+      formEl.reset();
 
       router.push(
         "/insights"
