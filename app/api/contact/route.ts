@@ -21,7 +21,7 @@ async function verifyTurnstile(token: string): Promise<boolean> {
   return data.success === true;
 }
 
-// -- Send email via Nodemailer (Gmail SMTP)
+// -- Send email via Nodemailer (Hostinger SMTP)
 async function sendEmail(
   to: string,
   subject: string,
@@ -31,11 +31,12 @@ async function sendEmail(
 
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
+  const host = process.env.SMTP_HOST || "smtp.hostinger.com";
 
   if (!user || !pass) throw new Error("SMTP credentials not set");
 
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host,
     port: 465,
     secure: true,
     auth: { user, pass },
