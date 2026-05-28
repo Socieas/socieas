@@ -8,7 +8,7 @@ import FadeUp from "@/components/FadeUp";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+// —— DATA ————————————————————————————————————————————————————————————————————
 
 const growthNeeds = [
   "Personal Branding",
@@ -31,800 +31,304 @@ const recentUpdates = [
   {
     title:
       "Why Most Personal Brands Never Build Authority",
-
-    category:
-      "Personal Branding",
-
-    link:
-      "/insights/blogs/personal-brand-authority",
+    category: "Personal Branding",
+    link: "/insights/blogs/personal-brand-authority",
   },
-
   {
     title:
       "CRM Systems That Actually Improve Conversion",
-
-    category:
-      "CRM Strategy",
-
-    link:
-      "/insights/articles/crm-conversion-systems",
+    category: "CRM Strategy",
+    link: "/insights/articles/crm-conversion-systems",
   },
-
   {
     title:
       "How Businesses Lose Leads Without Automation",
-
-    category:
-      "AI Automation",
-
-    link:
-      "/insights/case-studies/lead-automation",
+    category: "AI Automation",
+    link: "/insights/case-studies/lead-automation",
   },
 ];
 
-// ─── SHARED STYLE ────────────────────────────────────────────────────────────
+// —— STYLES ————————————————————————————————————————————————————————————————
 
 const inputCls =
-  "w-full rounded-2xl border border-black/5 bg-background px-6 py-5 text-lg text-foreground placeholder:text-muted/50 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/10";
+  "mt-2 block w-full rounded-2xl border border-black/10 bg-[#F9FAFB] px-4 py-3 text-sm text-foreground placeholder:text-muted/50 focus:border-black/30 focus:outline-none focus:ring-0 transition";
 
-// ─── CONTACT INFO ────────────────────────────────────────────────────────────
+// —— INFO PANEL ———————————————————————————————————————————————————————————————
 
-function ContactInfoCard() {
-
-  const rows = [
-    {
-      label: "Email",
-      value:
-        "hello@socieas.com",
-    },
-
-    {
-      label: "Phone",
-      value:
-        "+91 9142874636",
-    },
-
-    {
-      label: "Based In",
-      value: "India",
-    },
-  ];
-
+function InfoPanel() {
   return (
-
-    <div className="rounded-[40px] border border-black/5 bg-white p-10 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
-
-      <p className="text-xs uppercase tracking-[0.35em] text-primary">
-        Reach Out
-      </p>
-
-      <div className="mt-10 space-y-10">
-
-        {rows.map(
-          ({
-            label,
-            value,
-          }) => (
-
-            <div key={label}>
-
-              <p className="text-sm uppercase tracking-[0.2em] text-muted">
-                {label}
-              </p>
-
-              <p className="mt-3 text-2xl font-semibold tracking-tight">
-                {value}
-              </p>
-
-            </div>
-          )
-        )}
-
-      </div>
-
-    </div>
-  );
-}
-
-// ─── PHILOSOPHY ──────────────────────────────────────────────────────────────
-
-function PhilosophyCard() {
-
-  return (
-
-    <div
-      style={{
-        position:
-          "relative",
-
-        overflow:
-          "hidden",
-
-        borderRadius:
-          "40px",
-
-        background:
-          "linear-gradient(135deg,#7C3AED 0%,#5B21B6 55%,#4C1D95 100%)",
-
-        padding:
-          "40px",
-
-        boxShadow:
-          "0 32px 80px rgba(109,40,217,0.38),0 6px 20px rgba(0,0,0,0.16)",
-
-        isolation:
-          "isolate",
-      }}
-    >
-
-      <div
-        style={{
-          position:
-            "relative",
-
-          zIndex: 1,
-        }}
-      >
-
-        <div className="flex flex-wrap items-center justify-between gap-3">
-
-          <span
-            style={{
-              fontSize:
-                "11px",
-
-              fontWeight:
-                600,
-
-              letterSpacing:
-                "0.35em",
-
-              textTransform:
-                "uppercase",
-
-              color:
-                "rgba(255,255,255,0.52)",
-            }}
-          >
-            Socieas Philosophy
+    <div className="flex flex-col gap-10">
+      {/* Header */}
+      <FadeUp>
+        <div>
+          <span className="mb-4 inline-block rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-medium tracking-widest text-muted uppercase">
+            Get In Touch
           </span>
-
-          <span
-            style={{
-              fontSize:
-                "11px",
-
-              fontWeight:
-                600,
-
-              letterSpacing:
-                "0.25em",
-
-              textTransform:
-                "uppercase",
-
-              color:
-                "rgba(255,255,255,0.92)",
-
-              background:
-                "rgba(255,255,255,0.12)",
-
-              border:
-                "1px solid rgba(255,255,255,0.16)",
-
-              borderRadius:
-                "100px",
-
-              padding:
-                "8px 18px",
-            }}
-          >
-            Personal Branding
-          </span>
-
+          <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
+            Let&rsquo;s Build
+            <br />
+            Something
+            <br />
+            <span className="text-muted/50">That Lasts</span>
+          </h1>
+          <p className="mt-5 text-base leading-relaxed text-muted">
+            Whether you&rsquo;re scaling a business,
+            building a personal brand, or systemising
+            your growth — we&rsquo;re here to help you
+            move with clarity and precision.
+          </p>
         </div>
+      </FadeUp>
 
-        <h2
-          style={{
-            marginTop:
-              "32px",
+      {/* Pillars */}
+      <FadeUp delay={0.1}>
+        <div className="flex flex-wrap gap-2">
+          {pillars.map((p) => (
+            <span
+              key={p}
+              className="rounded-full border border-black/10 bg-white px-4 py-1.5 text-sm font-medium text-foreground"
+            >
+              {p}
+            </span>
+          ))}
+        </div>
+      </FadeUp>
 
-            fontSize:
-              "clamp(32px,4vw,46px)",
-
-            fontWeight:
-              800,
-
-            lineHeight:
-              0.95,
-
-            letterSpacing:
-              "-0.04em",
-
-            color:
-              "#ffffff",
-          }}
-        >
-          Visibility without
-          <br />
-          trust doesn&apos;t scale.
-        </h2>
-
-        <p
-          style={{
-            marginTop:
-              "22px",
-
-            fontSize:
-              "17px",
-
-            lineHeight:
-              1.85,
-
-            color:
-              "rgba(255,255,255,0.68)",
-
-            maxWidth:
-              "380px",
-          }}
-        >
-          Strong brands are built through positioning,
-          systems, consistency, and authority — not random
-          content and temporary attention.
-        </p>
-
-        <div
-          style={{
-            height: "1px",
-
-            background:
-              "rgba(255,255,255,0.12)",
-
-            margin:
-              "32px 0 28px",
-          }}
-        />
-
-        <div className="grid grid-cols-3 gap-3">
-
-          {pillars.map(
-            (item) => (
-
-              <motion.div
-                key={item}
-                whileHover={{
-                  y: -4,
-                }}
-                style={{
-                  borderRadius:
-                    "20px",
-
-                  border:
-                    "1px solid rgba(255,255,255,0.15)",
-
-                  background:
-                    "rgba(255,255,255,0.10)",
-
-                  padding:
-                    "14px 8px",
-
-                  textAlign:
-                    "center",
-
-                  fontSize:
-                    "14px",
-
-                  fontWeight:
-                    600,
-
-                  color:
-                    "#ffffff",
-                }}
+      {/* Growth Needs */}
+      <FadeUp delay={0.15}>
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
+            We help with
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {growthNeeds.map((n) => (
+              <span
+                key={n}
+                className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-foreground"
               >
-                {item}
-              </motion.div>
-            )
-          )}
-
+                {n}
+              </span>
+            ))}
+          </div>
         </div>
+      </FadeUp>
 
-      </div>
-
+      {/* Recent Updates */}
+      <FadeUp delay={0.2}>
+        <div>
+          <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted">
+            Recent Insights
+          </p>
+          <div className="flex flex-col gap-3">
+            {recentUpdates.map((u) => (
+              <Link
+                key={u.link}
+                href={u.link}
+                className="group flex items-start gap-3 rounded-2xl border border-black/5 bg-white p-4 transition hover:border-black/15"
+              >
+                <div className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-black/20 group-hover:bg-black/60 transition" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {u.title}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted">
+                    {u.category}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </FadeUp>
     </div>
   );
 }
 
-// ─── FORM PANEL ──────────────────────────────────────────────────────────────
+// —— FORM PANEL ———————————————————————————————————————————————————————————————
 
 function FormPanel() {
-
-  const router =
-    useRouter();
-
-  const [
-    loading,
-    setLoading,
-  ] = useState(false);
-
-  const [
-    error,
-    setError,
-  ] = useState("");
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
   ) {
-
     e.preventDefault();
-
     setLoading(true);
-
     setError("");
 
-    // Capture the form element BEFORE any await
-    // After await, e.currentTarget becomes null (React synthetic event cleanup)
     const formEl = e.currentTarget;
+    const formData = new FormData(formEl);
 
-    const formData =
-      new FormData(formEl);
+    // Honeypot spam check — bots fill hidden fields, humans don't
+    if (formData.get("website")) {
+      router.push("/insights");
+      return;
+    }
 
     const payload = {
-
-      name:
-        formData.get("name"),
-
-      email:
-        formData.get("email"),
-
-      company:
-        formData.get("company"),
-
-      goal:
-        formData.get("goal"),
-
-      message:
-        formData.get("message"),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      company: formData.get("company"),
+      goal: formData.get("goal"),
+      message: formData.get("message"),
     };
 
     try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-      const response =
-        await fetch(
-          "/api/contact",
-          {
-            method:
-              "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body:
-              JSON.stringify(
-                payload
-              ),
-          }
-        );
-
-      if (
-        !response.ok
-      ) {
-
-        throw new Error(
-          "Failed"
-        );
-      }
+      if (!response.ok) throw new Error("Failed");
 
       formEl.reset();
-
-      router.push(
-        "/insights"
-      );
-
-    } catch (err) {
-
+      router.push("/insights");
+    } catch {
       setError(
         "Something went wrong. Please try again."
       );
-
     } finally {
-
       setLoading(false);
     }
   }
 
   return (
+    <FadeUp delay={0.05}>
+      <form
+        onSubmit={handleSubmit}
+        className="overflow-hidden rounded-[32px] border border-black/5 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)]"
+      >
+        {/* Honeypot — hidden from real users, catches bots */}
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={{ display: "none" }}
+        />
 
-    <form
-      onSubmit={
-        handleSubmit
-      }
-      className="overflow-hidden rounded-[42px] border border-black/5 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)]"
-    >
+        <div className="p-6 sm:p-10">
+          <h2 className="mb-1 text-2xl font-bold tracking-tight text-foreground">
+            Start a Conversation
+          </h2>
+          <p className="mb-8 text-sm text-muted">
+            Fill in the details below and we&rsquo;ll
+            get back to you within 1–2 business days.
+          </p>
 
-      <div className="border-b border-black/5 px-10 py-10 md:px-14">
+          {/* Two-column on md+, single column on mobile */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-muted">
+                Full Name <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="John Doe"
+                className={inputCls}
+              />
+            </div>
 
-        <div className="flex flex-wrap items-start justify-between gap-8">
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-muted">
+                Email Address <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="you@example.com"
+                className={inputCls}
+              />
+            </div>
 
-          <div>
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-muted">
+                Company Name
+              </label>
+              <input
+                type="text"
+                name="company"
+                placeholder="Your Company (optional)"
+                className={inputCls}
+              />
+            </div>
 
-            <p className="text-xs uppercase tracking-[0.35em] text-primary">
-              Start Your Project
-            </p>
-
-            <h2 className="mt-5 text-5xl font-bold leading-[0.92] tracking-[-0.05em]">
-              What are
-              <br />
-              you trying
-              <br />
-              to improve?
-            </h2>
-
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-muted">
+                Primary Goal
+              </label>
+              <select name="goal" className={inputCls}>
+                <option value="">Select a goal…</option>
+                <option>Personal Branding</option>
+                <option>CRM Implementation</option>
+                <option>SEO Optimization</option>
+                <option>Lead Generation</option>
+                <option>AI Automation</option>
+                <option>Website Development</option>
+              </select>
+            </div>
           </div>
 
-          <div className="rounded-2xl bg-surface px-5 py-4">
-
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">
-              Average Response
-            </p>
-
-            <p className="mt-2 text-lg font-semibold">
-              Within 24 Hours
-            </p>
-
-          </div>
-
-        </div>
-
-        <div className="mt-10 flex flex-wrap gap-3">
-
-          {growthNeeds.map(
-            (item) => (
-
-              <motion.button
-                key={item}
-                type="button"
-                whileHover={{
-                  y: -3,
-                }}
-                whileTap={{
-                  scale: 0.97,
-                }}
-                className="rounded-2xl border border-primary/10 bg-primary/5 px-5 py-3 text-sm font-medium text-primary transition-all hover:bg-primary/10"
-              >
-                ✦ {item}
-              </motion.button>
-            )
-          )}
-
-        </div>
-
-      </div>
-
-      <div className="p-10 md:p-14">
-
-        <div className="grid gap-6 md:grid-cols-2">
-
-          <div>
-
-            <label className="mb-3 block text-sm font-medium text-muted">
-              Full Name
+          {/* Message — full width */}
+          <div className="mt-5 flex flex-col">
+            <label className="mb-1 text-sm font-medium text-muted">
+              What&rsquo;s Your Biggest Challenge Right Now?{" "}
+              <span className="text-red-400">*</span>
             </label>
-
-            <input
-              type="text"
-              name="name"
-              required
-              placeholder="John Doe"
-              autoComplete="name"
-              className={inputCls}
-            />
-
-          </div>
-
-          <div>
-
-            <label className="mb-3 block text-sm font-medium text-muted">
-              Email Address
-            </label>
-
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="you@example.com"
-              autoComplete="email"
-              className={inputCls}
-            />
-
-          </div>
-
-          <div>
-
-            <label className="mb-3 block text-sm font-medium text-muted">
-              Company Name
-            </label>
-
-            <input
-              type="text"
-              name="company"
-              placeholder="Your Company"
-              autoComplete="organization"
-              className={inputCls}
-            />
-
-          </div>
-
-          <div>
-
-            <label className="mb-3 block text-sm font-medium text-muted">
-              Primary Goal
-            </label>
-
-            <select
-              name="goal"
-              className={inputCls}
-            >
-
-              <option value="">
-                Select a goal…
-              </option>
-
-              <option>
-                Personal Branding
-              </option>
-
-              <option>
-                CRM Implementation
-              </option>
-
-              <option>
-                SEO Optimization
-              </option>
-
-              <option>
-                Lead Generation
-              </option>
-
-              <option>
-                AI Automation
-              </option>
-
-              <option>
-                Website Development
-              </option>
-
-            </select>
-
-          </div>
-
-          <div className="md:col-span-2">
-
-            <label className="mb-3 block text-sm font-medium text-muted">
-              What&apos;s Your Biggest Challenge Right Now?
-            </label>
-
             <textarea
-              rows={7}
+              rows={5}
               name="message"
               required
-              placeholder="Tell us where your business is struggling or what you want to improve…"
-              className={`${inputCls} resize-none rounded-3xl`}
+              placeholder="Tell us what you're working on..."
+              className={`${inputCls} resize-none`}
             />
-
           </div>
 
-        </div>
-
-        <div className="mt-10 flex flex-col gap-6 rounded-[32px] bg-surface p-6 md:flex-row md:items-center md:justify-between">
-
-          <div>
-
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">
-              Socieas Systems
+          {error && (
+            <p className="mt-4 text-sm text-red-500">
+              {error}
             </p>
+          )}
 
-            <p className="mt-2 text-xl font-semibold tracking-[-0.03em]">
-              Strong positioning starts with better systems.
-            </p>
-
-          </div>
-
-          <motion.button
+          <button
             type="submit"
             disabled={loading}
-            whileHover={{
-              y: -2,
-            }}
-            whileTap={{
-              scale: 0.98,
-            }}
-            className="shrink-0 rounded-2xl bg-primary px-8 py-5 text-lg font-semibold text-white shadow-xl transition-all hover:bg-primary/90 disabled:opacity-70"
+            className="mt-6 w-full rounded-2xl bg-foreground px-6 py-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
+            {loading ? "Sending…" : "Send Inquiry →"}
+          </button>
 
-            {loading
-              ? "Sending..."
-              : "Send Inquiry"}
-
-          </motion.button>
-
-        </div>
-
-        {error && (
-
-          <p className="mt-6 text-sm font-medium text-red-600">
-
-            {error}
-
+          <p className="mt-4 text-center text-xs text-muted/60">
+            No spam. We respect your privacy.
           </p>
-        )}
-
-      </div>
-
-    </form>
-  );
-}
-
-// ─── INSIGHT CARD ────────────────────────────────────────────────────────────
-
-function InsightCard({
-  title,
-  category,
-  link,
-}: any) {
-
-  return (
-
-    <FadeUp>
-
-      <motion.div
-        whileHover={{
-          y: -6,
-        }}
-        className="group rounded-[36px] border border-black/5 bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] transition-all"
-      >
-
-        <p className="text-xs uppercase tracking-[0.3em] text-primary">
-          {category}
-        </p>
-
-        <h3 className="mt-6 text-3xl font-bold leading-[1.1] tracking-[-0.04em] transition-colors group-hover:text-primary">
-          {title}
-        </h3>
-
-        <Link
-          href={link}
-          className="mt-10 inline-flex text-lg font-medium text-primary transition-opacity hover:opacity-70"
-        >
-          Read More →
-        </Link>
-
-      </motion.div>
-
+        </div>
+      </form>
     </FadeUp>
   );
 }
 
-// ─── PAGE ────────────────────────────────────────────────────────────────────
+// —— PAGE ——————————————————————————————————————————————————————————————————————
 
 export default function ContactPage() {
-
   return (
-
-    <main className="overflow-x-hidden bg-background text-foreground">
-
+    <>
       <Navbar />
-
-      <section className="relative overflow-hidden pt-36">
-
-        <div className="mx-auto max-w-7xl px-6">
-
-          <FadeUp>
-
-            <div className="max-w-6xl">
-
-              <div className="inline-flex items-center rounded-full border border-black/5 bg-white px-5 py-2 text-sm font-medium text-primary shadow-sm">
-                Contact Socieas
-              </div>
-
-              <h1 className="mt-8 text-6xl font-bold leading-[0.85] tracking-[-0.06em] md:text-[110px]">
-                Build a brand
-                <br />
-                people trust.
-                <br />
-                Build systems
-                <br />
-                that scale.
-              </h1>
-
-              <p className="mt-10 max-w-4xl text-xl leading-[1.9] text-muted md:text-2xl">
-                From personal branding and CRM implementation to SEO systems and automation — Socieas helps businesses create memorable digital ecosystems designed for visibility, authority, and growth.
-              </p>
-
-            </div>
-
-          </FadeUp>
-
-          <div className="mt-24 grid gap-8 lg:grid-cols-[0.7fr_1.3fr]">
-
-            <FadeUp>
-
-              <div className="space-y-8">
-
-                <ContactInfoCard />
-
-                <PhilosophyCard />
-
-              </div>
-
-            </FadeUp>
-
-            <FadeUp>
-
-              <FormPanel />
-
-            </FadeUp>
-
+      <main className="min-h-screen bg-[#F9FAFB] px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+            <InfoPanel />
+            <FormPanel />
           </div>
-
         </div>
-
-      </section>
-
-      <section className="pb-36 pt-32">
-
-        <div className="mx-auto max-w-7xl px-6">
-
-          <FadeUp>
-
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-
-              <div>
-
-                <p className="text-xs uppercase tracking-[0.35em] text-primary">
-                  Recent Updates
-                </p>
-
-                <h2 className="mt-6 text-5xl font-bold leading-[0.92] tracking-[-0.05em] md:text-7xl">
-                  Insights shaping
-                  <br />
-                  modern growth.
-                </h2>
-
-              </div>
-
-              <Link
-                href="/insights"
-                className="text-lg font-medium text-primary transition-opacity hover:opacity-70"
-              >
-                Explore Insights →
-              </Link>
-
-            </div>
-
-          </FadeUp>
-
-          <div className="mt-20 grid gap-8 md:grid-cols-3">
-
-            {recentUpdates.map(
-              (item) => (
-
-                <InsightCard
-                  key={item.link}
-                  {...item}
-                />
-              )
-            )}
-
-          </div>
-
-        </div>
-
-      </section>
-
+      </main>
       <Footer />
-
-    </main>
+    </>
   );
 }
