@@ -6,10 +6,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // —— DATA ————————————————————————————————————————————————————————————————————
-
 const growthNeeds = [
   "Personal Branding",
   "CRM Implementation",
@@ -21,147 +20,139 @@ const growthNeeds = [
   "Content Marketing",
 ];
 
-const pillars = [
-  "Authority",
-  "Trust",
-  "Positioning",
-];
+const pillars = ["Authority", "Trust", "Positioning"];
 
 const recentUpdates = [
   {
-    title:
-      "Why Most Personal Brands Never Build Authority",
+    title: "Why Most Personal Brands Never Build Authority",
     category: "Personal Branding",
     link: "/insights/blogs/personal-brand-authority",
   },
   {
-    title:
-      "CRM Systems That Actually Improve Conversion",
+    title: "CRM Systems That Actually Improve Conversion",
     category: "CRM Strategy",
     link: "/insights/articles/crm-conversion-systems",
   },
   {
-    title:
-      "How Businesses Lose Leads Without Automation",
+    title: "How Businesses Lose Leads Without Automation",
     category: "AI Automation",
     link: "/insights/case-studies/lead-automation",
   },
 ];
 
-// —— STYLES ————————————————————————————————————————————————————————————————
-
+// —— STYLES ———————————————————————————————————————————————————————————————
 const inputCls =
   "mt-2 block w-full rounded-2xl border border-black/10 bg-[#F9FAFB] px-4 py-3 text-sm text-foreground placeholder:text-muted/50 focus:border-black/30 focus:outline-none focus:ring-0 transition";
 
 // —— INFO PANEL ———————————————————————————————————————————————————————————————
-
 function InfoPanel() {
   return (
     <div className="flex flex-col gap-10">
       {/* Header */}
-      <FadeUp>
-        <div>
-          <span className="mb-4 inline-block rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-medium tracking-widest text-muted uppercase">
-            Get In Touch
-          </span>
-          <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
-            Let&rsquo;s Build
-            <br />
-            Something
-            <br />
-            <span className="text-muted/50">That Lasts</span>
-          </h1>
-          <p className="mt-5 text-base leading-relaxed text-muted">
-            Whether you&rsquo;re scaling a business,
-            building a personal brand, or systemising
-            your growth — we&rsquo;re here to help you
-            move with clarity and precision.
-          </p>
-        </div>
-      </FadeUp>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted/60">
+          Get In Touch
+        </p>
+        <h1 className="mt-3 text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+          Let&apos;s Build <br />
+          Something <br />
+          <span className="italic"> That Lasts</span>
+        </h1>
+        <p className="mt-4 text-sm leading-relaxed text-muted/80">
+          Whether you&apos;re scaling a business, building a personal brand, or
+          systemising your growth &mdash; we&apos;re here to help you move with
+          clarity and precision.
+        </p>
+      </div>
 
       {/* Pillars */}
-      <FadeUp delay={0.1}>
+      <div className="flex flex-wrap gap-2">
+        {pillars.map((p) => (
+          <span
+            key={p}
+            className="rounded-full border border-black/10 px-4 py-1.5 text-xs font-medium text-foreground"
+          >
+            {p}
+          </span>
+        ))}
+      </div>
+
+      {/* Growth Needs */}
+      <div>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted/60">
+          We help with
+        </p>
         <div className="flex flex-wrap gap-2">
-          {pillars.map((p) => (
+          {growthNeeds.map((n) => (
             <span
-              key={p}
-              className="rounded-full border border-black/10 bg-white px-4 py-1.5 text-sm font-medium text-foreground"
+              key={n}
+              className="rounded-xl bg-black/5 px-3 py-1 text-xs text-foreground"
             >
-              {p}
+              {n}
             </span>
           ))}
         </div>
-      </FadeUp>
-
-      {/* Growth Needs */}
-      <FadeUp delay={0.15}>
-        <div>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
-            We help with
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {growthNeeds.map((n) => (
-              <span
-                key={n}
-                className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-foreground"
-              >
-                {n}
-              </span>
-            ))}
-          </div>
-        </div>
-      </FadeUp>
+      </div>
 
       {/* Recent Updates */}
-      <FadeUp delay={0.2}>
-        <div>
-          <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted">
-            Recent Insights
-          </p>
-          <div className="flex flex-col gap-3">
-            {recentUpdates.map((u) => (
+      <div>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted/60">
+          Recent Insights
+        </p>
+        <ul className="space-y-3">
+          {recentUpdates.map((u) => (
+            <li key={u.title}>
               <Link
-                key={u.link}
                 href={u.link}
-                className="group flex items-start gap-3 rounded-2xl border border-black/5 bg-white p-4 transition hover:border-black/15"
+                className="group flex flex-col gap-0.5 rounded-xl p-3 transition hover:bg-black/5"
               >
-                <div className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-black/20 group-hover:bg-black/60 transition" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {u.title}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted">
-                    {u.category}
-                  </p>
-                </div>
+                <span className="text-sm font-medium text-foreground group-hover:underline">
+                  {u.title}
+                </span>
+                <span className="text-xs text-muted/60">{u.category}</span>
               </Link>
-            ))}
-          </div>
-        </div>
-      </FadeUp>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
 // —— FORM PANEL ———————————————————————————————————————————————————————————————
-
 function FormPanel() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<HTMLDivElement>(null);
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  useEffect(() => {
+    // Load Cloudflare Turnstile script
+    const script = document.createElement("script");
+    (window as any).onTurnstileSuccess = setTurnstileToken;     (window as any).onTurnstileSuccess = setTurnstileToken;     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      setError("Please complete the security check.");
+      return;
+    }
+
     setLoading(true);
     setError("");
-
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
 
-    // Honeypot spam check — bots fill hidden fields, humans don't
+    // Honeypot spam check
     if (formData.get("website")) {
       router.push("/insights");
       return;
@@ -173,6 +164,7 @@ function FormPanel() {
       company: formData.get("company"),
       goal: formData.get("goal"),
       message: formData.get("message"),
+      turnstileToken,
     };
 
     try {
@@ -181,27 +173,20 @@ function FormPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!response.ok) throw new Error("Failed");
-
       formEl.reset();
       router.push("/insights");
     } catch {
-      setError(
-        "Something went wrong. Please try again."
-      );
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <FadeUp delay={0.05}>
-      <form
-        onSubmit={handleSubmit}
-        className="overflow-hidden rounded-[32px] border border-black/5 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)]"
-      >
-        {/* Honeypot — hidden from real users, catches bots */}
+    <FadeUp>
+      <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-8 shadow-sm">
+        {/* Honeypot */}
         <input
           type="text"
           name="website"
@@ -211,111 +196,109 @@ function FormPanel() {
           style={{ display: "none" }}
         />
 
-        <div className="p-6 sm:p-10">
-          <h2 className="mb-1 text-2xl font-bold tracking-tight text-foreground">
-            Start a Conversation
-          </h2>
-          <p className="mb-8 text-sm text-muted">
-            Fill in the details below and we&rsquo;ll
-            get back to you within 1–2 business days.
-          </p>
+        <h2 className="text-2xl font-bold text-foreground">Start a Conversation</h2>
+        <p className="mt-1 text-sm text-muted/70">
+          Fill in the details below and we&apos;ll get back to you within 1&ndash;2 business days.
+        </p>
 
-          {/* Two-column on md+, single column on mobile */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div className="flex flex-col">
-              <label className="mb-1 text-sm font-medium text-muted">
-                Full Name <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="John Doe"
-                className={inputCls}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="mb-1 text-sm font-medium text-muted">
-                Email Address <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                placeholder="you@example.com"
-                className={inputCls}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="mb-1 text-sm font-medium text-muted">
-                Company Name
-              </label>
-              <input
-                type="text"
-                name="company"
-                placeholder="Your Company (optional)"
-                className={inputCls}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="mb-1 text-sm font-medium text-muted">
-                Primary Goal
-              </label>
-              <select name="goal" className={inputCls}>
-                <option value="">Select a goal…</option>
-                <option>Personal Branding</option>
-                <option>CRM Implementation</option>
-                <option>SEO Optimization</option>
-                <option>Lead Generation</option>
-                <option>AI Automation</option>
-                <option>Website Development</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Message — full width */}
-          <div className="mt-5 flex flex-col">
-            <label className="mb-1 text-sm font-medium text-muted">
-              What&rsquo;s Your Biggest Challenge Right Now?{" "}
-              <span className="text-red-400">*</span>
+        {/* Two-column on md+, single column on mobile */}
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+              Full Name <span className="text-red-400">*</span>
             </label>
-            <textarea
-              rows={5}
-              name="message"
+            <input
+              type="text"
+              name="name"
               required
-              placeholder="Tell us what you're working on..."
-              className={`${inputCls} resize-none`}
+              placeholder="John Doe"
+              className={inputCls}
             />
           </div>
-
-          {error && (
-            <p className="mt-4 text-sm text-red-500">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-6 w-full rounded-2xl bg-foreground px-6 py-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
-          >
-            {loading ? "Sending…" : "Send Inquiry →"}
-          </button>
-
-          <p className="mt-4 text-center text-xs text-muted/60">
-            No spam. We respect your privacy.
-          </p>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+              Email Address <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+              Company Name
+            </label>
+            <input
+              type="text"
+              name="company"
+              placeholder="Your Company (optional)"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+              Primary Goal
+            </label>
+            <select name="goal" className={inputCls}>
+              <option value="">Select a goal&hellip;</option>
+              <option>Personal Branding</option>
+              <option>CRM Implementation</option>
+              <option>SEO Optimization</option>
+              <option>Lead Generation</option>
+              <option>AI Automation</option>
+              <option>Website Development</option>
+            </select>
+          </div>
         </div>
+
+        {/* Message — full width */}
+        <div className="mt-4">
+          <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+            What&apos;s Your Biggest Challenge Right Now?{" "}
+            <span className="text-red-400">*</span>
+          </label>
+          <textarea
+            rows={5}
+            name="message"
+            required
+            placeholder="Tell us what you're working on..."
+            className={`${inputCls} resize-none`}
+          />
+        </div>
+
+        {/* Cloudflare Turnstile */}
+        <div className="mt-6">
+          <div
+            ref={turnstileRef}
+            className="cf-turnstile"
+            data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            data-callback="onTurnstileSuccess"
+          />
+        </div>
+
+        {error && (
+          <p className="mt-4 text-sm text-red-500">{error}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-6 w-full rounded-2xl bg-foreground px-6 py-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+        >
+          {loading ? "Sending…" : "Send Inquiry →"}
+        </button>
+        <p className="mt-4 text-center text-xs text-muted/60">
+          No spam. We respect your privacy.
+        </p>
       </form>
     </FadeUp>
   );
 }
 
 // —— PAGE ——————————————————————————————————————————————————————————————————————
-
 export default function ContactPage() {
   return (
     <>
