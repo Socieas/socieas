@@ -48,7 +48,7 @@ export async function POST(
       await resend.emails.send({
 
         from:
-          "Socieas <onboarding@resend.dev>",
+          "Socieas <hello@socieas.com>",
 
         to:
           "hello@socieas.com",
