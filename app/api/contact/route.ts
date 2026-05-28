@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-// — Cloudflare Turnstile verification ————————————————————————
+// — Cloudflare Turnstile verification ————————————————
 async function verifyTurnstile(token: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) return false;
@@ -21,7 +21,29 @@ async function verifyTurnstile(token: string): Promise<boolean> {
   return data.success === true;
 }
 
-// — POST handler ——————————————————————————————————————————
+// — Send email via Resend HTTP API ————————————————
+async function sendEmail(to: string, subject: string, html: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error("RESEND_API_KEY not set");
+
+  const from = process.env.RESEND_FROM_EMAIL || "Socieas <onboarding@resend.dev>";
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ from, to, subject, html }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend error: ${err}`);
+  }
+}
+
+// — POST handler ————————————————————————————
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -35,70 +57,44 @@ export async function POST(request: Request) {
     }
 
     // Verify Turnstile
-    if (!turnstileToken) {
-      return NextResponse.json(
-        { error: "Missing Turnstile token" },
-        { status: 400 }
-      );
-    }
-    const isValid = await verifyTurnstile(turnstileToken);
-    if (!isValid) {
+    const isHuman = await verifyTurnstile(turnstileToken);
+    if (!isHuman) {
       return NextResponse.json(
         { error: "Turnstile verification failed" },
         { status: 400 }
       );
     }
 
-    // Dynamic import to avoid bundling issues with nodemailer
-    const nodemailer = (await import("nodemailer")).default;
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.hostinger.com",
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    const notifyEmail = process.env.NOTIFY_EMAIL || "ankitdesizns@gmail.com";
 
     // Send internal notification
-    await transporter.sendMail({
-      from: `"Socieas Contact" <${process.env.SMTP_USER}>`,
-      to: process.env.NOTIFY_EMAIL || "ankitdesizns@gmail.com",
-      replyTo: email,
-      subject: `New Inquiry from ${name}`,
-      html: `
-        <table style="font-family:Arial,sans-serif;max-width:600px;margin:auto;border-collapse:collapse">
-          <tr><td colspan="2" style="background:#7c3aed;color:#fff;padding:20px;font-size:18px;font-weight:bold">New Inquiry from ${name}</td></tr>
-          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold;width:140px">Name</td><td style="padding:12px;border-bottom:1px solid #eee">${name}</td></tr>
-          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold">Email</td><td style="padding:12px;border-bottom:1px solid #eee">${email}</td></tr>
-          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold">Company</td><td style="padding:12px;border-bottom:1px solid #eee">${company || "—"}</td></tr>
-          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold">Goal</td><td style="padding:12px;border-bottom:1px solid #eee">${goal || "—"}</td></tr>
-          <tr><td style="padding:12px;font-weight:bold">Message</td><td style="padding:12px">${message}</td></tr>
-        </table>
-      `,
-    });
+    await sendEmail(
+      notifyEmail,
+      `New Inquiry from ${name}`,
+      `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Company:</strong> ${company || "N/A"}</p>
+        <p><strong>Goal:</strong> ${goal || "N/A"}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+      `
+    );
 
     // Send confirmation to user
-    await transporter.sendMail({
-      from: `"Socieas" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: "We received your message — Socieas",
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
-          <div style="background:#7c3aed;color:#fff;padding:24px;text-align:center">
-            <h1 style="margin:0;font-size:24px">We got your message!</h1>
-          </div>
-          <div style="padding:24px">
-            <p>Hi ${name},</p>
-            <p>Thanks for reaching out to Socieas. We've received your inquiry and will get back to you within 1-2 business days.</p>
-            <p><strong>Your message:</strong><br/>${message}</p>
-            <p>Best regards,<br/>The Socieas Team</p>
-          </div>
-        </div>
-      `,
-    });
+    await sendEmail(
+      email,
+      "We received your message — Socieas",
+      `
+        <h2>Thanks for reaching out, ${name}!</h2>
+        <p>We've received your message and will get back to you within 1-2 business days.</p>
+        <p><strong>Your message:</strong></p>
+        <p>${message}</p>
+        <br/>
+        <p>Best,<br/>The Socieas Team</p>
+      `
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {
