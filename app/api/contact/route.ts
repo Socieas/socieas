@@ -1,20 +1,6 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 
-// ── Nodemailer transporter using Hostinger SMTP ────────────────────────────
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.hostinger.com",
-    port: Number(process.env.SMTP_PORT) || 465,
-    secure: true, // SSL on port 465
-    auth: {
-      user: process.env.SMTP_USER, // contact@socieas.com
-      pass: process.env.SMTP_PASS, // email account password
-    },
-  });
-}
-
-// ── Cloudflare Turnstile verification ─────────────────────────────────────
+// — Cloudflare Turnstile verification ————————————————————————
 async function verifyTurnstile(token: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) return false;
@@ -35,85 +21,90 @@ async function verifyTurnstile(token: string): Promise<boolean> {
   return data.success === true;
 }
 
-// ── POST handler ───────────────────────────────────────────────────────────
-export async function POST(
-  request: Request
-) {
+// — POST handler ——————————————————————————————————————————
+export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, email, company, goal, message, turnstileToken } = body;
 
-    // Basic validation
     if (!name || !email || !message) {
       return NextResponse.json(
-        { error: "Name, email and message are required" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Turnstile verification
+    // Verify Turnstile
     if (!turnstileToken) {
       return NextResponse.json(
-        { error: "Missing security token" },
+        { error: "Missing Turnstile token" },
         { status: 400 }
       );
     }
-    const isHuman = await verifyTurnstile(turnstileToken);
-    if (!isHuman) {
+    const isValid = await verifyTurnstile(turnstileToken);
+    if (!isValid) {
       return NextResponse.json(
-        { error: "Security check failed" },
-        { status: 403 }
+        { error: "Turnstile verification failed" },
+        { status: 400 }
       );
     }
 
-    const transporter = createTransporter();
+    // Dynamic import to avoid bundling issues with nodemailer
+    const nodemailer = (await import("nodemailer")).default;
 
-    // ── Email 1: Internal notification to Ankit ─────────────────────────
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.hostinger.com",
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    // Send internal notification
     await transporter.sendMail({
       from: `"Socieas Contact" <${process.env.SMTP_USER}>`,
       to: process.env.NOTIFY_EMAIL || "ankitdesizns@gmail.com",
       replyTo: email,
       subject: `New Inquiry from ${name}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #111;">New Contact Form Submission</h2>
-          <table style="width:100%; border-collapse: collapse;">
-            <tr><td style="padding:8px; font-weight:bold;">Name</td><td style="padding:8px;">${name}</td></tr>
-            <tr style="background:#f9f9f9;"><td style="padding:8px; font-weight:bold;">Email</td><td style="padding:8px;"><a href="mailto:${email}">${email}</a></td></tr>
-            <tr><td style="padding:8px; font-weight:bold;">Company</td><td style="padding:8px;">${company || "—"}</td></tr>
-            <tr style="background:#f9f9f9;"><td style="padding:8px; font-weight:bold;">Primary Goal</td><td style="padding:8px;">${goal || "—"}</td></tr>
-            <tr><td style="padding:8px; font-weight:bold;">Message</td><td style="padding:8px;">${message}</td></tr>
-          </table>
-        </div>
+        <table style="font-family:Arial,sans-serif;max-width:600px;margin:auto;border-collapse:collapse">
+          <tr><td colspan="2" style="background:#7c3aed;color:#fff;padding:20px;font-size:18px;font-weight:bold">New Inquiry from ${name}</td></tr>
+          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold;width:140px">Name</td><td style="padding:12px;border-bottom:1px solid #eee">${name}</td></tr>
+          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold">Email</td><td style="padding:12px;border-bottom:1px solid #eee">${email}</td></tr>
+          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold">Company</td><td style="padding:12px;border-bottom:1px solid #eee">${company || "—"}</td></tr>
+          <tr><td style="padding:12px;border-bottom:1px solid #eee;font-weight:bold">Goal</td><td style="padding:12px;border-bottom:1px solid #eee">${goal || "—"}</td></tr>
+          <tr><td style="padding:12px;font-weight:bold">Message</td><td style="padding:12px">${message}</td></tr>
+        </table>
       `,
     });
 
-    // ── Email 2: Confirmation to the user ───────────────────────────────
+    // Send confirmation to user
     await transporter.sendMail({
       from: `"Socieas" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "We received your message — Socieas",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #111;">Thanks for reaching out, ${name}!</h2>
-          <p style="color: #444;">We've received your message and will get back to you within 1–2 business days.</p>
-          <blockquote style="border-left: 3px solid #ccc; padding-left: 16px; color: #666; margin: 20px 0;">
-            ${message}
-          </blockquote>
-          <p style="color: #444;">In the meantime, feel free to explore our work at <a href="https://socieas.com">socieas.com</a>.</p>
-          <p style="color: #444;">— The Socieas Team</p>
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
+          <div style="background:#7c3aed;color:#fff;padding:24px;text-align:center">
+            <h1 style="margin:0;font-size:24px">We got your message!</h1>
+          </div>
+          <div style="padding:24px">
+            <p>Hi ${name},</p>
+            <p>Thanks for reaching out to Socieas. We've received your inquiry and will get back to you within 1-2 business days.</p>
+            <p><strong>Your message:</strong><br/>${message}</p>
+            <p>Best regards,<br/>The Socieas Team</p>
+          </div>
         </div>
       `,
     });
 
-    return NextResponse.json(
-      { success: true, message: "Your message has been sent!" },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Contact form error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to send message" },
       { status: 500 }
     );
   }
