@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-                            "start": "NODE_OPTIONS=--max-old-space-size=256 next start"
+                            "start": "next start"
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
