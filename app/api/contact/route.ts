@@ -18,6 +18,7 @@ async function verifyTurnstile(token: string): Promise<boolean> {
     }
   );
   const data = await res.json();
+  console.log("Turnstile response:", data);
   return data.success === true;
 }
 
