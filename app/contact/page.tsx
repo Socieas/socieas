@@ -180,7 +180,30 @@ function FormPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!response.ok) throw new Error("Failed");
+      try {
+  const response = await fetch("/api/contact", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  console.log("API Response:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed");
+  }
+
+  formEl.reset();
+  router.push("/insights");
+
+} catch (err: any) {
+  console.error("Form submit error:", err);
+  setError(err.message || "Something went wrong.");
+} finally {
+  setLoading(false);
+}
       formEl.reset();
       router.push("/insights");
     } catch {
