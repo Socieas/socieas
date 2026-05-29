@@ -128,16 +128,23 @@ function FormPanel() {
   const turnstileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Load Cloudflare Turnstile script
-    const script = document.createElement("script");
-    (window as any).onTurnstileSuccess = setTurnstileToken;     (window as any).onTurnstileSuccess = setTurnstileToken;     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
+  // Load Cloudflare Turnstile script
+  const script = document.createElement("script");
+
+  (window as any).onTurnstileSuccess = setTurnstileToken;
+
+  script.src =
+    "https://challenges.cloudflare.com/turnstile/v0/api.js";
+
+  script.async = true;
+  script.defer = true;
+
+  document.head.appendChild(script);
+
+  return () => {
+    document.head.removeChild(script);
+  };
+}, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
