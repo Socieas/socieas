@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
+import Script from "next/script";
 import { useState, useEffect, useRef } from "react";
 
 // —— DATA ————————————————————————————————————————————————————————————————————
@@ -127,27 +128,25 @@ function FormPanel() {
   const turnstileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
-    console.warn("Missing NEXT_PUBLIC_TURNSTILE_SITE_KEY environment variable. Contact form may not work correctly.");
-  }
+    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      console.warn("Missing NEXT_PUBLIC_TURNSTILE_SITE_KEY environment variable. Contact form may not work correctly.");
+    }
 
-  // Load Cloudflare Turnstile script
-  const script = document.createElement("script");
+    (window as any).onTurnstileSuccess = setTurnstileToken;
 
-  (window as any).onTurnstileSuccess = setTurnstileToken;
+    // Explicitly render Turnstile if it's already loaded but not rendered
+    const interval = setInterval(() => {
+      if ((window as any).turnstile && turnstileRef.current && turnstileRef.current.innerHTML === "") {
+        (window as any).turnstile.render(turnstileRef.current, {
+          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+          callback: "onTurnstileSuccess",
+        });
+        clearInterval(interval);
+      }
+    }, 500);
 
-  script.src =
-    "https://challenges.cloudflare.com/turnstile/v0/api.js";
-
-  script.async = true;
-  script.defer = true;
-
-  document.head.appendChild(script);
-
-  return () => {
-    document.head.removeChild(script);
-  };
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -287,13 +286,20 @@ function FormPanel() {
         </div>
 
         {/* Cloudflare Turnstile */}
-        <div className="mt-6">
-          <div
-            ref={turnstileRef}
-            className="cf-turnstile"
-            data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            data-callback="onTurnstileSuccess"
+        <div className="mt-6 min-h-[65px]">
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+            strategy="afterInteractive"
+            onLoad={() => {
+              if ((window as any).turnstile && turnstileRef.current) {
+                (window as any).turnstile.render(turnstileRef.current, {
+                  sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+                  callback: "onTurnstileSuccess",
+                });
+              }
+            }}
           />
+          <div ref={turnstileRef} />
         </div>
 
         {error && (
