@@ -22,7 +22,7 @@ export default function ServicesJourney() {
 
             <h2 className="mt-8 text-5xl font-bold leading-[1.02] text-[var(--text)] md:text-6xl">
 
-              Visibility alone doesn’t scale businesses.
+              Visibility alone doesn&apos;t scale businesses.
 
             </h2>
 

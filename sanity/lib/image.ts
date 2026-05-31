@@ -1,8 +1,9 @@
-import imageUrlBuilder from "@sanity/image-url";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createImageUrlBuilder } from "@sanity/image-url";
 
 import { dataset, projectId } from "../env";
 
-const builder = imageUrlBuilder({
+const builder = createImageUrlBuilder({
   projectId,
   dataset,
 });

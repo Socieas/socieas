@@ -14,57 +14,32 @@ const transporter = nodemailer.createTransport({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const { email } = body;
 
-    const { name, email, company, service, message } = body;
-
-    if (!name || !email || !message) {
+    if (!email) {
       return NextResponse.json(
-        { error: "Required fields missing" },
+        { error: "Email is required" },
         { status: 400 }
       );
     }
 
-    // ADMIN EMAIL
+    // ADMIN NOTIFICATION
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: process.env.CONTACT_RECEIVER,
-      subject: `🚀 New Lead Received | ${name}`,
+      subject: `🔔 New Newsletter Subscriber | ${email}`,
       html: `
       <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
         <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
-          
           <div style="background:#44006D; padding:30px; text-align:center;">
             <img src="https://socieas.com/logo.png" alt="Socieas" style="height: 40px; width: auto; margin-bottom: 10px;">
-            <p style="color:#F57F20; margin-top:8px; font-weight: 600;">New Lead Notification</p>
+            <p style="color:#F57F20; margin-top:8px; font-weight: 600;">Newsletter Notification</p>
           </div>
-
           <div style="padding:32px;">
-            <h2 style="color:#111;">A new inquiry has arrived</h2>
-
-            <p><strong>Name:</strong> ${name}</p>
+            <h2 style="color:#111;">A new subscriber has joined</h2>
             <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Company:</strong> ${company || "Not provided"}</p>
-            <p><strong>Service:</strong> ${service || "Not selected"}</p>
-
-            <div style="margin-top:24px; padding:20px; background:#f9fafb; border-radius:12px;">
-              <strong>Message:</strong>
-              <p style="margin-top:10px;">${message}</p>
-            </div>
-
-            <div style="margin-top:30px;">
-              <a href="mailto:${email}" style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px; font-weight: bold;">
-                Reply to Lead
-              </a>
-            </div>
           </div>
-
           <div style="padding:20px; text-align:center; background:#f9fafb; font-size:14px; border-top: 1px solid #eee;">
-             <div style="margin-bottom: 15px;">
-                <a href="https://www.linkedin.com/company/socieas/" style="margin: 0 10px; text-decoration: none; color: #44006D; font-weight: 600;">LinkedIn</a>
-                <a href="https://www.instagram.com/socieas" style="margin: 0 10px; text-decoration: none; color: #44006D; font-weight: 600;">Instagram</a>
-                <a href="https://www.instagram.com/socieas" style="margin: 0 10px; text-decoration: none; color: #44006D; font-weight: 600;">X</a>
-                <a href="https://www.facebook.com/socieas" style="margin: 0 10px; text-decoration: none; color: #44006D; font-weight: 600;">Facebook</a>
-             </div>
              <p style="color: #666; margin: 0;">socieas.com</p>
           </div>
         </div>
@@ -72,50 +47,26 @@ export async function POST(req: Request) {
       `,
     });
 
-    // USER CONFIRMATION EMAIL
+    // USER CONFIRMATION
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: email,
-      subject: "We've received your inquiry | Socieas",
+      subject: "Welcome to Socieas Insights",
       html: `
       <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
         <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
-          
           <div style="background:#44006D; padding:30px; text-align:center;">
             <img src="https://socieas.com/logo.png" alt="Socieas" style="height: 40px; width: auto; margin-bottom: 10px;">
-            <p style="color:#F57F20; margin-top:8px; font-weight: 600;">
-              Building Growth Through Digital Innovation
-            </p>
+            <p style="color:#F57F20; margin-top:8px; font-weight: 600;">Building Growth Through Digital Innovation</p>
           </div>
-
           <div style="padding:32px;">
-            <h2 style="color:#111;">Hi ${name},</h2>
-
-            <p>
-              Thank you for reaching out to Socieas.
-            </p>
-
-            <p>
-              We've successfully received your inquiry and our team is reviewing it.
-              You can expect a response within 24 hours.
-            </p>
-
-            <p>
-              We're excited to explore how we can help elevate your digital presence.
-            </p>
-
+            <h2 style="color:#111;">Welcome to the community!</h2>
+            <p>Thank you for subscribing to Socieas Founder Insights.</p>
+            <p>You'll receive weekly strategies on founder visibility, positioning, AI systems, and scalable growth.</p>
             <div style="margin-top:30px;">
-              <a href="https://socieas.com"
-                 style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px; font-weight: bold;">
-                 Visit Socieas
-              </a>
+              <a href="https://socieas.com" style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px; font-weight: bold;">Explore Insights</a>
             </div>
-
-            <p style="margin-top:30px; color:#666;">
-              Team Socieas
-            </p>
           </div>
-
           <div style="padding:20px; text-align:center; background:#f9fafb; font-size:14px; border-top: 1px solid #eee;">
              <div style="margin-bottom: 15px;">
                 <a href="https://www.linkedin.com/company/socieas/" style="margin: 0 10px; text-decoration: none; color: #44006D; font-weight: 600;">LinkedIn</a>
@@ -131,13 +82,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
-    console.error("CONTACT ERROR:", error);
-
-    return NextResponse.json(
-      { error: "Failed to send email" },
-      { status: 500 }
-    );
+    console.error("NEWSLETTER ERROR:", error);
+    return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }

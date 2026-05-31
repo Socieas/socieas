@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 import Breadcrumbs from "./Breadcrumbs";
 import { urlFor } from "@/sanity/lib/image";

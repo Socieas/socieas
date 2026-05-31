@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   singlePostQuery,
   allPostsQuery,
 } from "@/sanity/lib/queries";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, safeFetchSingle } from "@/sanity/lib/client";
 
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
 }) {
   const { slug } = params;
 
-  const post = await client.fetch(
+  const post: any = await safeFetchSingle(
     singlePostQuery,
     {
       slug,
@@ -71,14 +72,14 @@ export default async function ArticlePage({
 }) {
   const { slug } = params;
 
-  const post = await client.fetch(
+  const post: any = await safeFetchSingle(
     singlePostQuery,
     {
       slug,
     }
   );
 
-  const allPosts = await client.fetch(
+  const allPosts: any = await safeFetch(
     allPostsQuery
   );
 

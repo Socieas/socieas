@@ -37,7 +37,7 @@ export default function FounderProblem() {
                 <br />
                 <br />
 
-                It’s about becoming impossible to ignore.
+                It&apos;s about becoming impossible to ignore.
               </p>
             </div>
           </div>

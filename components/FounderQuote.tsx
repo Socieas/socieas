@@ -20,7 +20,7 @@ export default function FounderQuote() {
 
           <br /><br />
 
-          It’s built when people
+          It&apos;s built when people
           remember you repeatedly.”
 
         </h2>

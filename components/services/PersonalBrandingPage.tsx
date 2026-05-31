@@ -80,7 +80,7 @@ const faqs = [
   {
     question: "Which platform is best for founder personal branding?",
     answer:
-      "LinkedIn is usually the strongest platform for founder authority and professional trust. Instagram can support familiarity and visual storytelling when it fits the founder’s audience and business context.",
+      "LinkedIn is usually the strongest platform for founder authority and professional trust. Instagram can support familiarity and visual storytelling when it fits the founder&apos;s audience and business context.",
   },
   {
     question: "Can personal branding help generate leads?",

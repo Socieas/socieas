@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MetadataRoute } from "next";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 export default async function sitemap():
@@ -10,7 +11,7 @@ Promise<MetadataRoute.Sitemap> {
     "https://socieas.com";
 
   const posts =
-    await client.fetch(
+    await safeFetch(
       allPostsQuery
     );
 

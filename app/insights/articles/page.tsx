@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
@@ -32,7 +33,7 @@ export default async function ArticlesPage({
     await searchParams;
 
   const posts =
-    await client.fetch(
+    await safeFetch(
       allPostsQuery
     );
 
