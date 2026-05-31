@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: process.env.CONTACT_RECEIVER,
-      subject: `🚀 New Lead Received | ${name}`,
+      subject: `New Lead Received | ${name}`,
       html: `
       <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
         <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: email,
-      subject: "We’ve received your inquiry | Socieas",
+      subject: "We have received your inquiry | Socieas",
       html: `
       <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
         <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
