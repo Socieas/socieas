@@ -127,6 +127,10 @@ function FormPanel() {
   const turnstileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+  if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+    console.warn("Missing NEXT_PUBLIC_TURNSTILE_SITE_KEY environment variable. Contact form may not work correctly.");
+  }
+
   // Load Cloudflare Turnstile script
   const script = document.createElement("script");
 

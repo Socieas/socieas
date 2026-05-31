@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 // -- Cloudflare Turnstile verification
 async function verifyTurnstile(token: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return false;
+  if (!secret) {
+    console.error("Missing TURNSTILE_SECRET_KEY environment variable.");
+    return false;
+  }
 
   const formData = new URLSearchParams();
   formData.append("secret", secret);
