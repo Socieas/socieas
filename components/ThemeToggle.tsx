@@ -3,16 +3,19 @@
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-
-  const [dark, setDark] = useState<boolean | null>(null);
+  const [dark, setDark] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const savedTheme = localStorage.getItem("theme");
-    setDark(savedTheme === "dark");
+    if (savedTheme === "dark") {
+      setDark(true);
+    }
   }, []);
 
   useEffect(() => {
-    if (dark === null) return;
+    if (!mounted) return;
 
     if (dark) {
       document.documentElement.classList.add("dark");
@@ -21,7 +24,13 @@ export default function ThemeToggle() {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
-  }, [dark]);
+  }, [dark, mounted]);
+
+  if (!mounted) {
+    return (
+        <div className="h-11 w-11 rounded-full border border-[var(--border)] bg-[var(--surface)]" />
+    );
+  }
 
   return (
     <button

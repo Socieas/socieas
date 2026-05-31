@@ -71,7 +71,7 @@ export default function Footer() {
 
       setEmail("");
 
-    } catch (err) {
+    } catch (_err) {
 
       setError(
         "Something went wrong."
