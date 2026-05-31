@@ -1,88 +1,126 @@
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
-// -- Cloudflare Turnstile verification
-async function verifyTurnstile(token: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return false;
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
-  const formData = new URLSearchParams();
-  formData.append("secret", secret);
-  formData.append("response", token);
-
-  const res = await fetch(
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData.toString(),
-    }
-  );
-  const data = await res.json();
-  return data.success === true;
-}
-
-// -- POST handler
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    const { name, email, company, goal, message, turnstileToken } = body;
+    const body = await req.json();
+
+    const { name, email, company, service, message } = body;
 
     if (!name || !email || !message) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Required fields missing" },
         { status: 400 }
       );
     }
 
-    const isHuman = await verifyTurnstile(turnstileToken);
-    if (!isHuman) {
-      return NextResponse.json(
-        { error: "Security check failed" },
-        { status: 400 }
-      );
-    }
-
-    const { Resend } = await import("resend");
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-    const notifyEmail = process.env.NOTIFY_EMAIL || "ankitdesizns@gmail.com";
-
-    // Internal notification to you
-    await resend.emails.send({
-      from: fromEmail,
-      to: notifyEmail,
-      subject: `New Inquiry from ${name}`,
+    // ADMIN EMAIL
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: process.env.CONTACT_RECEIVER,
+      subject: `🚀 New Lead Received | ${name}`,
       html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Company:</strong> ${company || "N/A"}</p>
-        <p><strong>Goal:</strong> ${goal || "N/A"}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
+      <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
+        <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+          
+          <div style="background:#44006D; padding:30px; text-align:center;">
+            <h1 style="color:white; margin:0;">SOCIEAS</h1>
+            <p style="color:#F57F20; margin-top:8px;">New Lead Notification</p>
+          </div>
+
+          <div style="padding:32px;">
+            <h2 style="color:#111;">A new inquiry has arrived</h2>
+
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Company:</strong> ${company || "Not provided"}</p>
+            <p><strong>Service:</strong> ${service || "Not selected"}</p>
+
+            <div style="margin-top:24px; padding:20px; background:#f9fafb; border-radius:12px;">
+              <strong>Message:</strong>
+              <p style="margin-top:10px;">${message}</p>
+            </div>
+
+            <div style="margin-top:30px;">
+              <a href="mailto:${email}" style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px;">
+                Reply to Lead
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       `,
     });
 
-    // Confirmation email to user
-    await resend.emails.send({
-      from: fromEmail,
+    // USER CONFIRMATION EMAIL
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
       to: email,
-      subject: "We received your message — Socieas",
+      subject: "We’ve received your inquiry | Socieas",
       html: `
-        <h2>Hi ${name},</h2>
-        <p>Thanks for reaching out! We've received your message and will get back to you within 1–2 business days.</p>
-        <p>Best,<br/>The Socieas Team</p>
+      <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
+        <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+          
+          <div style="background:#44006D; padding:30px; text-align:center;">
+            <h1 style="color:white; margin:0;">SOCIEAS</h1>
+            <p style="color:#F57F20; margin-top:8px;">
+              Building Growth Through Digital Innovation
+            </p>
+          </div>
+
+          <div style="padding:32px;">
+            <h2 style="color:#111;">Hi ${name},</h2>
+
+            <p>
+              Thank you for reaching out to Socieas.
+            </p>
+
+            <p>
+              We’ve successfully received your inquiry and our team is reviewing it.
+              You can expect a response within 24 hours.
+            </p>
+
+            <p>
+              We’re excited to explore how we can help elevate your digital presence.
+            </p>
+
+            <div style="margin-top:30px;">
+              <a href="https://socieas.com"
+                 style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px;">
+                 Visit Socieas
+              </a>
+            </div>
+
+            <p style="margin-top:30px; color:#666;">
+              Team Socieas
+            </p>
+          </div>
+
+          <div style="padding:20px; text-align:center; background:#f9fafb; font-size:14px;">
+            socieas.com
+          </div>
+        </div>
+      </div>
       `,
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-  console.error("CONTACT API ERROR:", error);
-  console.error(error?.message);
-  console.error(error?.stack);
+
+  } catch (error) {
+    console.error("CONTACT ERROR:", error);
+
     return NextResponse.json(
-      { error: "Failed to send message. Please try again." },
+      { error: "Failed to send email" },
       { status: 500 }
     );
   }
