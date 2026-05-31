@@ -125,9 +125,11 @@ function FormPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [mounted, setMounted] = useState(false);
   const turnstileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setMounted(true);
     if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
       console.warn("Missing NEXT_PUBLIC_TURNSTILE_SITE_KEY environment variable. Contact form may not work correctly.");
     }
@@ -135,17 +137,27 @@ function FormPanel() {
     (window as any).onTurnstileSuccess = setTurnstileToken;
 
     // Explicitly render Turnstile if it's already loaded but not rendered
+    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     const interval = setInterval(() => {
-      if ((window as any).turnstile && turnstileRef.current && turnstileRef.current.innerHTML === "") {
-        (window as any).turnstile.render(turnstileRef.current, {
-          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-          callback: "onTurnstileSuccess",
-        });
-        clearInterval(interval);
+      if (typeof window !== "undefined" && (window as any).turnstile && turnstileRef.current && turnstileRef.current.innerHTML === "" && siteKey) {
+        try {
+          (window as any).turnstile.render(turnstileRef.current, {
+            sitekey: siteKey,
+            callback: "onTurnstileSuccess",
+          });
+          clearInterval(interval);
+        } catch (e) {
+          console.error("Turnstile render error:", e);
+        }
       }
     }, 500);
 
-    return () => clearInterval(interval);
+    const timeout = setTimeout(() => clearInterval(interval), 10000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
   }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -200,8 +212,8 @@ function FormPanel() {
   }
 
   return (
-    <FadeUp>
-      <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-8 shadow-sm">
+    <div className="rounded-3xl bg-white p-8 shadow-sm">
+      <form onSubmit={handleSubmit}>
         {/* Honeypot */}
         <input
           type="text"
@@ -286,21 +298,28 @@ function FormPanel() {
         </div>
 
         {/* Cloudflare Turnstile */}
-        <div className="mt-6 min-h-[65px]">
-          <Script
-            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-            strategy="afterInteractive"
-            onLoad={() => {
-              if ((window as any).turnstile && turnstileRef.current) {
-                (window as any).turnstile.render(turnstileRef.current, {
-                  sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-                  callback: "onTurnstileSuccess",
-                });
-              }
-            }}
-          />
-          <div ref={turnstileRef} />
-        </div>
+        {mounted && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+          <div className="mt-6 min-h-[65px]">
+            <Script
+              src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+              strategy="afterInteractive"
+              onLoad={() => {
+                const sKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+                if ((window as any).turnstile && turnstileRef.current && turnstileRef.current.innerHTML === "" && sKey) {
+                  try {
+                    (window as any).turnstile.render(turnstileRef.current, {
+                      sitekey: sKey,
+                      callback: "onTurnstileSuccess",
+                    });
+                  } catch (e) {
+                    console.error("Turnstile onLoad render error:", e);
+                  }
+                }
+              }}
+            />
+            <div ref={turnstileRef} />
+          </div>
+        )}
 
         {error && (
           <p className="mt-4 text-sm text-red-500">{error}</p>
@@ -317,7 +336,7 @@ function FormPanel() {
           No spam. We respect your privacy.
         </p>
       </form>
-    </FadeUp>
+    </div>
   );
 }
 
