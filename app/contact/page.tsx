@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
-import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 // —— DATA ————————————————————————————————————————————————————————————————————
@@ -180,34 +179,18 @@ function FormPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      try {
-  const response = await fetch("/api/contact", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
 
-  const data = await response.json();
+      const data = await response.json();
 
-  console.log("API Response:", data);
+      if (!response.ok) {
+        throw new Error(data.error || "Request failed");
+      }
 
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed");
-  }
-
-  formEl.reset();
-  router.push("/insights");
-
-} catch (err: any) {
-  console.error("Form submit error:", err);
-  setError(err.message || "Something went wrong.");
-} finally {
-  setLoading(false);
-}
       formEl.reset();
       router.push("/insights");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error("Form submit error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

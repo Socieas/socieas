@@ -6,3 +6,9 @@ export const dataset =
 
 export const projectId =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "placeholder";
+
+if (projectId === "placeholder") {
+  console.warn(
+    "Sanity project ID is set to 'placeholder'. Please set NEXT_PUBLIC_SANITY_PROJECT_ID in your environment variables."
+  );
+}
