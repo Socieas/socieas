@@ -15,13 +15,27 @@ export default function FormPanel() {
   const turnstileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Define the callback globally
+    (window as any).onTurnstileSuccess = (token: string) => {
+      console.log("Turnstile Success:", token);
+      setTurnstileToken(token);
+    };
+
     // Load Cloudflare Turnstile script
     const script = document.createElement("script");
-    (window as any).onTurnstileSuccess = (token: string) => setTurnstileToken(token);
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
+
+    script.onload = () => {
+        if ((window as any).turnstile && turnstileRef.current) {
+            (window as any).turnstile.render(turnstileRef.current, {
+                sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA",
+                callback: "onTurnstileSuccess",
+            });
+        }
+    };
 
     return () => {
       if (document.head.contains(script)) {
@@ -170,8 +184,6 @@ export default function FormPanel() {
           <div
             ref={turnstileRef}
             className="cf-turnstile"
-            data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            data-callback="onTurnstileSuccess"
           />
         </div>
 
