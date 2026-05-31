@@ -43,7 +43,7 @@ export default function Footer() {
 
       const response =
         await fetch(
-          "/api/newsletter",
+          "/api/contact/newsletter",
           {
             method: "POST",
 
