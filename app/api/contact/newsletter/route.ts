@@ -10,8 +10,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    console.log("NEW NEWSLETTER SUBSCRIBER:", email);
-
     const resendApiKey = process.env.RESEND_API_KEY;
     if (!resendApiKey) {
       console.warn("RESEND_API_KEY is not set. Subscription logged but no email sent.");
