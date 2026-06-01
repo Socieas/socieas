@@ -30,10 +30,14 @@ export default function FormPanel() {
 
     script.onload = () => {
         if ((window as any).turnstile && turnstileRef.current) {
-            (window as any).turnstile.render(turnstileRef.current, {
-                sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA",
-                callback: "onTurnstileSuccess",
-            });
+            try {
+                (window as any).turnstile.render(turnstileRef.current, {
+                    sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA",
+                    callback: "onTurnstileSuccess",
+                });
+            } catch (err) {
+                console.error("Turnstile render error:", err);
+            }
         }
     };
 
@@ -68,10 +72,12 @@ export default function FormPanel() {
       name: formData.get("name"),
       email: formData.get("email"),
       company: formData.get("company"),
-      service: formData.get("goal"),
+      service: formData.get("goal"), // API expects 'service'
       message: formData.get("message"),
       turnstileToken,
     };
+
+    console.log("Sending payload:", payload);
 
     try {
       const response = await fetch("/api/contact", {
@@ -81,6 +87,7 @@ export default function FormPanel() {
       });
 
       const data = await response.json();
+      console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Request failed");
