@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
-import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 // —— DATA ————————————————————————————————————————————————————————————————————
@@ -128,23 +127,23 @@ function FormPanel() {
   const turnstileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  // Load Cloudflare Turnstile script
-  const script = document.createElement("script");
+    // Load Cloudflare Turnstile script
+    const script = document.createElement("script");
 
-  (window as any).onTurnstileSuccess = setTurnstileToken;
+    (window as any).onTurnstileSuccess = setTurnstileToken;
 
-  script.src =
-    "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
 
-  script.async = true;
-  script.defer = true;
+    document.head.appendChild(script);
 
-  document.head.appendChild(script);
-
-  return () => {
-    document.head.removeChild(script);
-  };
-}, []);
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -169,7 +168,7 @@ function FormPanel() {
       name: formData.get("name"),
       email: formData.get("email"),
       company: formData.get("company"),
-      goal: formData.get("goal"),
+      service: formData.get("goal"), // Maps 'goal' select to 'service' API field
       message: formData.get("message"),
       turnstileToken,
     };
@@ -180,34 +179,18 @@ function FormPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      try {
-  const response = await fetch("/api/contact", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
 
-  const data = await response.json();
+      const data = await response.json();
 
-  console.log("API Response:", data);
+      if (!response.ok) {
+        throw new Error(data.error || "Request failed");
+      }
 
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed");
-  }
-
-  formEl.reset();
-  router.push("/insights");
-
-} catch (err: any) {
-  console.error("Form submit error:", err);
-  setError(err.message || "Something went wrong.");
-} finally {
-  setLoading(false);
-}
       formEl.reset();
       router.push("/insights");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error("Form submit error:", err);
+      setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -215,7 +198,10 @@ function FormPanel() {
 
   return (
     <FadeUp>
-      <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-8 shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-3xl bg-white p-8 shadow-sm"
+      >
         {/* Honeypot */}
         <input
           type="text"
@@ -226,9 +212,12 @@ function FormPanel() {
           style={{ display: "none" }}
         />
 
-        <h2 className="text-2xl font-bold text-foreground">Start a Conversation</h2>
+        <h2 className="text-2xl font-bold text-foreground">
+          Start a Conversation
+        </h2>
         <p className="mt-1 text-sm text-muted/70">
-          Fill in the details below and we&apos;ll get back to you within 1&ndash;2 business days.
+          Fill in the details below and we&apos;ll get back to you within 1&ndash;2
+          business days.
         </p>
 
         {/* Two-column on md+, single column on mobile */}
@@ -294,7 +283,7 @@ function FormPanel() {
             rows={5}
             name="message"
             required
-            placeholder="Tell us what you're working on..."
+            placeholder="Tell us what you&apos;re working on..."
             className={`${inputCls} resize-none`}
           />
         </div>
@@ -309,9 +298,7 @@ function FormPanel() {
           />
         </div>
 
-        {error && (
-          <p className="mt-4 text-sm text-red-500">{error}</p>
-        )}
+        {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
         <button
           type="submit"

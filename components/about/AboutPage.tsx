@@ -753,7 +753,7 @@ export default function AboutPage() {
 
             <p className="mx-auto mt-10 max-w-3xl text-2xl leading-relaxed text-[#666]">
 
-              Let’s build something
+              Let&apos;s build something
               people actually remember.
 
             </p>

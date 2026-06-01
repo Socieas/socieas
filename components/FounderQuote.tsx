@@ -15,13 +15,13 @@ export default function FounderQuote() {
 
         <h2 className="mt-10 text-4xl font-bold leading-tight md:text-6xl">
 
-          “Your brand is not built
+          &ldquo;Your brand is not built
           when you post once.
 
           <br /><br />
 
-          It’s built when people
-          remember you repeatedly.”
+          It&apos;s built when people
+          remember you repeatedly.&rdquo;
 
         </h2>
 

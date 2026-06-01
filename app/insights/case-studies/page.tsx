@@ -1,6 +1,6 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, SanityPost } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
@@ -27,10 +27,10 @@ export default async function CaseStudiesPage({
 }) {
   const params = searchParams;
 
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch<SanityPost>(allPostsQuery);
 
   const caseStudies = posts.filter(
-    (post: any) => post.type === "case-study"
+    (post) => post.type === "case-study"
   );
 
   const search = params.search?.toLowerCase() || "";
@@ -40,13 +40,13 @@ export default async function CaseStudiesPage({
   const categories = [
     "All",
     ...caseStudies
-      .map((post: any) => post.category?.title)
+      .map((post) => post.category?.title)
       .filter(
         (category: string | undefined): category is string => typeof category === "string"
       ),
   ] as string[];
 
-  const filteredCaseStudies = caseStudies.filter((post: any) => {
+  const filteredCaseStudies = caseStudies.filter((post) => {
     const matchesSearch =
       post.title?.toLowerCase().includes(search) ||
       post.excerpt?.toLowerCase().includes(search);

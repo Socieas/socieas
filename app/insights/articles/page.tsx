@@ -1,6 +1,6 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, SanityPost } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
@@ -32,13 +32,13 @@ export default async function ArticlesPage({
     await searchParams;
 
   const posts =
-    await client.fetch(
+    await safeFetch<SanityPost>(
       allPostsQuery
     );
 
   const articles =
     posts.filter(
-      (post: any) =>
+      (post) =>
         post.type ===
         "article"
     );
@@ -56,7 +56,7 @@ export default async function ArticlesPage({
       "All",
       articles
         .map(
-          (post: any) =>
+          (post) =>
             post.category
               ?.title
         )
@@ -71,7 +71,7 @@ export default async function ArticlesPage({
 
   const filteredArticles =
     articles.filter(
-      (post: any) => {
+      (post) => {
         const matchesSearch =
           post.title
             ?.toLowerCase()

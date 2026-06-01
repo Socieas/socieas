@@ -37,7 +37,7 @@ export default function FounderProblem() {
                 <br />
                 <br />
 
-                It’s about becoming impossible to ignore.
+                It&apos;s about becoming impossible to ignore.
               </p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function FounderProblem() {
 
               {/* Quote */}
               <div className="text-6xl font-black leading-none text-violet-500/30 md:text-7xl">
-                ”
+                &rdquo;
               </div>
 
               {/* Main Statement */}

@@ -1,9 +1,10 @@
+import { notFound } from "next/navigation";
 import {
   singlePostQuery,
   allPostsQuery,
 } from "@/sanity/lib/queries";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, safeFetchSingle, SanityPost } from "@/sanity/lib/client";
 
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
 }) {
   const { slug } = params;
 
-  const post = await client.fetch(
+  const post = await safeFetchSingle<SanityPost>(
     singlePostQuery,
     {
       slug,
@@ -71,38 +72,30 @@ export default async function ArticlePage({
 }) {
   const { slug } = params;
 
-  const post = await client.fetch(
+  const post = await safeFetchSingle<SanityPost>(
     singlePostQuery,
     {
       slug,
     }
   );
 
-  const allPosts = await client.fetch(
+  if (!post) {
+    notFound();
+  }
+
+  const allPosts = await safeFetch<SanityPost>(
     allPostsQuery
   );
 
   const relatedPosts = allPosts
     .filter(
-      (item: any) =>
+      (item) =>
         item.slug?.current !==
           slug &&
         item.type ===
           "article"
     )
     .slice(0, 3);
-
-  if (!post) {
-    return (
-      <div
-        style={{
-          padding: "120px 24px",
-        }}
-      >
-        Not found
-      </div>
-    );
-  }
 
   return (
     <InsightPageTemplate
