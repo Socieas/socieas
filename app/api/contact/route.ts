@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -13,29 +14,26 @@ async function sendEmail({ to, subject, html }: { to: string; subject: string; h
 
   let sent = false;
 
-  // 1. Try Resend
   if (resend) {
     try {
-      const { error } = await resend.emails.send({
-        from: process.env.EMAIL_FROM || "Socieas <onboarding@resend.dev>",
+      console.log(`Attempting Resend to ${to}...`);
+      const res: any = await resend.emails.send({
+        from: process.env.EMAIL_FROM || "Socieas <hello@socieas.com>",
         to,
         subject,
         html,
       });
-      if (!error) {
-        console.log(`Resend success to ${to}`);
+      if (res.data) {
         sent = true;
-      } else {
-        console.error(`Resend error to ${to}:`, error);
       }
     } catch (err: any) {
-      console.error(`Resend exception to ${to}:`, err?.message || err);
+      console.error("Resend error:", err?.message);
     }
   }
 
-  // 2. Fallback to SMTP
   if (!sent && process.env.SMTP_HOST) {
     try {
+      console.log(`Attempting SMTP to ${to}...`);
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
@@ -51,10 +49,9 @@ async function sendEmail({ to, subject, html }: { to: string; subject: string; h
         subject,
         html,
       });
-      console.log(`SMTP success to ${to}`);
       sent = true;
     } catch (err: any) {
-      console.error(`SMTP error to ${to}:`, err?.message || err);
+      console.error("SMTP error:", err?.message);
     }
   }
 
@@ -64,10 +61,27 @@ async function sendEmail({ to, subject, html }: { to: string; subject: string; h
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, company, service, message } = body;
+    const { name, email, company, service, message, turnstileToken } = body;
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
+    }
+
+    // Verify Turnstile
+    if (turnstileToken && process.env.TURNSTILE_SECRET_KEY) {
+        try {
+            const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyData.success && process.env.NODE_ENV === 'production') {
+                return NextResponse.json({ error: "Security check failed" }, { status: 400 });
+            }
+        } catch (err) {
+            console.error("Turnstile verification error:", err);
+        }
     }
 
     const footerHtml = `
@@ -93,7 +107,14 @@ export async function POST(req: Request) {
           ${commonHeader}
           <div style="padding:32px;">
             <h2 style="color:#111;">New contact received</h2>
-            <p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Company:</strong> ${company || 'Not provided'}</p><p><strong>Service:</strong> ${service || 'Not selected'}</p><div style='margin-top:24px; padding:20px; background:#f9fafb; border-radius:12px;'><strong>Message:</strong><p style='margin-top:10px;'>${message}</p></div>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Company:</strong> ${company || 'Not provided'}</p>
+            <p><strong>Service:</strong> ${service || 'Not selected'}</p>
+            <div style='margin-top:24px; padding:20px; background:#f9fafb; border-radius:12px;'>
+              <strong>Message:</strong>
+              <p style='margin-top:10px;'>${message}</p>
+            </div>
           </div>
           ${footerHtml}
         </div>
@@ -118,26 +139,21 @@ export async function POST(req: Request) {
         </div>
       </div>`;
 
-    // Try to send emails
     const adminSent = await sendEmail({
-      to: process.env.CONTACT_RECEIVER || "",
+      to: process.env.CONTACT_RECEIVER || "hello@socieas.com",
       subject: `🚀 New Lead Received | ${name}`,
       html: adminHtml,
     });
 
     const userSent = await sendEmail({
       to: email,
-      subject: 'We\'ve received your inquiry | Socieas',
+      subject: "We've received your inquiry | Socieas",
       html: userHtml,
     });
 
-    if (!adminSent && !userSent && process.env.NODE_ENV !== 'development') {
-        return NextResponse.json({ error: "Failed to send emails" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, adminSent, userSent });
   } catch (error: any) {
-    console.error("CONTACT API ERROR:", error?.message || error);
+    console.error("CONTACT API ERROR:", error?.message);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -13,29 +14,26 @@ async function sendEmail({ to, subject, html }: { to: string; subject: string; h
 
   let sent = false;
 
-  // 1. Try Resend
   if (resend) {
     try {
-      const { error } = await resend.emails.send({
-        from: process.env.EMAIL_FROM || "Socieas <onboarding@resend.dev>",
+      console.log(`Attempting Resend to ${to}...`);
+      const res: any = await resend.emails.send({
+        from: process.env.EMAIL_FROM || "Socieas <hello@socieas.com>",
         to,
         subject,
         html,
       });
-      if (!error) {
-        console.log(`Resend success to ${to}`);
+      if (res.data) {
         sent = true;
-      } else {
-        console.error(`Resend error to ${to}:`, error);
       }
     } catch (err: any) {
-      console.error(`Resend exception to ${to}:`, err?.message || err);
+      console.error("Resend error:", err?.message);
     }
   }
 
-  // 2. Fallback to SMTP
   if (!sent && process.env.SMTP_HOST) {
     try {
+      console.log(`Attempting SMTP to ${to}...`);
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
@@ -51,10 +49,9 @@ async function sendEmail({ to, subject, html }: { to: string; subject: string; h
         subject,
         html,
       });
-      console.log(`SMTP success to ${to}`);
       sent = true;
     } catch (err: any) {
-      console.error(`SMTP error to ${to}:`, err?.message || err);
+      console.error("SMTP error:", err?.message);
     }
   }
 
@@ -67,7 +64,7 @@ export async function POST(req: Request) {
     const { email } = body;
 
     if (!email) {
-      return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     const footerHtml = `
@@ -92,7 +89,7 @@ export async function POST(req: Request) {
         <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
           ${commonHeader}
           <div style="padding:32px;">
-            <h2 style="color:#111;">New newsletter received</h2>
+            <h2 style="color:#111;">New newsletter subscriber</h2>
             <p><strong>Email:</strong> ${email}</p>
           </div>
           ${footerHtml}
@@ -108,7 +105,8 @@ export async function POST(req: Request) {
           </div>
           <div style="padding:32px;">
             <h2 style="color:#111;">Welcome to the community!</h2>
-            <p>Thank you for subscribing to Socieas Founder Insights.</p><p>You'll receive weekly strategies on founder visibility, positioning, AI systems, and scalable growth.</p>
+            <p>Thank you for subscribing to Socieas Founder Insights.</p>
+            <p>You'll receive weekly strategies on founder visibility, positioning, AI systems, and scalable growth.</p>
             <div style="margin-top:30px;">
               <a href="https://socieas.com" style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px; font-weight: bold;">Visit Socieas</a>
             </div>
@@ -118,26 +116,21 @@ export async function POST(req: Request) {
         </div>
       </div>`;
 
-    // Try to send emails
     const adminSent = await sendEmail({
-      to: process.env.CONTACT_RECEIVER || "",
+      to: process.env.CONTACT_RECEIVER || "hello@socieas.com",
       subject: `🔔 New Newsletter Subscriber | ${email}`,
       html: adminHtml,
     });
 
     const userSent = await sendEmail({
       to: email,
-      subject: 'Welcome to Socieas Insights',
+      subject: "Welcome to Socieas Insights",
       html: userHtml,
     });
 
-    if (!adminSent && !userSent && process.env.NODE_ENV !== 'development') {
-        return NextResponse.json({ error: "Failed to send emails" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, adminSent, userSent });
   } catch (error: any) {
-    console.error("NEWSLETTER API ERROR:", error?.message || error);
+    console.error("NEWSLETTER API ERROR:", error?.message);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
