@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 
 export default function RelatedArticles({
@@ -20,21 +20,15 @@ export default function RelatedArticles({
         <div
           style={{
             display: "flex",
-
-            justifyContent:
-              "space-between",
-
+            justifyContent: "space-between",
             alignItems: "center",
-
             marginBottom: "34px",
           }}
         >
           <h2
             style={{
               fontSize: "2rem",
-
               fontWeight: 700,
-
               color: "#111111",
             }}
           >
@@ -45,10 +39,7 @@ export default function RelatedArticles({
         <div
           style={{
             display: "grid",
-
-            gridTemplateColumns:
-              "repeat(auto-fit,minmax(280px,1fr))",
-
+            gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
             gap: "20px",
           }}
         >
@@ -58,41 +49,31 @@ export default function RelatedArticles({
               href={`/insights/blogs/${item.slug.current}`}
               style={{
                 textDecoration: "none",
-
                 color: "inherit",
               }}
             >
               <article
                 style={{
                   background: "white",
-
                   borderRadius: "20px",
-
                   overflow: "hidden",
-
-                  border:
-                    "1px solid #E5E7EB",
-
-                  boxShadow:
-                    "0 2px 8px rgba(0,0,0,0.03)",
-
+                  border: "1px solid #E5E7EB",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
                   height: "100%",
                 }}
               >
                 {item.coverImage && (
-                  <img
-                    src={urlFor(
-                      item.coverImage
-                    ).url()}
-                    alt={item.title}
-                    style={{
-                      width: "100%",
-
-                      height: "190px",
-
-                      objectFit: "cover",
-                    }}
-                  />
+                  <div style={{ position: 'relative', width: '100%', height: '190px' }}>
+                    <Image
+                      src={urlFor(item.coverImage).url()}
+                      alt={item.title}
+                      fill
+                      style={{
+                        objectFit: "cover",
+                      }}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                 )}
 
                 <div
@@ -103,13 +84,9 @@ export default function RelatedArticles({
                   <h3
                     style={{
                       fontSize: "1.15rem",
-
                       lineHeight: 1.4,
-
                       fontWeight: 700,
-
                       color: "#111111",
-
                       marginBottom: "12px",
                     }}
                   >
@@ -119,9 +96,7 @@ export default function RelatedArticles({
                   <p
                     style={{
                       color: "#6B7280",
-
                       lineHeight: 1.7,
-
                       fontSize: "14px",
                     }}
                   >

@@ -174,7 +174,7 @@ export default function FormPanel() {
             rows={5}
             name="message"
             required
-            placeholder="Tell us what you&apos;re working on..."
+            placeholder="Tell us what you're working on..."
             className={`${inputCls} resize-none`}
           />
         </div>
