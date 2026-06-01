@@ -1,0 +1,98 @@
+
+> socieas@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 1326ms
+
+○ Compiling /contact ...
+ GET /contact 200 in 6.2s (next.js: 5.6s, application-code: 609ms)
+ GET /contact 200 in 127ms (next.js: 6ms, application-code: 121ms)
+ GET /contact 200 in 137ms (next.js: 5ms, application-code: 132ms)
+⨯ ./app/contact/page.tsx:6:19
+`ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+  [90m 4 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m"@/components/Footer"[0m;
+  [90m 5 |[0m
+[31m[1m>[0m [90m 6 |[0m [36mconst[0m [33mFormPanel[0m = dynamic(() => [36mimport[0m([32m"@/components/contact/FormPanel"[0m), {
+  [90m   |[0m                   [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   ssr: [36mfalse[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m });
+  [90m   |[0m [31m[1m^^[0m
+  [90m 9 |[0m
+  [90m10 |[0m [90m// —— DATA ————————————————————————————————————————————————————————————————————[0m
+  [90m11 |[0m [36mconst[0m growthNeeds = [
+
+Ecmascript file had an error
+
+
+ GET /contact 500 in 1341ms (next.js: 1156ms, application-code: 185ms)
+[browser] Uncaught Error: ./app/contact/page.tsx:6:19
+`ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+   4 | import Footer from "@/components/Footer";
+   5 |
+>  6 | const FormPanel = dynamic(() => import("@/components/contact/FormPanel"), {
+     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  7 |   ssr: false,
+     | ^^^^^^^^^^^^^
+>  8 | });
+     | ^^
+   9 |
+  10 | // —— DATA ————————————————————————————————————————————————————————————————————
+  11 | const growthNeeds = [
+
+Ecmascript file had an error
+
+
+    at <unknown> (Error: ./app/contact/page.tsx:6:19)
+    at <unknown> (Error: (./app/contact/page.tsx:6:19)
+[browser] ./app/contact/page.tsx:6:19
+`ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+   4 | import Footer from "@/components/Footer";
+   5 |
+>  6 | const FormPanel = dynamic(() => import("@/components/contact/FormPanel"), {
+     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  7 |   ssr: false,
+     | ^^^^^^^^^^^^^
+>  8 | });
+     | ^^
+   9 |
+  10 | // —— DATA ————————————————————————————————————————————————————————————————————
+  11 | const growthNeeds = [
+
+Ecmascript file had an error
+[browser] ./app/contact/page.tsx:6:19
+`ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+   4 | import Footer from "@/components/Footer";
+   5 |
+>  6 | const FormPanel = dynamic(() => import("@/components/contact/FormPanel"), {
+     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  7 |   ssr: false,
+     | ^^^^^^^^^^^^^
+>  8 | });
+     | ^^
+   9 |
+  10 | // —— DATA ————————————————————————————————————————————————————————————————————
+  11 | const growthNeeds = [
+
+Ecmascript file had an error
+[browser] ./app/contact/page.tsx:6:19
+`ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
+   4 | import Footer from "@/components/Footer";
+   5 |
+>  6 | const FormPanel = dynamic(() => import("@/components/contact/FormPanel"), {
+     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  7 |   ssr: false,
+     | ^^^^^^^^^^^^^
+>  8 | });
+     | ^^
+   9 |
+  10 | // —— DATA ————————————————————————————————————————————————————————————————————
+  11 | const growthNeeds = [
+
+Ecmascript file had an error
+✓ Compiled in 262ms
+ GET /contact 200 in 420ms (next.js: 127ms, application-code: 293ms)
+[browser] [Cloudflare Turnstile] Turnstile already has been loaded. Was Turnstile imported multiple times? (https://challenges.cloudflare.com/turnstile/v0/api.js:1:10974)
