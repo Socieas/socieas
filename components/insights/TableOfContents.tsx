@@ -1,8 +1,13 @@
 "use client";
 
+interface Heading {
+  id: string;
+  text: string;
+}
+
 export default function TableOfContents({
   headings,
-}: any) {
+}: { headings: Heading[] }) {
 
   if (!headings?.length)
     return null;
@@ -60,8 +65,8 @@ export default function TableOfContents({
       >
         {headings.map(
           (
-            heading: any,
-            index: number
+            heading,
+            index
           ) => (
             <a
               key={index}

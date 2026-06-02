@@ -1,9 +1,10 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
+import { SanityPost } from "@/lib/types";
 
 export const metadata = generateSEOMetadata({
   title: "Case Studies",
@@ -23,30 +24,32 @@ type CaseStudySearchParams = {
 export default async function CaseStudiesPage({
   searchParams,
 }: {
-  searchParams: CaseStudySearchParams;
+  searchParams: Promise<CaseStudySearchParams>;
 }) {
-  const params = searchParams;
+  const params = await searchParams;
 
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch<SanityPost>(allPostsQuery);
 
   const caseStudies = posts.filter(
-    (post: any) => post.type === "case-study"
+    (post) => post.type === "case-study"
   );
 
   const search = params.search?.toLowerCase() || "";
 
   const activeCategory = params.category || "All";
 
-  const categories = [
+  const categories: string[] = [
     "All",
-    ...caseStudies
-      .map((post: any) => post.category?.title)
-      .filter(
-        (category: string | undefined): category is string => typeof category === "string"
-      ),
-  ] as string[];
+    ...Array.from(new Set(
+      caseStudies
+        .map((post) => post.category?.title)
+        .filter(
+          (category): category is string => typeof category === "string"
+        )
+    )),
+  ];
 
-  const filteredCaseStudies = caseStudies.filter((post: any) => {
+  const filteredCaseStudies = caseStudies.filter((post) => {
     const matchesSearch =
       post.title?.toLowerCase().includes(search) ||
       post.excerpt?.toLowerCase().includes(search);
@@ -76,7 +79,7 @@ export default async function CaseStudiesPage({
       label="SOCIEAS CASE STUDIES"
       description="Execution breakdowns, measurable outcomes, implementation frameworks, and strategic transformation stories from Socieas."
       posts={paginatedCaseStudies}
-      categories={categories as string[]}
+      categories={categories}
       activeCategory={activeCategory}
       search={search}
       currentPage={currentPage}

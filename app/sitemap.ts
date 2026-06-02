@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
+import { SanityPost } from "@/lib/types";
 
 export default async function sitemap():
 Promise<MetadataRoute.Sitemap> {
@@ -10,13 +11,13 @@ Promise<MetadataRoute.Sitemap> {
     "https://socieas.com";
 
   const posts =
-    await client.fetch(
+    await safeFetch<SanityPost>(
       allPostsQuery
     );
 
   const insightRoutes =
     posts.map(
-      (post: any) => {
+      (post) => {
 
         const basePath =
           post.type ===
@@ -33,7 +34,7 @@ Promise<MetadataRoute.Sitemap> {
           url: `${baseUrl}${basePath}/${post.slug.current}`,
 
           lastModified:
-            post._updatedAt,
+            new Date(post.publishedAt),
 
           changeFrequency:
             "weekly" as const,

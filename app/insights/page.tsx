@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 import { generateSEOMetadata } from "@/lib/seo";
+import { SanityPost } from "@/lib/types";
 
 export const metadata = generateSEOMetadata({
   title: "Insights",
@@ -15,12 +16,12 @@ export const metadata = generateSEOMetadata({
 export const revalidate = 60;
 
 export default async function InsightsHubPage() {
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch<SanityPost>(allPostsQuery);
 
-  const blogs = posts.filter((p: any) => p.type === "blog").slice(0, 3);
-  const articles = posts.filter((p: any) => p.type === "article").slice(0, 3);
+  const blogs = posts.filter((p) => p.type === "blog").slice(0, 3);
+  const articles = posts.filter((p) => p.type === "article").slice(0, 3);
   const caseStudies = posts
-    .filter((p: any) => p.type === "case-study")
+    .filter((p) => p.type === "case-study")
     .slice(0, 3);
 
   const sections = [
@@ -90,7 +91,7 @@ export default async function InsightsHubPage() {
                 {/* POSTS GRID */}
                 {section.posts.length > 0 ? (
                   <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    {section.posts.map((post: any) => (
+                    {section.posts.map((post) => (
                       <Link
                         key={post.slug?.current}
                         href={`/insights/${section.label.toLowerCase().replace(" ", "-")}/${post.slug?.current}`}

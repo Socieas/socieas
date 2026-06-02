@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { SanityPost } from "@/lib/types";
 
 export default function Breadcrumbs({
   post,
-}: any) {
+}: { post: SanityPost }) {
 
   const basePath =
     post.type === "article"

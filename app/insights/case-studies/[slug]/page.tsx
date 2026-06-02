@@ -3,22 +3,24 @@ import {
   allPostsQuery,
 } from "@/sanity/lib/queries";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, safeFetchSingle } from "@/sanity/lib/client";
 
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
+import { SanityPost } from "@/lib/types";
+import { notFound } from "next/navigation";
 
 export const revalidate = 60;
 
 export async function generateMetadata({
   params,
 }: {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
-  const post = await client.fetch(
+  const post = await safeFetchSingle<SanityPost>(
     singlePostQuery,
     {
       slug,
@@ -65,26 +67,26 @@ export async function generateMetadata({
 export default async function CaseStudyPage({
   params,
 }: {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
-  const post = await client.fetch(
+  const post = await safeFetchSingle<SanityPost>(
     singlePostQuery,
     {
       slug,
     }
   );
 
-  const allPosts = await client.fetch(
+  const allPosts = await safeFetch<SanityPost>(
     allPostsQuery
   );
 
   const relatedPosts = allPosts
     .filter(
-      (item: any) =>
+      (item) =>
         item.slug?.current !==
           slug &&
         item.type ===
@@ -93,15 +95,7 @@ export default async function CaseStudyPage({
     .slice(0, 3);
 
   if (!post) {
-    return (
-      <div
-        style={{
-          padding: "120px 24px",
-        }}
-      >
-        Not found
-      </div>
-    );
+    notFound();
   }
 
   return (

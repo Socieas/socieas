@@ -7,12 +7,13 @@ import CTASection from "@/components/insights/CTASection";
 import BlogCard from "@/components/insights/BlogCard";
 import FeaturedBlog from "@/components/insights/FeaturedBlog";
 import SearchBar from "@/components/insights/SearchBar";
+import { SanityPost } from "@/lib/types";
 
 type InsightsListingTemplateProps = {
   title: string;
   label: string;
   description: string;
-  posts: any[];
+  posts: SanityPost[];
   currentPage: number;
   totalPages: number;
   basePath: string;
@@ -210,7 +211,7 @@ export default function InsightsListingTemplate({
                   gap: "20px",
                 }}
               >
-                {remainingPosts.map((post: any) => (
+                {remainingPosts.map((post) => (
                   <BlogCard key={post._id} post={post} />
                 ))}
               </div>

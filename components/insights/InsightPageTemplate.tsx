@@ -7,11 +7,12 @@ import ArticleHero from "@/components/insights/ArticleHero";
 import TableOfContents from "@/components/insights/TableOfContents";
 
 import DOMPurify from "isomorphic-dompurify";
+import { SanityPost } from "@/lib/types";
 
 export default function InsightPageTemplate({
   post,
   relatedPosts,
-}: any) {
+}: { post: SanityPost, relatedPosts: SanityPost[] }) {
 
   let cleanHTML =
     DOMPurify.sanitize(
@@ -23,7 +24,7 @@ export default function InsightPageTemplate({
   const headingRegex =
     /<h2([^>]*)>(.*?)<\/h2>/g;
 
-  const headings: any[] = [];
+  const headings: { id: string; text: string }[] = [];
 
   cleanHTML = cleanHTML.replace(
     headingRegex,

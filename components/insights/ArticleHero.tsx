@@ -2,9 +2,10 @@ import Image from "next/image";
 import Breadcrumbs from "./Breadcrumbs";
 import { urlFor } from "@/sanity/lib/image";
 import calculateReadingTime from "@/lib/calculateReadingTime";
+import { SanityPost } from "@/lib/types";
 export default function ArticleHero({
   post,
-}: any) {
+}: { post: SanityPost }) {
   return (
     <section
       style={{

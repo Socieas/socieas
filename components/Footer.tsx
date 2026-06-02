@@ -71,8 +71,8 @@ export default function Footer() {
 
       setEmail("");
 
-    } catch (err) {
-
+    } catch (err: unknown) {
+      console.error("Newsletter subscription error:", err);
       setError(
         "Something went wrong."
       );

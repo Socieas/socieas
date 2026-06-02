@@ -1,10 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { urlFor } from "@/sanity/lib/image";
+import { SanityPost } from "@/lib/types";
 
 export default function RelatedArticles({
   posts,
-}: any) {
+}: { posts: SanityPost[] }) {
   return (
     <section
       style={{
@@ -52,10 +54,10 @@ export default function RelatedArticles({
             gap: "20px",
           }}
         >
-          {posts.map((item: any) => (
+          {posts.map((item) => (
             <Link
               key={item._id}
-              href={`/insights/blogs/${item.slug.current}`}
+              href={`/insights/${item.type === 'article' ? 'articles' : item.type === 'case-study' ? 'case-studies' : 'blogs'}/${item.slug.current}`}
               style={{
                 textDecoration: "none",
 
@@ -80,19 +82,19 @@ export default function RelatedArticles({
                 }}
               >
                 {item.coverImage && (
-                  <img
-                    src={urlFor(
-                      item.coverImage
-                    ).url()}
-                    alt={item.title}
-                    style={{
-                      width: "100%",
-
-                      height: "190px",
-
-                      objectFit: "cover",
-                    }}
-                  />
+                  <div style={{ position: 'relative', width: '100%', height: '190px' }}>
+                    <Image
+                      src={urlFor(
+                        item.coverImage
+                      ).url()}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      style={{
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
                 )}
 
                 <div

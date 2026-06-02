@@ -2,10 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { urlFor } from "@/sanity/lib/image";
+import { SanityPost } from "@/lib/types";
 
 export default function FeaturedBlog({
   post,
-}: any) {
+}: { post: SanityPost | null }) {
 
   if (!post) return null;
 

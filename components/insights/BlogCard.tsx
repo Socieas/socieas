@@ -2,10 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { urlFor } from "@/sanity/lib/image";
+import { SanityPost } from "@/lib/types";
 
 export default function BlogCard({
   post,
-}: any) {
+}: { post: SanityPost }) {
 
   const basePath =
     post.type === "article"
