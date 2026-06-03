@@ -1,18 +1,21 @@
 export default function calculateReadingTime(content: any): string {
-  if (!content) return "1 min read";
+  if (!content || (Array.isArray(content) && content.length === 0)) return "1 min read";
 
   let text = "";
 
   if (typeof content === "string") {
     text = content;
   } else if (Array.isArray(content)) {
-    // Basic Portable Text to string conversion
+    // Robust Portable Text to string conversion
     text = content
       .map((block: any) => {
         if (block._type !== "block" || !block.children) {
           return "";
         }
-        return block.children.map((child: any) => child.text).join("");
+        return block.children
+          .filter((child: any) => child.text)
+          .map((child: any) => child.text)
+          .join("");
       })
       .join(" ");
   }
@@ -20,7 +23,10 @@ export default function calculateReadingTime(content: any): string {
   const words = text
     .replace(/<[^>]*>/g, "")
     .trim()
-    .split(/\s+/).length;
+    .split(/\s+/)
+    .filter(word => word.length > 0).length;
+
+  if (words === 0) return "1 min read";
 
   const minutes = Math.ceil(words / 200);
 

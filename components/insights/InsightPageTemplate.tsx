@@ -5,56 +5,28 @@ import RelatedArticles from "@/components/insights/RelatedArticles";
 import CTASection from "@/components/insights/CTASection";
 import ArticleHero from "@/components/insights/ArticleHero";
 import TableOfContents from "@/components/insights/TableOfContents";
-
-import DOMPurify from "isomorphic-dompurify";
+import PortableText from "@/components/PortableText";
 
 export default function InsightPageTemplate({
   post,
   relatedPosts,
 }: any) {
 
-  let cleanHTML =
-    DOMPurify.sanitize(
-      post.content || ""
-    );
+  /* EXTRACT HEADINGS FOR TOC */
+  const headings = (post.content || [])
+    .filter((block: any) => block._type === "block" && block.style === "h2")
+    .map((block: any) => {
+      const text = block.children
+        .map((child: any) => child.text)
+        .join("");
 
-  /* EXTRACT HEADINGS */
+      const id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
 
-  const headingRegex =
-    /<h2([^>]*)>(.*?)<\/h2>/g;
-
-  const headings: any[] = [];
-
-  cleanHTML = cleanHTML.replace(
-    headingRegex,
-    (
-      match,
-      attributes,
-      text
-    ) => {
-
-      const cleanText =
-        text.replace(
-          /<[^>]+>/g,
-          ""
-        );
-
-      const id =
-        cleanText
-          .toLowerCase()
-          .replace(
-            /[^a-z0-9]+/g,
-            "-"
-          );
-
-      headings.push({
-        id,
-        text: cleanText,
-      });
-
-      return `<h2 ${attributes} id="${id}">${text}</h2>`;
-    }
-  );
+      return { id, text };
+    });
 
   /* SEO SCHEMA */
 
@@ -122,13 +94,7 @@ export default function InsightPageTemplate({
       />
 
       <main
-        style={{
-          background:
-            "#F7F7F5",
-
-          minHeight:
-            "100vh",
-        }}
+        className="min-h-screen bg-[#F7F7F5]"
       >
         {/* HERO */}
 
@@ -139,61 +105,17 @@ export default function InsightPageTemplate({
         {/* CONTENT */}
 
         <section
-          style={{
-            padding:
-              "0 24px 90px",
-          }}
+          className="px-6 pb-24"
         >
           <div
-            style={{
-              maxWidth:
-                "1180px",
-
-              margin:
-                "0 auto",
-
-              display:
-                "grid",
-
-              gridTemplateColumns:
-                "minmax(0,1fr) 300px",
-
-              gap: "40px",
-
-              alignItems:
-                "start",
-            }}
+            className="mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-[1fr_300px]"
           >
             {/* ARTICLE */}
 
             <article
-              style={{
-                background:
-                  "white",
-
-                borderRadius:
-                  "28px",
-
-                padding:
-                  "clamp(24px,5vw,60px)",
-
-                border:
-                  "1px solid #E5E7EB",
-
-                boxShadow:
-                  "0 4px 20px rgba(0,0,0,0.03)",
-
-                overflow:
-                  "hidden",
-              }}
+              className="overflow-hidden rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm sm:p-12 lg:p-16"
             >
-              <div
-                className="socieas-article-content"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    cleanHTML,
-                }}
-              />
+              <PortableText value={post.content} />
             </article>
 
             {/* TOC */}
