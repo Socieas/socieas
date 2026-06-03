@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 import { generateSEOMetadata } from "@/lib/seo";
+import { SanityPost } from "@/lib/types";
 
 export const metadata = generateSEOMetadata({
   title: "Insights",
@@ -15,7 +16,7 @@ export const metadata = generateSEOMetadata({
 export const revalidate = 60;
 
 export default async function InsightsHubPage() {
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch<SanityPost>(allPostsQuery);
 
   const blogs = posts.filter((p: any) => p.type === "blog").slice(0, 3);
   const articles = posts.filter((p: any) => p.type === "article").slice(0, 3);
@@ -67,7 +68,7 @@ export default async function InsightsHubPage() {
         {/* SECTIONS */}
         <section className="py-20 px-6">
           <div className="mx-auto max-w-7xl space-y-20">
-            {sections.map((section) => (
+            {sections.map((section) => section.posts.length > 0 && (
               <div key={section.label}>
                 {/* SECTION HEADER */}
                 <div className="flex items-end justify-between mb-10">

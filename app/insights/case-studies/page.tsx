@@ -1,18 +1,10 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
-
-export const metadata = generateSEOMetadata({
-  title: "Case Studies",
-  description:
-    "Real execution stories, measurable business outcomes, implementation frameworks, and transformation results delivered by Socieas.",
-  path: "/insights/case-studies",
-});
-
-export const revalidate = 60;
+import { Metadata } from "next";
 
 type CaseStudySearchParams = {
   search?: string;
@@ -20,14 +12,29 @@ type CaseStudySearchParams = {
   page?: string;
 };
 
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<CaseStudySearchParams>;
+}): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: "Case Studies",
+    description:
+      "Real execution stories, measurable business outcomes, implementation frameworks, and transformation results delivered by Socieas.",
+    path: "/insights/case-studies",
+  });
+}
+
+export const revalidate = 60;
+
 export default async function CaseStudiesPage({
   searchParams,
 }: {
-  searchParams: CaseStudySearchParams;
+  searchParams: Promise<CaseStudySearchParams>;
 }) {
-  const params = searchParams;
+  const params = await searchParams;
 
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch(allPostsQuery);
 
   const caseStudies = posts.filter(
     (post: any) => post.type === "case-study"

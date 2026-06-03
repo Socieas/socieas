@@ -1,21 +1,29 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
+import { Metadata } from "next";
 
-export const metadata =
-  generateSEOMetadata({
-    title:
-      "Strategic Articles",
+type ArticlesSearchParams = {
+  search?: string;
+  category?: string;
+  page?: string;
+};
 
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<ArticlesSearchParams>;
+}): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: "Strategic Articles",
     description:
       "Deep strategic analysis, positioning frameworks, scalable systems, operational intelligence, and business growth thinking from Socieas.",
-
-    path:
-      "/insights/articles",
+    path: "/insights/articles",
   });
+}
 
 export const revalidate = 60;
 
@@ -32,7 +40,7 @@ export default async function ArticlesPage({
     await searchParams;
 
   const posts =
-    await client.fetch(
+    await safeFetch(
       allPostsQuery
     );
 

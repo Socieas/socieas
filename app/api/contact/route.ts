@@ -1,6 +1,22 @@
 import { NextResponse } from "next/server";
 
-async function sendEmail(to: string, subject: string, html: string) {
+async function verifyTurnstile(token: string) {
+  const secretKey = process.env.TURNSTILE_SECRET_KEY;
+  if (!secretKey) return true; // Skip if no secret key (dev mode)
+
+  const res = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret: secretKey, response: token }),
+    }
+  );
+  const data = await res.json();
+  return data.success;
+}
+
+async function sendEmail(to: string, subject: string, html: string, replyTo?: string) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -12,6 +28,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       to,
       subject,
       html,
+      reply_to: replyTo,
     }),
   });
   if (!res.ok) {
@@ -24,7 +41,8 @@ async function sendEmail(to: string, subject: string, html: string) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, company, service, message } = body;
+    const { name, email, company, service, message, turnstileToken } = body;
+
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: "Required fields missing" },
@@ -32,9 +50,20 @@ export async function POST(req: Request) {
       );
     }
 
+    // VERIFY TURNSTILE
+    const isHuman = await verifyTurnstile(turnstileToken);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Security verification failed" },
+        { status: 403 }
+      );
+    }
+
+    const adminReceiver = process.env.CONTACT_RECEIVER || process.env.NOTIFY_EMAIL;
+
     // ADMIN NOTIFICATION EMAIL
     await sendEmail(
-      process.env.CONTACT_RECEIVER!,
+      adminReceiver!,
       `New Opportunity | ${name}`,
       `<!DOCTYPE html>
 <html>
@@ -68,16 +97,6 @@ export async function POST(req: Request) {
 <h3 style="margin-top:0;color:#7C3AED;">Message</h3>
 <p style="margin:0;color:#444444;line-height:1.9;font-size:15px;">${message}</p>
 </div>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:30px;">
-<tr>
-<td width="50%" style="padding-right:8px;">
-<a href="mailto:${email}" style="display:block;text-align:center;background:#7C3AED;color:#ffffff;text-decoration:none;padding:16px;border-radius:10px;font-weight:700;">Reply to Lead</a>
-</td>
-<td width="50%" style="padding-left:8px;">
-<a href="https://mail.google.com" style="display:block;text-align:center;background:#C4B5FD;color:#ffffff;text-decoration:none;padding:16px;border-radius:10px;font-weight:700;">Open Inbox</a>
-</td>
-</tr>
-</table>
 </td>
 </tr>
 <tr>
@@ -100,7 +119,8 @@ export async function POST(req: Request) {
 </tr>
 </table>
 </body>
-</html>`
+</html>`,
+      email
     );
 
     // USER CONFIRMATION EMAIL

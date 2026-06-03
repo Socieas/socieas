@@ -3,9 +3,11 @@ import {
   allPostsQuery,
 } from "@/sanity/lib/queries";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, safeFetchSingle } from "@/sanity/lib/client";
 
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
+import { notFound } from "next/navigation";
+import { SanityPost } from "@/lib/types";
 
 export const revalidate = 60;
 
@@ -21,7 +23,7 @@ export async function generateMetadata({
     await params;
 
   const post =
-    await client.fetch(
+    await safeFetchSingle<SanityPost>(
       singlePostQuery,
       {
         slug,
@@ -55,7 +57,7 @@ export async function generateMetadata({
       description:
         post.seoDescription ||
         post.excerpt,
-type: "article",
+      type: "article",
       images: [
         `/og?title=${encodeURIComponent(
           post.title
@@ -81,15 +83,19 @@ export default async function BlogPage({
     await params;
 
   const post =
-    await client.fetch(
+    await safeFetchSingle<SanityPost>(
       singlePostQuery,
       {
         slug,
       }
     );
 
+  if (!post) {
+    notFound();
+  }
+
   const allPosts =
-    await client.fetch(
+    await safeFetch<SanityPost>(
       allPostsQuery
     );
 
@@ -104,20 +110,6 @@ export default async function BlogPage({
             "blog"
       )
       .slice(0, 3);
-
-  if (!post) {
-
-    return (
-      <div
-        style={{
-          padding:
-            "120px 24px",
-        }}
-      >
-        Not found
-      </div>
-    );
-  }
 
   return (
     <InsightPageTemplate
