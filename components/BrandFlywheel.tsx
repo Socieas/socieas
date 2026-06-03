@@ -17,7 +17,7 @@ export default function BrandFlywheel() {
               Growth Flywheel
             </div>
 
-            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111] md:text-6xl">
+            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
               Visibility compounds
               <br />
               faster when systems
@@ -50,11 +50,11 @@ export default function BrandFlywheel() {
 
                 </div>
 
-                <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+                <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                   Strategic content attracts attention.
                 </h3>
 
-                <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+                <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--muted)]">
                   Strong ideas consistently placed in front of the right audience
                   create visibility momentum.
                 </p>
@@ -72,7 +72,7 @@ export default function BrandFlywheel() {
                     Step 02
                   </div>
 
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface)] shadow-sm">
                     <span className="text-3xl">
                       🚀
                     </span>
@@ -80,11 +80,11 @@ export default function BrandFlywheel() {
 
                 </div>
 
-                <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+                <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                   Visibility creates familiarity and trust.
                 </h3>
 
-                <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+                <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--muted)]">
                   Repeated exposure changes how founders are perceived online,
                   making trust easier to establish before conversations even begin.
                 </p>
@@ -99,7 +99,7 @@ export default function BrandFlywheel() {
             <div className="flex flex-col gap-8">
 
               {/* BLOCK 3 */}
-              <div className="hover-card rounded-[36px] border border-slate-200 bg-white p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
+              <div className="hover-card rounded-[36px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
 
                 <div className="flex items-center justify-between">
 
@@ -115,11 +115,11 @@ export default function BrandFlywheel() {
 
                 </div>
 
-                <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+                <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                   Positioning increases perceived authority.
                 </h3>
 
-                <p className="mt-6 text-lg leading-relaxed text-slate-600">
+                <p className="mt-6 text-lg leading-relaxed text-[var(--muted)]">
                   Strong positioning lowers trust friction dramatically.
                 </p>
 
@@ -136,20 +136,20 @@ export default function BrandFlywheel() {
 
                 <div className="mt-10 space-y-5">
 
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                    <span className="font-semibold text-[#111111]">
+                  <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-5 py-4 shadow-sm">
+                    <span className="font-semibold text-[var(--text)]">
                       Content → Visibility
                     </span>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                    <span className="font-semibold text-[#111111]">
+                  <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-5 py-4 shadow-sm">
+                    <span className="font-semibold text-[var(--text)]">
                       Visibility → Trust
                     </span>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                    <span className="font-semibold text-[#111111]">
+                  <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-5 py-4 shadow-sm">
+                    <span className="font-semibold text-[var(--text)]">
                       Trust → Inbound Growth
                     </span>
                   </div>

@@ -5,7 +5,7 @@ import FadeUp from "@/components/FadeUp";
 import { useState, useEffect, useRef } from "react";
 
 const inputCls =
-  "mt-2 block w-full rounded-2xl border border-black/10 bg-[#F9FAFB] px-4 py-3 text-sm text-foreground placeholder:text-muted/50 focus:border-black/30 focus:outline-none focus:ring-0 transition";
+  "mt-2 block w-full rounded-2xl border border-[var(--border)] bg-[var(--soft-surface)] px-4 py-3 text-sm text-foreground placeholder:text-muted/50 focus:border-black/30 focus:outline-none focus:ring-0 transition";
 
 export default function FormPanel() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function FormPanel() {
   useEffect(() => {
     // Load Cloudflare Turnstile script
     const script = document.createElement("script");
-    (window as any).onTurnstileSuccess = setTurnstileToken;
+    (window as any).onTurnstileSuccess = (token: string) => setTurnstileToken(token);
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     script.async = true;
     script.defer = true;
@@ -58,8 +58,6 @@ export default function FormPanel() {
       turnstileToken,
     };
 
-    console.log("Submitting payload:", payload);
-
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -78,9 +76,10 @@ export default function FormPanel() {
 
       formEl.reset();
       router.push("/insights");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Form submit error:", err);
-      setError(err.message || "Something went wrong. Please try again.");
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -88,7 +87,7 @@ export default function FormPanel() {
 
   return (
     <FadeUp>
-      <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-8 shadow-sm">
+      <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--surface)] p-8 shadow-sm">
         {/* Honeypot */}
         <input
           type="text"

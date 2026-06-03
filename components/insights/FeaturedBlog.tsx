@@ -1,204 +1,123 @@
+import { SanityPost } from "@/lib/types";
 import Link from "next/link";
-import Image from "next/image";
 
-import { urlFor } from "@/sanity/lib/image";
-
-export default function FeaturedBlog({
-  post,
-}: any) {
-
-  if (!post) return null;
-
+export default function FeaturedBlog({ post }: { post: SanityPost }) {
   const basePath =
     post.type === "article"
-      ? "/insights/articles"
-      : post.type ===
-          "case-study"
-        ? "/insights/case-studies"
-        : "/insights/blogs";
+      ? "/insights/articles/"
+      : post.type === "case-study"
+        ? "/insights/case-studies/"
+        : "/insights/blogs/";
 
   return (
     <section
       style={{
-        padding: "0 24px 60px",
+        padding: "0 24px 80px",
       }}
     >
       <div
         style={{
-          maxWidth: "1320px",
+          maxWidth: "1180px",
           margin: "0 auto",
         }}
       >
         <Link
-          href={`${basePath}/${post.slug.current}`}
+          href={`${basePath}${post.slug?.current}`}
           style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "40px",
+            background: "white",
+            padding: "40px",
+            borderRadius: "40px",
+            border: "1px solid #E5E7EB",
             textDecoration: "none",
-            color: "inherit",
+            alignItems: "center",
           }}
+          className="hover-card group"
         >
-          <article
+          {/* IMAGE PLACEHOLDER */}
+          <div
             style={{
-              display: "grid",
-
-              gridTemplateColumns:
-                "repeat(auto-fit,minmax(320px,1fr))",
-
-              background: "white",
-
-              borderRadius: "28px",
-
-              overflow: "hidden",
-
-              border: "1px solid #E5E7EB",
-
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.03)",
-
-              cursor: "pointer",
-
-              alignItems: "stretch",
-
-              transition:
-                "0.25s ease",
+              aspectRatio: "16/10",
+              background: "#F5F3FF",
+              borderRadius: "24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "4rem",
             }}
           >
-            {/* IMAGE */}
+            ✦
+          </div>
 
-            {post.coverImage && (
-              <div
-                style={{
-                  position: "relative",
+          <div>
+            <span
+              style={{
+                background: "#7C3AED",
+                color: "white",
+                padding: "8px 14px",
+                borderRadius: "999px",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+              }}
+            >
+              Featured {post.type}
+            </span>
 
-                  width: "100%",
+            <h2
+              style={{
+                fontSize: "clamp(2rem,4vw,3rem)",
+                fontWeight: 700,
+                color: "var(--text)",
+                lineHeight: 1,
+                marginTop: "24px",
+                marginBottom: "20px",
+              }}
+              className="group-hover:text-violet-700 transition"
+            >
+              {post.title}
+            </h2>
 
-                  minHeight: "260px",
-
-                  maxHeight: "460px",
-                }}
-              >
-                <Image
-                  src={urlFor(
-                    post.coverImage
-                  ).url()}
-                  alt={post.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  style={{
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            )}
-
-            {/* CONTENT */}
+            <p
+              style={{
+                fontSize: "1.1rem",
+                color: "#6B7280",
+                lineHeight: 1.7,
+                marginBottom: "30px",
+              }}
+            >
+              {post.excerpt}
+            </p>
 
             <div
               style={{
-                padding: "36px",
-
                 display: "flex",
-
-                flexDirection: "column",
-
-                justifyContent: "center",
+                alignItems: "center",
+                gap: "12px",
               }}
             >
-              {/* LABEL */}
-
-              <span
-                style={{
-                  color: "#7C3AED",
-
-                  fontWeight: 700,
-
-                  fontSize: "12px",
-
-                  marginBottom: "16px",
-
-                  letterSpacing: "0.4px",
-
-                  textTransform: "uppercase",
-                }}
-              >
-                FEATURED INSIGHT
-              </span>
-
-              {/* TITLE */}
-
-              <h2
-                style={{
-                  fontSize:
-                    "clamp(1.8rem,3vw,2.6rem)",
-
-                  lineHeight: 1.1,
-
-                  fontWeight: 700,
-
-                  color: "#111111",
-
-                  marginBottom: "18px",
-                }}
-              >
-                {post.title}
-              </h2>
-
-              {/* EXCERPT */}
-
-              <p
-                style={{
-                  color: "#6B7280",
-
-                  lineHeight: 1.75,
-
-                  fontSize: "15px",
-
-                  marginBottom: "24px",
-                }}
-              >
-                {post.excerpt}
-              </p>
-
-              {/* FOOTER */}
-
               <div
                 style={{
-                  display: "flex",
-
-                  justifyContent:
-                    "space-between",
-
-                  alignItems: "center",
-
-                  marginTop: "auto",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "full",
+                  background: "#7C3AED",
+                }}
+              />
+              <span
+                style={{
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  color: "var(--text)",
                 }}
               >
-                <span
-                  style={{
-                    fontWeight: 600,
-
-                    color: "#111111",
-
-                    fontSize: "14px",
-                  }}
-                >
-                  {post.author?.name ||
-                    "Socieas"}
-                </span>
-
-                <span
-                  style={{
-                    color: "#7C3AED",
-
-                    fontWeight: 700,
-
-                    fontSize: "14px",
-                  }}
-                >
-                  Read Article →
-                </span>
-              </div>
+                {post.author?.name || "Socieas"}
+              </span>
             </div>
-          </article>
+          </div>
         </Link>
       </div>
     </section>

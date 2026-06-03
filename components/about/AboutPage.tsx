@@ -116,7 +116,7 @@ export default function AboutPage() {
           {/* NEW INFOGRAPHIC EXPERIENCE */}
           <FadeUp>
 
-            <div className="relative mt-20 overflow-hidden rounded-[56px] border border-violet-100 bg-white shadow-2xl">
+            <div className="relative mt-20 overflow-hidden rounded-[56px] border border-violet-100 bg-[var(--surface)] shadow-2xl">
 
               {/* BACKGROUND */}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#f3e8ff,transparent_35%),radial-gradient(circle_at_bottom_right,#ede9fe,transparent_35%)]"></div>
@@ -238,7 +238,7 @@ export default function AboutPage() {
                           className={`absolute flex h-[88px] w-[170px] cursor-grab items-center justify-center rounded-[26px] border px-4 text-center text-sm font-semibold transition-all duration-300 md:text-base ${
                             selectedItems.includes(item)
                               ? "border-violet-600 bg-violet-600 text-white shadow-2xl"
-                              : "border-violet-200 bg-white text-[#151515] shadow-lg"
+                              : "border-violet-200 bg-[var(--surface)] text-[#151515] shadow-lg"
                           } ${
                             index === 0
                               ? "left-[0%] top-[12%]"
@@ -306,7 +306,7 @@ export default function AboutPage() {
 
                           <div
                             key={index}
-                            className="rounded-2xl border border-violet-200 bg-white px-5 py-4 text-sm font-medium text-[#151515] shadow-sm"
+                            className="rounded-2xl border border-violet-200 bg-[var(--surface)] px-5 py-4 text-sm font-medium text-[#151515] shadow-sm"
                           >
 
                             {item}
@@ -441,7 +441,7 @@ export default function AboutPage() {
                       rotate: -5,
                       scale: 1.03,
                     }}
-                    className="relative flex h-[260px] w-[260px] items-center justify-center overflow-hidden rounded-[42px] border border-violet-500/20 bg-white/5 backdrop-blur-xl"
+                    className="relative flex h-[260px] w-[260px] items-center justify-center overflow-hidden rounded-[42px] border border-violet-500/20 bg-[var(--surface)]/5 backdrop-blur-xl"
                   >
 
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.15),transparent_70%)]"></div>
@@ -517,7 +517,7 @@ export default function AboutPage() {
 
           <FadeUp>
 
-            <div className="rounded-[52px] border border-violet-100 bg-white p-16 shadow-2xl">
+            <div className="rounded-[52px] border border-violet-100 bg-[var(--surface)] p-16 shadow-2xl">
 
               <div className="text-center">
 
@@ -550,7 +550,7 @@ export default function AboutPage() {
                     }}
                     className={`cursor-pointer rounded-full px-8 py-5 text-2xl font-semibold transition-all duration-300 ${
                       index < 4
-                        ? "bg-[#FAFAFA] text-gray-300 hover:opacity-20"
+                        ? "bg-[var(--soft-surface)] text-gray-300 hover:opacity-20"
                         : "bg-violet-100 text-violet-700 hover:shadow-xl"
                     }`}
                   >
@@ -574,7 +574,7 @@ export default function AboutPage() {
       {/* INTERNET NEVER STOPS */}
       <section className="pb-36">
 
-        <div className="relative overflow-hidden border-y border-violet-100 bg-white py-14">
+        <div className="relative overflow-hidden border-y border-violet-100 bg-[var(--surface)] py-14">
 
           <motion.div
             animate={{
@@ -635,7 +635,7 @@ export default function AboutPage() {
                 className={`cursor-pointer rounded-[38px] border p-10 transition-all duration-300 ${
                   activeCard === index
                     ? "border-violet-600 bg-violet-600 text-white shadow-2xl"
-                    : "border-violet-100 bg-white shadow-lg"
+                    : "border-violet-100 bg-[var(--surface)] shadow-lg"
                 }`}
               >
 
@@ -717,7 +717,7 @@ export default function AboutPage() {
                     whileHover={{
                       scale: 1.08,
                     }}
-                    className="relative rounded-full border border-violet-500/30 bg-white/5 px-8 py-5 text-xl font-semibold backdrop-blur-md"
+                    className="relative rounded-full border border-violet-500/30 bg-[var(--surface)]/5 px-8 py-5 text-xl font-semibold backdrop-blur-md"
                   >
 
                     {item}

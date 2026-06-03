@@ -118,7 +118,7 @@ export default function ServicesPage() {
   ];
 
   return (
-    <main className="overflow-x-hidden bg-[#F7F7F5] text-[#111111]">
+    <main className="overflow-x-hidden bg-[var(--background)] text-[var(--text)]">
 
       <Navbar />
 
@@ -140,7 +140,7 @@ export default function ServicesPage() {
 
               </div>
 
-              <h1 className="mt-8 text-5xl font-black leading-[0.98] tracking-[-0.05em] text-[#111111] md:text-7xl">
+              <h1 className="mt-8 text-5xl font-black leading-[0.98] tracking-[-0.05em] text-[var(--text)] md:text-7xl">
 
                 Modern businesses
                 <br />
@@ -150,7 +150,7 @@ export default function ServicesPage() {
 
               </h1>
 
-              <p className="mt-10 max-w-4xl text-xl leading-relaxed text-slate-600">
+              <p className="mt-10 max-w-4xl text-xl leading-relaxed text-[var(--muted)]">
 
                 Visibility attracts attention.
                 Infrastructure converts opportunities.
@@ -184,17 +184,17 @@ export default function ServicesPage() {
                   className={`w-full rounded-[28px] border p-6 text-left transition-all duration-300 ${
                     activeService === index
                       ? "border-violet-200 bg-[#F6F0FF] shadow-md"
-                      : "border-slate-200 bg-white hover:border-violet-200 hover:bg-violet-50/40"
+                      : "border-slate-200 bg-[var(--surface)] hover:border-violet-200 hover:bg-violet-50/40"
                   }`}
                 >
 
-                  <div className="text-2xl font-black leading-tight text-[#111111]">
+                  <div className="text-2xl font-black leading-tight text-[var(--text)]">
 
                     {service.name}
 
                   </div>
 
-                  <div className="mt-3 leading-relaxed text-slate-600">
+                  <div className="mt-3 leading-relaxed text-[var(--muted)]">
 
                     {service.short}
 
@@ -223,7 +223,7 @@ export default function ServicesPage() {
 
                   </div>
 
-                  <h2 className="mt-6 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111]">
+                  <h2 className="mt-6 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)]">
 
                     {services[activeService].name}
 
@@ -231,7 +231,7 @@ export default function ServicesPage() {
 
                 </div>
 
-                <div className="rounded-full border border-violet-200 bg-white px-5 py-3 text-sm font-medium text-violet-700 shadow-sm">
+                <div className="rounded-full border border-violet-200 bg-[var(--surface)] px-5 py-3 text-sm font-medium text-violet-700 shadow-sm">
 
                   Connected System
 
@@ -239,7 +239,7 @@ export default function ServicesPage() {
 
               </div>
 
-              <p className="mt-10 max-w-3xl text-xl leading-relaxed text-slate-600">
+              <p className="mt-10 max-w-3xl text-xl leading-relaxed text-[var(--muted)]">
 
                 {services[activeService].description}
 
@@ -252,7 +252,7 @@ export default function ServicesPage() {
 
                   <div
                     key={index}
-                    className="rounded-2xl border border-slate-200 bg-white px-6 py-5 font-medium text-[#111111] transition-all duration-300 hover:border-violet-200 hover:shadow-sm"
+                    className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-6 py-5 font-medium text-[var(--text)] transition-all duration-300 hover:border-violet-200 hover:shadow-sm"
                   >
 
                     {item}
@@ -277,7 +277,7 @@ export default function ServicesPage() {
 
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center rounded-2xl border border-violet-200 bg-white px-7 py-4 font-semibold text-[#111111] transition-all duration-300 hover:bg-violet-50"
+                  className="inline-flex items-center justify-center rounded-2xl border border-violet-200 bg-[var(--surface)] px-7 py-4 font-semibold text-[var(--text)] transition-all duration-300 hover:bg-violet-50"
                 >
 
                   Book Consultation

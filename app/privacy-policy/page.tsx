@@ -16,13 +16,13 @@ export const metadata = generateSEOMetadata({
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="overflow-x-hidden bg-white text-[#111111]">
+    <main className="overflow-x-hidden bg-[var(--surface)] text-[var(--text)]">
 
       <Navbar />
 
       {/* HERO */}
 
-      <section className="border-b border-black/5 bg-white pt-24 pb-10 md:pt-32 md:pb-14">
+      <section className="border-b border-black/5 bg-[var(--surface)] pt-24 pb-10 md:pt-32 md:pb-14">
 
         <div className="mx-auto max-w-4xl px-6">
 
@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
 
           </div>
 
-          <h1 className="mt-6 text-4xl font-black leading-[0.96] tracking-[-0.05em] text-[#111111] md:text-6xl">
+          <h1 className="mt-6 text-4xl font-black leading-[0.96] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
 
             Privacy Policy
 
@@ -54,7 +54,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="mx-auto max-w-4xl px-6">
 
-          <div className="rounded-[32px] border border-black/5 bg-white p-6 shadow-[0_20px_60px_rgba(124,58,237,0.04)] md:p-10">
+          <div className="rounded-[32px] border border-black/5 bg-[var(--surface)] p-6 shadow-[0_20px_60px_rgba(124,58,237,0.04)] md:p-10">
 
             <div className="space-y-10">
 

@@ -70,7 +70,7 @@ export default function InsightsEcosystem() {
               </div>
               <Link
                 href="/insights"
-                className="mt-10 inline-flex items-center justify-center rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-50"
+                className="mt-10 inline-flex items-center justify-center rounded-2xl bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-50"
               >
                 Explore Insights
               </Link>

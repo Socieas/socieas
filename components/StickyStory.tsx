@@ -3,7 +3,7 @@ import FadeUp from "./FadeUp";
 export default function StickyStory() {
   return (
     <FadeUp>
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#F7F7F5] to-white py-24 md:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[var(--background)] to-white py-24 md:py-32">
 
         {/* BACKGROUND GLOW */}
         <div className="pointer-events-none absolute left-[-120px] top-[10%] h-[300px] w-[300px] rounded-full bg-violet-200/40 blur-3xl" />
@@ -17,13 +17,13 @@ export default function StickyStory() {
               Modern Founder Reality
             </div>
 
-            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111] md:text-6xl">
+            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
               The internet rewards
               <br />
               founders people remember.
             </h2>
 
-            <p className="mt-8 max-w-3xl text-xl leading-relaxed text-slate-600">
+            <p className="mt-8 max-w-3xl text-xl leading-relaxed text-[var(--muted)]">
               Visibility influences trust before conversations begin.
               Strong positioning compounds faster than most founders realize.
             </p>
@@ -34,7 +34,7 @@ export default function StickyStory() {
           <div className="mt-20 grid gap-8 lg:grid-cols-3">
 
             {/* CARD 1 */}
-            <div className="hover-card rounded-[36px] border border-slate-200 bg-white p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
+            <div className="hover-card rounded-[36px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
 
               <div className="flex items-center justify-between">
 
@@ -48,7 +48,7 @@ export default function StickyStory() {
 
               </div>
 
-              <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+              <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                 People trust
                 what they repeatedly see.
               </h3>
@@ -79,7 +79,7 @@ export default function StickyStory() {
                     Positioning
                   </div>
 
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface)] shadow-sm">
                     <span className="text-3xl">
                       🚀
                     </span>
@@ -87,11 +87,11 @@ export default function StickyStory() {
 
                 </div>
 
-                <h3 className="mt-8 text-4xl font-black leading-tight text-[#111111]">
+                <h3 className="mt-8 text-4xl font-black leading-tight text-[var(--text)]">
                   Strong positioning lowers acquisition friction.
                 </h3>
 
-                <p className="mt-6 text-lg leading-relaxed text-slate-600">
+                <p className="mt-6 text-lg leading-relaxed text-[var(--muted)]">
                   Familiarity creates trust.
                   Trust creates inbound leverage.
                 </p>
@@ -99,15 +99,15 @@ export default function StickyStory() {
                 {/* Tags */}
                 <div className="mt-8 flex flex-wrap gap-3">
 
-                  <div className="rounded-full border border-violet-200 bg-white px-4 py-2 text-sm font-medium text-violet-700 shadow-sm">
+                  <div className="rounded-full border border-violet-200 bg-[var(--surface)] px-4 py-2 text-sm font-medium text-violet-700 shadow-sm">
                     Authority
                   </div>
 
-                  <div className="rounded-full border border-violet-200 bg-white px-4 py-2 text-sm font-medium text-violet-700 shadow-sm">
+                  <div className="rounded-full border border-violet-200 bg-[var(--surface)] px-4 py-2 text-sm font-medium text-violet-700 shadow-sm">
                     Trust
                   </div>
 
-                  <div className="rounded-full border border-violet-200 bg-white px-4 py-2 text-sm font-medium text-violet-700 shadow-sm">
+                  <div className="rounded-full border border-violet-200 bg-[var(--surface)] px-4 py-2 text-sm font-medium text-violet-700 shadow-sm">
                     Growth
                   </div>
 
@@ -129,20 +129,20 @@ export default function StickyStory() {
 
               <div className="mt-10 space-y-5">
 
-                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                  <span className="font-semibold text-[#111111]">
+                <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-5 py-4 shadow-sm">
+                  <span className="font-semibold text-[var(--text)]">
                     Content → Attention
                   </span>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                  <span className="font-semibold text-[#111111]">
+                <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-5 py-4 shadow-sm">
+                  <span className="font-semibold text-[var(--text)]">
                     Attention → Familiarity
                   </span>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                  <span className="font-semibold text-[#111111]">
+                <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] px-5 py-4 shadow-sm">
+                  <span className="font-semibold text-[var(--text)]">
                     Familiarity → Inbound Growth
                   </span>
                 </div>

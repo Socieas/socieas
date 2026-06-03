@@ -18,7 +18,7 @@ export default function NotFound() {
           "center",
 
         background:
-          "#F7F7F5",
+          "var(--background)",
 
         padding:
           "40px",
@@ -44,7 +44,7 @@ export default function NotFound() {
               800,
 
             color:
-              "#111111",
+              "var(--text)",
 
             lineHeight:
               1,
@@ -62,7 +62,7 @@ export default function NotFound() {
               "20px",
 
             color:
-              "#111111",
+              "var(--text)",
           }}
         >
           Page not found

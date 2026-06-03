@@ -117,7 +117,7 @@ export default function Footer() {
 
   return (
 
-    <footer className="relative overflow-hidden border-t border-black/5 bg-[#FCFCFD]">
+    <footer className="relative overflow-hidden border-t border-black/5 bg-[var(--background)]">
 
       {/* TOP SECTION */}
 
@@ -188,7 +188,7 @@ xl:grid-cols-[1.3fr_0.8fr_0.8fr_1fr]">
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-[#6B7280] transition-all duration-300 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
+                className="group flex items-center gap-2 rounded-full border border-black/10 bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[#6B7280] transition-all duration-300 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
               >
 
                 {item.name}
@@ -309,7 +309,7 @@ xl:grid-cols-[1.3fr_0.8fr_0.8fr_1fr]">
             positioning, AI systems, and scalable growth.
           </p>
 
-          <div className="mt-8 rounded-[28px] border border-black/5 bg-white p-4 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
+          <div className="mt-8 rounded-[28px] border border-black/5 bg-[var(--surface)] p-4 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
 
             <input
               type="email"
@@ -320,7 +320,7 @@ xl:grid-cols-[1.3fr_0.8fr_0.8fr_1fr]">
                 )
               }
               placeholder="Enter your email"
-              className="h-12 w-full rounded-2xl border border-black/10 bg-[#F9FAFB] px-4 text-sm outline-none transition focus:border-violet-400"
+              className="h-12 w-full rounded-2xl border border-black/10 bg-[var(--soft-surface)] px-4 text-sm outline-none transition focus:border-violet-400"
             />
 
             <button

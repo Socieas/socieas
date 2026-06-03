@@ -35,7 +35,7 @@ export default function TableOfContents({
 
           fontWeight: 700,
 
-          color: "#111111",
+          color: "var(--text)",
 
           marginBottom: "18px",
 

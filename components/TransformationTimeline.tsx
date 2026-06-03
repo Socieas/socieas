@@ -13,7 +13,7 @@ export default function TransformationTimeline() {
 
           </div>
 
-          <h2 className="mt-6 text-4xl font-bold leading-tight text-[#111111] md:text-6xl">
+          <h2 className="mt-6 text-4xl font-bold leading-tight text-[var(--text)] md:text-6xl">
 
             Strong founder brands compound
             trust long before conversion happens.
@@ -34,7 +34,7 @@ export default function TransformationTimeline() {
 
             </div>
 
-            <h3 className="mt-8 text-2xl font-semibold text-[#111111]">
+            <h3 className="mt-8 text-2xl font-semibold text-[var(--text)]">
 
               Visibility
 
@@ -57,7 +57,7 @@ export default function TransformationTimeline() {
 
             </div>
 
-            <h3 className="mt-8 text-2xl font-semibold text-[#111111]">
+            <h3 className="mt-8 text-2xl font-semibold text-[var(--text)]">
 
               Familiarity
 
@@ -74,13 +74,13 @@ export default function TransformationTimeline() {
           {/* STEP 3 */}
           <div>
 
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#111111] text-2xl font-bold text-white">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--text)] text-2xl font-bold text-white">
 
               3
 
             </div>
 
-            <h3 className="mt-8 text-2xl font-semibold text-[#111111]">
+            <h3 className="mt-8 text-2xl font-semibold text-[var(--text)]">
 
               Authority
 
@@ -103,7 +103,7 @@ export default function TransformationTimeline() {
 
             </div>
 
-            <h3 className="mt-8 text-2xl font-semibold text-[#111111]">
+            <h3 className="mt-8 text-2xl font-semibold text-[var(--text)]">
 
               Inbound Growth
 

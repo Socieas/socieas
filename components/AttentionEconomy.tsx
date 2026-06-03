@@ -1,6 +1,6 @@
 export default function AttentionEconomy() {
   return (
-    <section className="bg-[#F7F7F5] py-24 md:py-32">
+    <section className="bg-[var(--background)] py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
 
         <div className="grid gap-16 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-24">
@@ -14,14 +14,14 @@ export default function AttentionEconomy() {
             </div>
 
             {/* Heading */}
-            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] !text-[#111111] md:text-6xl">
+            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] !text-[var(--text)] md:text-6xl">
               The internet has become
               <br />
               a trust distribution system.
             </h2>
 
             {/* Paragraph */}
-            <p className="mt-8 max-w-2xl text-lg leading-8 !text-slate-600 md:text-xl">
+            <p className="mt-8 max-w-2xl text-lg leading-8 !text-[var(--muted)] md:text-xl">
               People buy from founders they repeatedly
               see, trust, and remember.
 
@@ -41,7 +41,7 @@ export default function AttentionEconomy() {
           <div className="grid gap-5">
 
             {/* CARD 1 */}
-            <div className="group rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_10px_40px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+            <div className="group rounded-[32px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_10px_40px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
 
               <div className="flex items-start justify-between">
 
@@ -50,7 +50,7 @@ export default function AttentionEconomy() {
                     Visibility
                   </div>
 
-                  <h3 className="mt-5 text-3xl font-black leading-tight !text-[#111111]">
+                  <h3 className="mt-5 text-3xl font-black leading-tight !text-[var(--text)]">
                     People trust what
                     they repeatedly see.
                   </h3>
@@ -73,13 +73,13 @@ export default function AttentionEconomy() {
                     Authority
                   </div>
 
-                  <h3 className="mt-5 text-3xl font-black leading-tight !text-[#111111]">
+                  <h3 className="mt-5 text-3xl font-black leading-tight !text-[var(--text)]">
                     Consistency creates
                     perceived expertise.
                   </h3>
                 </div>
 
-                <div className="rounded-2xl bg-white/70 p-3 backdrop-blur-sm">
+                <div className="rounded-2xl bg-[var(--surface)]/70 p-3 backdrop-blur-sm">
                   <div className="h-3 w-3 rounded-full bg-violet-700" />
                 </div>
 
@@ -108,7 +108,7 @@ export default function AttentionEconomy() {
                   </h3>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
+                <div className="rounded-2xl border border-white/10 bg-[var(--surface)]/5 p-3 backdrop-blur-sm">
                   <div className="h-3 w-3 rounded-full bg-violet-400" />
                 </div>
 

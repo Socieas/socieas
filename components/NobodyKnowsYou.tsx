@@ -1,6 +1,6 @@
 export default function NobodyKnowsYou() {
   return (
-    <section className="relative overflow-hidden bg-[#F7F7F5] py-24 md:py-32">
+    <section className="relative overflow-hidden bg-[var(--background)] py-24 md:py-32">
 
       {/* Background Glow */}
       <div className="pointer-events-none absolute inset-0">
@@ -25,7 +25,7 @@ export default function NobodyKnowsYou() {
             </div>
 
             {/* Heading */}
-            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111] md:text-6xl">
+            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
               Nobody buys from founders they forget instantly.
             </h2>
 
@@ -37,7 +37,7 @@ export default function NobodyKnowsYou() {
           {/* RIGHT */}
           <div>
 
-            <p className="max-w-xl text-lg leading-8 text-slate-600 md:text-xl">
+            <p className="max-w-xl text-lg leading-8 text-[var(--muted)] md:text-xl">
               Most founders focus only on operations,
               delivery, and execution.
 
@@ -62,7 +62,7 @@ export default function NobodyKnowsYou() {
         <div className="mt-20 grid gap-6 md:grid-cols-3">
 
           {/* CARD 1 */}
-          <div className="group relative overflow-hidden rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_15px_50px_rgba(15,23,42,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_80px_rgba(124,58,237,0.10)]">
+          <div className="group relative overflow-hidden rounded-[32px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_15px_50px_rgba(15,23,42,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_80px_rgba(124,58,237,0.10)]">
 
             {/* Hover Glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-violet-50 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
@@ -73,11 +73,11 @@ export default function NobodyKnowsYou() {
                 📉
               </div>
 
-              <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+              <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                 Low visibility creates lost opportunities.
               </h3>
 
-              <p className="mt-5 text-base leading-7 text-slate-600">
+              <p className="mt-5 text-base leading-7 text-[var(--muted)]">
                 Great work alone no longer guarantees attention in crowded digital markets.
               </p>
 
@@ -93,15 +93,15 @@ export default function NobodyKnowsYou() {
 
             <div className="relative">
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm text-3xl">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface)] shadow-sm text-3xl">
                 🧠
               </div>
 
-              <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+              <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                 Familiarity builds trust before conversations happen.
               </h3>
 
-              <p className="mt-5 text-base leading-7 text-slate-600">
+              <p className="mt-5 text-base leading-7 text-[var(--muted)]">
                 Consistent positioning changes how founders are perceived online.
               </p>
 
@@ -121,7 +121,7 @@ export default function NobodyKnowsYou() {
 
             <div className="relative">
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-3xl backdrop-blur-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-[var(--surface)]/5 text-3xl backdrop-blur-sm">
                 🚀
               </div>
 

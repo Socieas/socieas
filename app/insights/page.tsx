@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 import { generateSEOMetadata } from "@/lib/seo";
+import { SanityPost } from "@/lib/types";
 
 export const metadata = generateSEOMetadata({
   title: "Insights",
@@ -15,12 +16,12 @@ export const metadata = generateSEOMetadata({
 export const revalidate = 60;
 
 export default async function InsightsHubPage() {
-  const posts = await safeFetch<any[]>(allPostsQuery, {}, []);
+  const posts = await safeFetch<SanityPost[]>(allPostsQuery, {}, []);
 
-  const blogs = posts.filter((p: any) => p.type === "blog").slice(0, 3);
-  const articles = posts.filter((p: any) => p.type === "article").slice(0, 3);
+  const blogs = posts.filter((p: SanityPost) => p.type === "blog").slice(0, 3);
+  const articles = posts.filter((p: SanityPost) => p.type === "article").slice(0, 3);
   const caseStudies = posts
-    .filter((p: any) => p.type === "case-study")
+    .filter((p: SanityPost) => p.type === "case-study")
     .slice(0, 3);
 
   const sections = [
@@ -47,14 +48,14 @@ export default async function InsightsHubPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-[var(--surface)]">
         {/* HERO */}
         <section className="bg-gradient-to-br from-violet-50 to-white py-20 px-6">
           <div className="mx-auto max-w-4xl text-center">
             <div className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold uppercase tracking-[0.22em] text-violet-700 mb-6">
               Insights
             </div>
-            <h1 className="text-5xl font-black leading-tight tracking-tight text-[#111111] mb-6">
+            <h1 className="text-5xl font-black leading-tight tracking-tight text-[var(--text)] mb-6">
               Ideas, Research & Real Results
             </h1>
             <p className="text-lg text-gray-500 max-w-2xl mx-auto">
@@ -75,7 +76,7 @@ export default async function InsightsHubPage() {
                     <p className="text-sm font-semibold uppercase tracking-widest text-violet-600 mb-2">
                       {section.label}
                     </p>
-                    <h2 className="text-3xl font-black text-[#111111]">
+                    <h2 className="text-3xl font-black text-[var(--text)]">
                       {section.description}
                     </h2>
                   </div>
@@ -90,16 +91,16 @@ export default async function InsightsHubPage() {
                 {/* POSTS GRID */}
                 {section.posts.length > 0 ? (
                   <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    {section.posts.map((post: any) => (
+                    {section.posts.map((post: SanityPost) => (
                       <Link
                         key={post.slug?.current}
                         href={`/insights/${section.label.toLowerCase().replace(" ", "-")}/${post.slug?.current}`}
-                        className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                        className="group rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                       >
                         <p className="text-xs font-semibold uppercase tracking-widest text-violet-600 mb-3">
                           {post.category?.title || section.label}
                         </p>
-                        <h3 className="text-lg font-bold text-[#111111] leading-snug mb-3 group-hover:text-violet-700 transition-colors">
+                        <h3 className="text-lg font-bold text-[var(--text)] leading-snug mb-3 group-hover:text-violet-700 transition-colors">
                           {post.title}
                         </h3>
                         <p className="text-sm text-gray-500 line-clamp-2">
@@ -109,7 +110,7 @@ export default async function InsightsHubPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="rounded-3xl border border-dashed border-slate-200 p-12 text-center">
+                  <div className="rounded-3xl border border-dashed border-[var(--border)] p-12 text-center">
                     <p className="text-gray-400 text-sm">Coming soon — check back shortly.</p>
                   </div>
                 )}

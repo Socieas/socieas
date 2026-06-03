@@ -2,7 +2,7 @@ export default function Loading() {
   return (
     <main
       style={{
-        background: "#F7F7F5",
+        background: "var(--background)",
         minHeight: "100vh",
         padding: "90px 24px",
       }}

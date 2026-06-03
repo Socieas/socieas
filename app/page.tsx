@@ -31,9 +31,7 @@ export default function Home() {
 
       <Navbar />
 
-      <section>
-        <Hero />
-      </section>
+      <Hero />
 
       <ScrollingProof />
       <TrustSignals />

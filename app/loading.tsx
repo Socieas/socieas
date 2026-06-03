@@ -16,7 +16,7 @@ export default function Loading() {
           "center",
 
         background:
-          "#F7F7F5",
+          "var(--background)",
       }}
     >
 

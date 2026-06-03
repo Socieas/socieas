@@ -1,18 +1,17 @@
 import Link from "next/link";
-
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
 import CTASection from "@/components/insights/CTASection";
 import BlogCard from "@/components/insights/BlogCard";
 import FeaturedBlog from "@/components/insights/FeaturedBlog";
 import SearchBar from "@/components/insights/SearchBar";
+import { SanityPost } from "@/lib/types";
 
 type InsightsListingTemplateProps = {
   title: string;
   label: string;
   description: string;
-  posts: any[];
+  posts: SanityPost[];
   currentPage: number;
   totalPages: number;
   basePath: string;
@@ -61,7 +60,7 @@ export default function InsightsListingTemplate({
 
       <main
         style={{
-          background: "#F7F7F5",
+          background: "var(--background)",
           minHeight: "100vh",
         }}
       >
@@ -95,7 +94,7 @@ export default function InsightsListingTemplate({
                 fontSize: "clamp(2.5rem,7vw,5rem)",
                 lineHeight: 0.95,
                 fontWeight: 700,
-                color: "#111111",
+                color: "var(--text)",
                 marginTop: "26px",
                 marginBottom: "20px",
                 maxWidth: "850px",
@@ -144,7 +143,7 @@ export default function InsightsListingTemplate({
                     background:
                       activeCategory === category ? "#7C3AED" : "white",
                     color:
-                      activeCategory === category ? "white" : "#111111",
+                      activeCategory === category ? "white" : "var(--text)",
                     border:
                       activeCategory === category
                         ? "1px solid #7C3AED"
@@ -185,7 +184,7 @@ export default function InsightsListingTemplate({
                 style={{
                   fontSize: "2rem",
                   fontWeight: 700,
-                  color: "#111111",
+                  color: "var(--text)",
                 }}
               >
                 Recent Insights
@@ -210,7 +209,7 @@ export default function InsightsListingTemplate({
                   gap: "20px",
                 }}
               >
-                {remainingPosts.map((post: any) => (
+                {remainingPosts.map((post: SanityPost) => (
                   <BlogCard key={post._id} post={post} />
                 ))}
               </div>
@@ -227,7 +226,7 @@ export default function InsightsListingTemplate({
                 <h3
                   style={{
                     fontSize: "2rem",
-                    color: "#111111",
+                    color: "var(--text)",
                     marginBottom: "14px",
                   }}
                 >
@@ -278,7 +277,7 @@ export default function InsightsListingTemplate({
                     background:
                       currentPage === page ? "#7C3AED" : "white",
                     color:
-                      currentPage === page ? "white" : "#111111",
+                      currentPage === page ? "white" : "var(--text)",
                     border:
                       currentPage === page
                         ? "1px solid #7C3AED"

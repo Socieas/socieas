@@ -82,7 +82,7 @@ export default function Breadcrumbs({
 
       <span
         style={{
-          color: "#111111",
+          color: "var(--text)",
 
           fontWeight: 600,
         }}

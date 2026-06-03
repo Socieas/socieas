@@ -1,21 +1,15 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
-
 import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
-
 import { generateSEOMetadata } from "@/lib/seo";
+import { SanityPost } from "@/lib/types";
 
-export const metadata =
-  generateSEOMetadata({
-    title:
-      "Strategic Blogs",
-
-    description:
-      "Business growth insights, digital systems, strategic frameworks, and execution intelligence from Socieas.",
-
-    path:
-      "/insights/blogs",
-  });
+export const metadata = generateSEOMetadata({
+  title: "Strategic Blogs",
+  description:
+    "Business growth insights, digital systems, strategic frameworks, and execution intelligence from Socieas.",
+  path: "/insights/blogs",
+});
 
 export const revalidate = 60;
 
@@ -28,126 +22,55 @@ export default async function BlogsPage({
     page?: string;
   }>;
 }) {
-  const params =
-    await searchParams;
+  const params = await searchParams;
 
-  const posts =
-    await safeFetch<any[]>(
-      allPostsQuery,
-      {},
-      []
-    );
+  const posts = await safeFetch<SanityPost[]>(allPostsQuery, {}, []);
 
-  const blogs =
-    posts.filter(
-      (post: any) =>
-        post.type ===
-        "blog"
-    );
+  const blogs = posts.filter((post: SanityPost) => post.type === "blog");
 
-  const search =
-    params.search
-      ?.toLowerCase() || "";
+  const search = params.search?.toLowerCase() || "";
 
-  const activeCategory =
-    params.category ||
-    "All";
+  const activeCategory = params.category || "All";
 
-  const categories: string[] =
-    Array<string>().concat(
-      "All",
-      blogs
-        .map(
-          (post: any) =>
-            post.category
-              ?.title
-        )
-        .filter(
-          (
-            category:
-              | string
-              | undefined
-          ): category is string =>
-            typeof category ===
-            "string"
-        )
-    );
+  const categories: string[] = ["All"].concat(
+    blogs
+      .map((post: SanityPost) => post.category?.title)
+      .filter((category): category is string => typeof category === "string")
+  );
 
-  const filteredBlogs =
-    blogs.filter(
-      (post: any) => {
-        const matchesSearch =
-          post.title
-            ?.toLowerCase()
-            .includes(
-              search
-            ) ||
+  const filteredBlogs = blogs.filter((post: SanityPost) => {
+    const matchesSearch =
+      post.title?.toLowerCase().includes(search) ||
+      post.excerpt?.toLowerCase().includes(search);
 
-          post.excerpt
-            ?.toLowerCase()
-            .includes(
-              search
-            );
+    const matchesCategory =
+      activeCategory === "All" || post.category?.title === activeCategory;
 
-        const matchesCategory =
-          activeCategory ===
-            "All" ||
+    return matchesSearch && matchesCategory;
+  });
 
-          post.category
-            ?.title ===
-            activeCategory;
+  const currentPage = Number(params.page || 1);
 
-        return (
-          matchesSearch &&
-          matchesCategory
-        );
-      }
-    );
+  const POSTS_PER_PAGE = 9;
 
-  const currentPage =
-    Number(
-      params.page || 1
-    );
+  const totalPages = Math.ceil(filteredBlogs.length / POSTS_PER_PAGE);
 
-  const POSTS_PER_PAGE =
-    9;
-
-  const totalPages =
-    Math.ceil(
-      filteredBlogs.length /
-        POSTS_PER_PAGE
-    );
-
-  const paginatedBlogs =
-    filteredBlogs.slice(
-      (currentPage - 1) *
-        POSTS_PER_PAGE,
-
-      currentPage *
-        POSTS_PER_PAGE
-    );
+  const paginatedBlogs = filteredBlogs.slice(
+    (currentPage - 1) * POSTS_PER_PAGE,
+    currentPage * POSTS_PER_PAGE
+  );
 
   return (
     <InsightsListingTemplate
       title="Strategic Blogs"
       label="SOCIEAS BLOGS"
       description="Strategic business insights, systems thinking, and execution frameworks from Socieas."
-      posts={
-        paginatedBlogs
-      }
-      categories={
-        categories
-      }
-      activeCategory={
-        activeCategory
-      }
+      posts={paginatedBlogs}
+      categories={categories}
+      activeCategory={activeCategory}
       search={search}
-      currentPage={
-        currentPage
-      }
-      totalPages={
-        totalPages
-      }
+      currentPage={currentPage}
+      totalPages={totalPages}
       basePath="/insights/blogs"
     />
   );

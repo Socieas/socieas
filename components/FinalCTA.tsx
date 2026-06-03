@@ -12,14 +12,14 @@ export default function FinalCTA() {
         </div>
 
         {/* HEADING */}
-        <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111] md:text-6xl">
+        <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
           Strong founder brands
           <br />
           create long-term leverage.
         </h2>
 
         {/* DESCRIPTION */}
-        <p className="mx-auto mt-8 max-w-2xl text-xl leading-relaxed text-slate-600">
+        <p className="mx-auto mt-8 max-w-2xl text-xl leading-relaxed text-[var(--muted)]">
           Visibility compounds trust.
           <br />
           Trust compounds growth.

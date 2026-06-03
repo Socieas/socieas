@@ -1,6 +1,6 @@
 export default function FounderQuote() {
   return (
-    <section className="relative overflow-hidden bg-[#111111] py-36 text-white">
+    <section className="relative overflow-hidden bg-[var(--text)] py-36 text-white">
 
       {/* GLOW */}
       <div className="absolute left-[-100px] top-[-100px] h-[300px] w-[300px] rounded-full bg-violet-600/20 blur-3xl"></div>

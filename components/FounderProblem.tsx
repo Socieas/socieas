@@ -15,7 +15,7 @@ export default function FounderProblem() {
                 Founder Visibility Problem
               </div>
 
-              <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111] md:text-6xl">
+              <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
                 The internet rewards
                 positioning before
                 capability.
@@ -24,7 +24,7 @@ export default function FounderProblem() {
 
             {/* RIGHT */}
             <div className="flex items-center">
-              <p className="max-w-xl text-lg leading-8 text-slate-600 md:text-xl">
+              <p className="max-w-xl text-lg leading-8 text-[var(--muted)] md:text-xl">
                 Great founders are ignored every day because
                 visibility is treated as optional.
 

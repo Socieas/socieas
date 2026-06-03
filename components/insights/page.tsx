@@ -49,7 +49,7 @@ export default function InsightsPage() {
       <main
         style={{
           background:
-            "#F7F7F5",
+            "var(--background)",
 
           minHeight:
             "100vh",
@@ -110,7 +110,7 @@ export default function InsightsPage() {
                 800,
 
               color:
-                "#111111",
+                "var(--text)",
 
               marginTop:
                 "28px",
@@ -271,7 +271,7 @@ export default function InsightsPage() {
                             800,
 
                           color:
-                            "#111111",
+                            "var(--text)",
 
                           marginBottom:
                             "24px",

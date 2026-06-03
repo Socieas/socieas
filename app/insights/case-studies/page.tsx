@@ -1,9 +1,8 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
-
 import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
-
 import { generateSEOMetadata } from "@/lib/seo";
+import { SanityPost } from "@/lib/types";
 
 export const metadata = generateSEOMetadata({
   title: "Case Studies",
@@ -23,15 +22,13 @@ type CaseStudySearchParams = {
 export default async function CaseStudiesPage({
   searchParams,
 }: {
-  searchParams: CaseStudySearchParams;
+  searchParams: Promise<CaseStudySearchParams>;
 }) {
-  const params = searchParams;
+  const params = await searchParams;
 
-  const posts = await safeFetch<any[]>(allPostsQuery, {}, []);
+  const posts = await safeFetch<SanityPost[]>(allPostsQuery, {}, []);
 
-  const caseStudies = posts.filter(
-    (post: any) => post.type === "case-study"
-  );
+  const caseStudies = posts.filter((post: SanityPost) => post.type === "case-study");
 
   const search = params.search?.toLowerCase() || "";
 
@@ -40,13 +37,13 @@ export default async function CaseStudiesPage({
   const categories = [
     "All",
     ...caseStudies
-      .map((post: any) => post.category?.title)
+      .map((post: SanityPost) => post.category?.title)
       .filter(
-        (category: string | undefined): category is string => typeof category === "string"
+        (category): category is string => typeof category === "string"
       ),
   ] as string[];
 
-  const filteredCaseStudies = caseStudies.filter((post: any) => {
+  const filteredCaseStudies = caseStudies.filter((post: SanityPost) => {
     const matchesSearch =
       post.title?.toLowerCase().includes(search) ||
       post.excerpt?.toLowerCase().includes(search);
@@ -61,9 +58,7 @@ export default async function CaseStudiesPage({
 
   const POSTS_PER_PAGE = 9;
 
-  const totalPages = Math.ceil(
-    filteredCaseStudies.length / POSTS_PER_PAGE
-  );
+  const totalPages = Math.ceil(filteredCaseStudies.length / POSTS_PER_PAGE);
 
   const paginatedCaseStudies = filteredCaseStudies.slice(
     (currentPage - 1) * POSTS_PER_PAGE,
@@ -76,7 +71,7 @@ export default async function CaseStudiesPage({
       label="SOCIEAS CASE STUDIES"
       description="Execution breakdowns, measurable outcomes, implementation frameworks, and strategic transformation stories from Socieas."
       posts={paginatedCaseStudies}
-      categories={categories as string[]}
+      categories={categories}
       activeCategory={activeCategory}
       search={search}
       currentPage={currentPage}

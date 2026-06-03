@@ -161,7 +161,7 @@ export default function DigitalMarketingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <main className="overflow-x-hidden bg-white text-slate-900">
+      <main className="overflow-x-hidden bg-[var(--surface)] text-slate-900">
         <Navbar />
 
         <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
@@ -176,7 +176,7 @@ export default function DigitalMarketingPage() {
                 Digital Growth Systems Built for Search Visibility, Trust, and Inbound Scale
               </h1>
 
-              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--muted)]">
                 Socieas helps businesses grow through connected digital marketing systems that combine
                 search visibility, content ecosystems, audience positioning, acquisition infrastructure,
                 and authority signals.
@@ -191,7 +191,7 @@ export default function DigitalMarketingPage() {
                 </Link>
                 <Link
                   href="/insights"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
                 >
                   Insights
                 </Link>
@@ -201,7 +201,7 @@ export default function DigitalMarketingPage() {
                 {["SEO", "Audience Positioning", "Inbound Growth", "Authority Systems"].map((item) => (
                   <span
                     key={item}
-                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-600 shadow-sm"
+                    className="rounded-full border border-slate-200 bg-[var(--surface)] px-4 py-2 text-[var(--muted)] shadow-sm"
                   >
                     {item}
                   </span>
@@ -210,7 +210,7 @@ export default function DigitalMarketingPage() {
             </FadeUp>
 
             <FadeUp>
-              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
+              <div className="rounded-[32px] border border-slate-200 bg-[var(--surface)] p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
                 <div className="grid gap-4">
                   <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                     <p className="text-sm font-medium text-slate-500">Before</p>
@@ -227,10 +227,10 @@ export default function DigitalMarketingPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
+                    <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] p-4 text-center text-sm font-semibold text-slate-700">
                       Better visibility
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
+                    <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] p-4 text-center text-sm font-semibold text-slate-700">
                       Stronger trust
                     </div>
                   </div>
@@ -246,7 +246,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Why Growth Stalls Without Visibility Infrastructure
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Growth slows when discoverability, trust, positioning, and acquisition do not work as one connected system.
               </p>
             </div>
@@ -255,7 +255,7 @@ export default function DigitalMarketingPage() {
               {problemItems.map((item) => (
                 <div
                   key={item}
-                  className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg"
+                  className="group rounded-[24px] border border-slate-200 bg-[var(--surface)] px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
@@ -275,7 +275,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Search Visibility Systems
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Modern search growth comes from connected systems built around relevance, authority, and trust.
               </p>
             </div>
@@ -284,7 +284,7 @@ export default function DigitalMarketingPage() {
               {visibilitySystems.map((item) => (
                 <div
                   key={item}
-                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm"
+                  className="rounded-full border border-slate-200 bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm"
                 >
                   {item}
                 </div>
@@ -299,7 +299,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Our Digital Growth Approach
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 We connect visibility, positioning, acquisition, and intelligence into one scalable marketing ecosystem.
               </p>
             </div>
@@ -312,8 +312,8 @@ export default function DigitalMarketingPage() {
                     onClick={() => setActiveLayer(index)}
                     className={`group relative w-full overflow-hidden rounded-[28px] border p-5 text-left transition-all duration-300 ${
                       activeLayer === index
-                        ? "border-violet-300 bg-white shadow-[0_20px_60px_rgba(124,58,237,0.08)]"
-                        : "border-slate-200 bg-white hover:border-violet-200"
+                        ? "border-violet-300 bg-[var(--surface)] shadow-[0_20px_60px_rgba(124,58,237,0.08)]"
+                        : "border-slate-200 bg-[var(--surface)] hover:border-violet-200"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -324,14 +324,14 @@ export default function DigitalMarketingPage() {
                         }`}
                       />
                     </div>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-base">
+                    <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
                       {item.description}
                     </p>
                   </button>
                 ))}
               </div>
 
-              <div className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
+              <div className="rounded-[34px] border border-slate-200 bg-[var(--surface)] p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                   <div>
                     <div className="text-sm uppercase tracking-[0.2em] text-violet-600">
@@ -381,7 +381,7 @@ export default function DigitalMarketingPage() {
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                   Content Distribution Compounds Growth Faster
                 </h2>
-                <p className="mt-4 text-lg leading-8 text-slate-600">
+                <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                   Search, content, audience discovery, familiarity, and trust must reinforce each other to create durable growth.
                 </p>
               </div>
@@ -396,7 +396,7 @@ export default function DigitalMarketingPage() {
                 ].map((item) => (
                   <div
                     key={item}
-                    className="group rounded-[28px] border border-slate-200 bg-white px-6 py-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg"
+                    className="group rounded-[28px] border border-slate-200 bg-[var(--surface)] px-6 py-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div className="text-lg font-semibold text-slate-950">{item}</div>
@@ -415,7 +415,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Marketing Technology and Growth Infrastructure
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Scalable growth depends on connected search, advertising, reporting, and automation systems.
               </p>
             </div>
@@ -423,7 +423,7 @@ export default function DigitalMarketingPage() {
             <div className="mt-10 grid gap-6 lg:grid-cols-3">
               {techCategories.map((stack) => (
                 <FadeUp key={stack.title}>
-                  <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg md:p-8">
+                  <div className="rounded-[30px] border border-slate-200 bg-[var(--surface)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg md:p-8">
                     <div className="text-sm uppercase tracking-[0.22em] text-violet-600">
                       {stack.title}
                     </div>
@@ -450,7 +450,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Growth Outcomes from Connected Marketing Systems
               </h2>
-              <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+              <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-[var(--muted)]">
                 Stronger visibility ecosystems create more durable discoverability, trust, and inbound growth momentum.
               </p>
             </div>
@@ -475,14 +475,14 @@ export default function DigitalMarketingPage() {
                 },
               ].map((item) => (
                 <FadeUp key={item.title}>
-                  <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg">
+                  <div className="rounded-[30px] border border-slate-200 bg-[var(--surface)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg">
                     <div className="text-sm uppercase tracking-[0.2em] text-violet-600">
                       Outcome
                     </div>
                     <h3 className="mt-5 text-2xl font-bold leading-tight text-slate-950">
                       {item.title}
                     </h3>
-                    <p className="mt-4 text-base leading-relaxed text-slate-600">
+                    <p className="mt-4 text-base leading-relaxed text-[var(--muted)]">
                       {item.desc}
                     </p>
                   </div>
@@ -502,7 +502,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Explore More from Socieas
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Move directly into strategy, services, and practical marketing insights.
               </p>
             </div>
@@ -528,10 +528,10 @@ export default function DigitalMarketingPage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-lg"
+                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-[var(--surface)] hover:shadow-lg"
                 >
                   <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
-                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
+                  <p className="mt-3 leading-7 text-[var(--muted)]">{item.desc}</p>
                   <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
                     Explore →
                   </span>
@@ -547,7 +547,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Digital Marketing FAQs
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Clear answers for businesses building long-term visibility and inbound growth systems.
               </p>
             </div>
@@ -556,7 +556,7 @@ export default function DigitalMarketingPage() {
               {faqs.map((faq, index) => (
                 <div
                   key={faq.q}
-                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-[var(--surface)] shadow-sm"
                 >
                   <button
                     onClick={() => setActiveFaq(activeFaq === index ? null : index)}
@@ -573,7 +573,7 @@ export default function DigitalMarketingPage() {
                   </button>
 
                   {activeFaq === index && (
-                    <div id={`faq-${index}`} className="px-6 pb-6 leading-7 text-slate-600">
+                    <div id={`faq-${index}`} className="px-6 pb-6 leading-7 text-[var(--muted)]">
                       {faq.a}
                     </div>
                   )}
@@ -589,7 +589,7 @@ export default function DigitalMarketingPage() {
               <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
                 Build Digital Growth Systems That Create Long-Term Leverage
               </h2>
-              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">
                 Get visibility, positioning, acquisition, and authority systems designed around your market, audience, and growth goals.
               </p>
 
@@ -602,7 +602,7 @@ export default function DigitalMarketingPage() {
                 </Link>
                 <Link
                   href="/insights"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
                 >
                   Insights
                 </Link>

@@ -158,7 +158,7 @@ export default function AIAutomationPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <main className="overflow-x-hidden bg-white text-slate-900">
+      <main className="overflow-x-hidden bg-[var(--surface)] text-slate-900">
         <Navbar />
 
         <section className="relative overflow-hidden border-b border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
@@ -173,7 +173,7 @@ export default function AIAutomationPage() {
                 AI Automation Systems That Reduce Manual Work and Scale Operations
               </h1>
 
-              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--muted)]">
                 Socieas helps businesses build AI automation infrastructure through workflow systems,
                 lead routing, reporting automation, and operational efficiency engines that compound over time.
               </p>
@@ -187,7 +187,7 @@ export default function AIAutomationPage() {
                 </Link>
                 <Link
                   href="/insights"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
                 >
                   Insights
                 </Link>
@@ -198,7 +198,7 @@ export default function AIAutomationPage() {
                   (item) => (
                     <span
                       key={item}
-                      className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-600 shadow-sm"
+                      className="rounded-full border border-slate-200 bg-[var(--surface)] px-4 py-2 text-[var(--muted)] shadow-sm"
                     >
                       {item}
                     </span>
@@ -208,7 +208,7 @@ export default function AIAutomationPage() {
             </FadeUp>
 
             <FadeUp>
-              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
+              <div className="rounded-[32px] border border-slate-200 bg-[var(--surface)] p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] md:p-8">
                 <div className="grid gap-4">
                   <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                     <p className="text-sm font-medium text-slate-500">Before</p>
@@ -225,10 +225,10 @@ export default function AIAutomationPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
+                    <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] p-4 text-center text-sm font-semibold text-slate-700">
                       Faster execution
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm font-semibold text-slate-700">
+                    <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] p-4 text-center text-sm font-semibold text-slate-700">
                       Less manual work
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export default function AIAutomationPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Why Growing Businesses Stay Stuck in Manual Operations
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Operational bottlenecks compound as businesses scale, making automation a strategic necessity rather than a convenience.
               </p>
             </div>
@@ -253,7 +253,7 @@ export default function AIAutomationPage() {
               {problemItems.map((item) => (
                 <div
                   key={item}
-                  className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg"
+                  className="group rounded-[24px] border border-slate-200 bg-[var(--surface)] px-5 py-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
@@ -273,13 +273,13 @@ export default function AIAutomationPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Our AI Automation Approach
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 We build connected automation systems around your existing operations to improve speed, consistency, and visibility.
               </p>
             </div>
 
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
-              <article className="rounded-[32px] border border-rose-200 bg-white p-7 shadow-sm md:p-8">
+              <article className="rounded-[32px] border border-rose-200 bg-[var(--surface)] p-7 shadow-sm md:p-8">
                 <div className="inline-flex rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-700">
                   Before
                 </div>
@@ -301,7 +301,7 @@ export default function AIAutomationPage() {
                 </div>
               </article>
 
-              <article className="rounded-[32px] border border-violet-200 bg-white p-7 shadow-lg md:p-8">
+              <article className="rounded-[32px] border border-violet-200 bg-[var(--surface)] p-7 shadow-lg md:p-8">
                 <div className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-violet-700">
                   After
                 </div>
@@ -332,7 +332,7 @@ export default function AIAutomationPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 How Socieas Builds AI Automation Systems
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 A structured process from operational audit to deployed automation infrastructure.
               </p>
             </div>
@@ -341,7 +341,7 @@ export default function AIAutomationPage() {
               {processSteps.map((step) => (
                 <article
                   key={step.no}
-                  className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group rounded-[28px] border border-slate-200 bg-[var(--surface)] p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-violet-700">{step.no}</span>
@@ -350,7 +350,7 @@ export default function AIAutomationPage() {
                     </div>
                   </div>
                   <h3 className="mt-5 text-2xl font-bold text-slate-950">{step.title}</h3>
-                  <p className="mt-3 leading-7 text-slate-600">{step.desc}</p>
+                  <p className="mt-3 leading-7 text-[var(--muted)]">{step.desc}</p>
                 </article>
               ))}
             </div>
@@ -363,7 +363,7 @@ export default function AIAutomationPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 AI Automation Systems Built for Real Operations
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Automation works best as a connected system rather than isolated tools running independently.
               </p>
             </div>
@@ -376,7 +376,7 @@ export default function AIAutomationPage() {
                   className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
                     activeSystem === index
                       ? "bg-slate-950 text-white"
-                      : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400"
+                      : "border border-slate-300 bg-[var(--surface)] text-slate-700 hover:border-slate-400"
                   }`}
                 >
                   {tab.title}
@@ -384,9 +384,9 @@ export default function AIAutomationPage() {
               ))}
             </div>
 
-            <div className="mt-8 rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+            <div className="mt-8 rounded-[32px] border border-slate-200 bg-[var(--surface)] p-6 shadow-sm md:p-8">
               <h3 className="text-2xl font-bold text-slate-950">{systemTabs[activeSystem].title}</h3>
-              <p className="mt-2 max-w-3xl text-slate-600">{systemTabs[activeSystem].desc}</p>
+              <p className="mt-2 max-w-3xl text-[var(--muted)]">{systemTabs[activeSystem].desc}</p>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {systemTabs[activeSystem].items.map((item) => (
@@ -409,7 +409,7 @@ export default function AIAutomationPage() {
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                   AI Automation Needs Systems, Not Isolated Tools
                 </h2>
-                <p className="mt-4 text-lg leading-8 text-slate-600">
+                <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                   Automation becomes stronger when every workflow, trigger, and integration operates as one connected infrastructure.
                 </p>
               </div>
@@ -418,7 +418,7 @@ export default function AIAutomationPage() {
                 {capabilities.map((item) => (
                   <div
                     key={item}
-                    className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                    className="rounded-[22px] border border-slate-200 bg-[var(--surface)] p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="text-base font-semibold md:text-lg">{item}</div>
                   </div>
@@ -439,7 +439,7 @@ export default function AIAutomationPage() {
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                   AI Automation FAQs
                 </h2>
-                <p className="mt-4 text-lg leading-8 text-slate-600">
+                <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                   Clear answers for businesses evaluating AI automation support.
                 </p>
               </div>
@@ -449,7 +449,7 @@ export default function AIAutomationPage() {
               {faqs.map((faq, index) => (
                 <div
                   key={faq.question}
-                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-[var(--surface)] shadow-sm"
                 >
                   <button
                     onClick={() => setActiveFaq(activeFaq === index ? null : index)}
@@ -465,7 +465,7 @@ export default function AIAutomationPage() {
                   </button>
 
                   {activeFaq === index && (
-                    <div className="px-6 pb-6 leading-7 text-slate-600">{faq.answer}</div>
+                    <div className="px-6 pb-6 leading-7 text-[var(--muted)]">{faq.answer}</div>
                   )}
                 </div>
               ))}
@@ -479,7 +479,7 @@ export default function AIAutomationPage() {
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Explore More from Socieas
               </h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
                 Keep moving with direct paths to contact, services, and insights.
               </p>
             </div>
@@ -505,10 +505,10 @@ export default function AIAutomationPage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-white hover:shadow-lg"
+                  className="group rounded-[28px] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-violet-200 hover:bg-[var(--surface)] hover:shadow-lg"
                 >
                   <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
-                  <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
+                  <p className="mt-3 leading-7 text-[var(--muted)]">{item.desc}</p>
                   <span className="mt-5 inline-flex text-sm font-semibold text-violet-700 transition group-hover:translate-x-1">
                     Explore →
                   </span>
@@ -524,7 +524,7 @@ export default function AIAutomationPage() {
               <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
                 Build Automation Systems That Scale With Your Business
               </h2>
-              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">
                 Get AI automation support built around your workflows, tools, and operational goals.
               </p>
 
@@ -537,7 +537,7 @@ export default function AIAutomationPage() {
                 </Link>
                 <Link
                   href="/insights"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-slate-300 bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50"
                 >
                   Insights
                 </Link>

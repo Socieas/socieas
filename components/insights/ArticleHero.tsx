@@ -1,199 +1,92 @@
-import Image from "next/image";
-import Breadcrumbs from "./Breadcrumbs";
-import { urlFor } from "@/sanity/lib/image";
-import calculateReadingTime from "@/lib/calculateReadingTime";
-export default function ArticleHero({
-  post,
-}: any) {
+import { SanityPost } from "@/lib/types";
+
+export default function ArticleHero({ post }: { post: SanityPost }) {
   return (
     <section
       style={{
-        padding:
-          "120px 24px 50px",
+        padding: "130px 24px 60px",
       }}
     >
       <div
         style={{
-          maxWidth: "1100px",
+          maxWidth: "920px",
           margin: "0 auto",
+          textAlign: "center",
         }}
       >
-        <Breadcrumbs post={post} />
-        {/* CATEGORY */}
-
-        <div
+        <span
           style={{
-            marginBottom: "18px",
+            background: "#F5F3FF",
+            color: "#7C3AED",
+            padding: "10px 18px",
+            borderRadius: "999px",
+            fontSize: "12px",
+            fontWeight: 700,
+            letterSpacing: "0.5px",
           }}
         >
-          <span
-            style={{
-              background: "#7C3AED",
-
-              color: "white",
-
-              padding: "10px 18px",
-
-              borderRadius: "999px",
-
-              fontSize: "12px",
-
-              fontWeight: 700,
-
-              letterSpacing: "0.5px",
-            }}
-          >
-            {post.category?.title ||
-              "Insights"}
-          </span>
-        </div>
-
-        {/* TITLE */}
+          {post.category?.title || "Insights"}
+        </span>
 
         <h1
           style={{
-            fontSize:
-              "clamp(2.3rem,7vw,5rem)",
-
-            lineHeight: 1,
-
+            fontSize: "clamp(2.5rem,6vw,4.5rem)",
             fontWeight: 700,
-
-            color: "#111111",
-
+            lineHeight: 1,
+            color: "var(--text)",
+            marginTop: "30px",
             marginBottom: "24px",
-
-            maxWidth: "950px",
           }}
         >
           {post.title}
         </h1>
 
-        {/* EXCERPT */}
-
         <p
           style={{
-            fontSize: "1.1rem",
-
-            lineHeight: 1.9,
-
+            fontSize: "1.2rem",
             color: "#6B7280",
-
-            maxWidth: "780px",
-
-            marginBottom: "40px",
+            lineHeight: 1.6,
+            maxWidth: "750px",
+            margin: "0 auto",
           }}
         >
           {post.excerpt}
         </p>
 
-        {/* META */}
-
-{/* META */}
-
-<div
-  style={{
-    display: "flex",
-
-    gap: "18px",
-
-    alignItems: "center",
-
-    marginBottom: "40px",
-
-    flexWrap: "wrap",
-  }}
->
-  <span
-    style={{
-      fontWeight: 600,
-
-      color: "#111111",
-
-      fontSize: "14px",
-    }}
-  >
-    {post.author?.name ||
-      "Socieas"}
-  </span>
-
-  <span
-    style={{
-      color: "#9CA3AF",
-    }}
-  >
-    •
-  </span>
-
-  <span
-    style={{
-      color: "#6B7280",
-
-      fontSize: "14px",
-    }}
-  >
-    {new Date(
-      post.publishedAt
-    ).toLocaleDateString()}
-  </span>
-
-  <span
-    style={{
-      color: "#9CA3AF",
-    }}
-  >
-    •
-  </span>
-
-  <span
-    style={{
-      color: "#6B7280",
-
-      fontSize: "14px",
-    }}
-  >
-    {calculateReadingTime(
-      post.content || ""
-    )}
-  </span>
-</div>
-
-        {/* HERO IMAGE */}
-
-        {post.showHeroBanner &&
-          post.heroBanner && (
+        <div
+          style={{
+            marginTop: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "12px",
+          }}
+        >
+          <div
+            style={{
+              textAlign: "left",
+            }}
+          >
             <div
               style={{
-                position: "relative",
-
-                width: "100%",
-
-                minHeight: "260px",
-
-                maxHeight: "520px",
-
-                borderRadius: "28px",
-
-                overflow: "hidden",
-
-                border:
-                  "1px solid #E5E7EB",
+                fontSize: "14px",
+                fontWeight: 700,
+                color: "var(--text)",
               }}
             >
-              <Image
-                src={urlFor(
-                  post.heroBanner
-                ).url()}
-                alt={post.title}
-                fill
-                priority
-                sizes="100vw"
-                style={{
-                  objectFit: "cover",
-                }}
-              />
+              {post.author?.name || "Socieas"}
             </div>
-          )}
+            <div
+              style={{
+                fontSize: "12px",
+                color: "#9CA3AF",
+              }}
+            >
+              Published on{" "}
+              {new Date(post.publishedAt).toLocaleDateString()}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

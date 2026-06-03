@@ -161,7 +161,7 @@ export default function Navbar() {
 
           {/* NAVBAR */}
 
-          <div className="relative flex h-[68px] items-center justify-between rounded-[24px] border border-white/40 bg-white/80 px-5 shadow-[0_8px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl transition-all duration-300 sm:px-7">
+          <div className="relative flex h-[68px] items-center justify-between rounded-[24px] border border-white/40 bg-[var(--surface)]/80 px-5 shadow-[0_8px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl transition-all duration-300 sm:px-7">
 
             {/* LEFT */}
 
@@ -171,7 +171,7 @@ export default function Navbar() {
 
               <Link
                 href="/"
-                className="shrink-0 text-[25px] font-black tracking-[-0.08em] text-[#111111] transition duration-300 hover:opacity-80"
+                className="shrink-0 text-[25px] font-black tracking-[-0.08em] text-[var(--text)] transition duration-300 hover:opacity-80"
               >
                 Socieas.
               </Link>
@@ -257,7 +257,7 @@ export default function Navbar() {
                     }`}
                   >
 
-                    <div className="rounded-[28px] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+                    <div className="rounded-[28px] border border-black/5 bg-[var(--surface)] p-4 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
 
                       <Link
                         href="/services"
@@ -393,7 +393,7 @@ export default function Navbar() {
                     }`}
                   >
 
-                    <div className="rounded-[28px] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+                    <div className="rounded-[28px] border border-black/5 bg-[var(--surface)] p-4 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
 
                       <Link
                         href="/insights"
@@ -517,7 +517,7 @@ export default function Navbar() {
                   )
                 }
                 aria-label="Toggle Mobile Menu"
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:bg-[#F9FAFB]"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-black/10 bg-[var(--surface)] shadow-sm transition-all duration-300 hover:bg-[var(--soft-surface)]"
               >
                 {mobileMenuOpen ? (
                   <X size={20} />
@@ -540,7 +540,7 @@ export default function Navbar() {
             }`}
           >
 
-            <div className="overflow-hidden rounded-[26px] border border-black/5 bg-white/85 shadow-[0_20px_80px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+            <div className="overflow-hidden rounded-[26px] border border-black/5 bg-[var(--surface)]/85 shadow-[0_20px_80px_rgba(0,0,0,0.08)] backdrop-blur-xl">
 
               <div className="max-h-[82vh] overflow-y-auto px-5 py-5">
 
@@ -554,7 +554,7 @@ export default function Navbar() {
                     className={`flex items-center justify-between rounded-2xl px-5 py-4 text-[15px] font-semibold transition-all duration-300 ${
                       pathname === "/"
                         ? "bg-violet-50 text-violet-700"
-                        : "text-black hover:bg-[#F8F8F8]"
+                        : "text-black hover:bg-[var(--soft-surface)]"
                     }`}
                   >
                     Home
@@ -562,7 +562,7 @@ export default function Navbar() {
 
                   {/* SERVICES */}
 
-                  <div className="rounded-[24px] border border-black/5 bg-[#FAFAFA] p-2">
+                  <div className="rounded-[24px] border border-black/5 bg-[var(--soft-surface)] p-2">
 
                     <div className="flex items-center justify-between px-3 py-2">
 
@@ -582,7 +582,7 @@ export default function Navbar() {
                             !servicesOpen
                           )
                         }
-                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-white"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface)]"
                       >
                         <ChevronDown
                           size={18}
@@ -629,7 +629,7 @@ export default function Navbar() {
                                 onClick={() =>
                                   setMobileMenuOpen(false)
                                 }
-                                className="block rounded-2xl bg-white px-4 py-4 transition-all duration-300 hover:bg-violet-50"
+                                className="block rounded-2xl bg-[var(--surface)] px-4 py-4 transition-all duration-300 hover:bg-violet-50"
                               >
 
                                 <div className="text-sm font-semibold text-black">
@@ -654,7 +654,7 @@ export default function Navbar() {
 
                   {/* INSIGHTS */}
 
-                  <div className="rounded-[24px] border border-black/5 bg-[#FAFAFA] p-2">
+                  <div className="rounded-[24px] border border-black/5 bg-[var(--soft-surface)] p-2">
 
                     <div className="flex items-center justify-between px-3 py-2">
 
@@ -674,7 +674,7 @@ export default function Navbar() {
                             !insightsOpen
                           )
                         }
-                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-white"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface)]"
                       >
                         <ChevronDown
                           size={18}
@@ -721,7 +721,7 @@ export default function Navbar() {
                                 onClick={() =>
                                   setMobileMenuOpen(false)
                                 }
-                                className="block rounded-2xl bg-white px-4 py-4 transition-all duration-300 hover:bg-violet-50"
+                                className="block rounded-2xl bg-[var(--surface)] px-4 py-4 transition-all duration-300 hover:bg-violet-50"
                               >
 
                                 <div className="text-sm font-semibold text-black">
@@ -754,7 +754,7 @@ export default function Navbar() {
                     className={`flex items-center justify-between rounded-2xl px-5 py-4 text-[15px] font-semibold transition-all duration-300 ${
                       pathname === "/about"
                         ? "bg-violet-50 text-violet-700"
-                        : "text-black hover:bg-[#F8F8F8]"
+                        : "text-black hover:bg-[var(--soft-surface)]"
                     }`}
                   >
                     About

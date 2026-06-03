@@ -17,7 +17,7 @@ export default function EditorialProof() {
               Digital Presence System
             </div>
 
-            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[#111111] md:text-6xl">
+            <h2 className="mt-8 text-5xl font-black leading-[1.02] tracking-[-0.05em] text-[var(--text)] md:text-6xl">
               Strong founder brands
               <br />
               feel consistent
@@ -25,7 +25,7 @@ export default function EditorialProof() {
               everywhere online.
             </h2>
 
-            <p className="mt-8 max-w-3xl text-xl leading-relaxed text-slate-600">
+            <p className="mt-8 max-w-3xl text-xl leading-relaxed text-[var(--muted)]">
               Modern trust is built through repeated,
               connected digital experiences across platforms.
             </p>
@@ -39,7 +39,7 @@ export default function EditorialProof() {
             <div className="space-y-8">
 
               {/* CONTENT CARD */}
-              <div className="hover-card rounded-[36px] border border-slate-200 bg-white p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
+              <div className="hover-card rounded-[36px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
 
                 <div className="flex items-center justify-between">
 
@@ -53,7 +53,7 @@ export default function EditorialProof() {
 
                 </div>
 
-                <h3 className="mt-8 text-3xl font-black leading-tight text-[#111111]">
+                <h3 className="mt-8 text-3xl font-black leading-tight text-[var(--text)]">
                   Every platform should reinforce the same founder perception.
                 </h3>
 
@@ -94,7 +94,7 @@ export default function EditorialProof() {
                       Audience Touchpoints
                     </div>
 
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface)] shadow-sm">
                       <span className="text-3xl">
                         ✦
                       </span>
@@ -105,9 +105,9 @@ export default function EditorialProof() {
                   {/* Touchpoints */}
                   <div className="mt-10 space-y-4">
 
-                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-white px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
+                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-[var(--surface)] px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
 
-                      <span className="font-medium text-[#111111]">
+                      <span className="font-medium text-[var(--text)]">
                         Founder Content
                       </span>
 
@@ -117,9 +117,9 @@ export default function EditorialProof() {
 
                     </div>
 
-                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-white px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
+                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-[var(--surface)] px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
 
-                      <span className="font-medium text-[#111111]">
+                      <span className="font-medium text-[var(--text)]">
                         Brand Messaging
                       </span>
 
@@ -129,9 +129,9 @@ export default function EditorialProof() {
 
                     </div>
 
-                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-white px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
+                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-[var(--surface)] px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
 
-                      <span className="font-medium text-[#111111]">
+                      <span className="font-medium text-[var(--text)]">
                         Visual Identity
                       </span>
 
@@ -141,9 +141,9 @@ export default function EditorialProof() {
 
                     </div>
 
-                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-white px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
+                    <div className="group/item flex items-center justify-between rounded-2xl border border-violet-100 bg-[var(--surface)] px-5 py-4 shadow-sm transition-all duration-300 hover:border-violet-200 hover:bg-violet-50">
 
-                      <span className="font-medium text-[#111111]">
+                      <span className="font-medium text-[var(--text)]">
                         Social Presence
                       </span>
 
@@ -168,7 +168,7 @@ export default function EditorialProof() {
             <div className="flex flex-col gap-8">
 
               {/* SOCIAL UI */}
-              <div className="hover-card rounded-[36px] border border-slate-200 bg-white p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
+              <div className="hover-card rounded-[36px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
 
                 <div className="flex items-center justify-between">
 
@@ -178,7 +178,7 @@ export default function EditorialProof() {
                       Founder Feed
                     </div>
 
-                    <div className="mt-3 text-2xl font-black leading-tight text-[#111111]">
+                    <div className="mt-3 text-2xl font-black leading-tight text-[var(--text)]">
                       Strategic visibility across channels.
                     </div>
 
@@ -198,15 +198,15 @@ export default function EditorialProof() {
 
                 <div className="mt-10 space-y-5">
 
-                  <div className="rounded-2xl bg-violet-50 px-5 py-5 font-medium text-[#111111]">
+                  <div className="rounded-2xl bg-violet-50 px-5 py-5 font-medium text-[var(--text)]">
                     LinkedIn thought leadership content
                   </div>
 
-                  <div className="rounded-2xl bg-pink-50 px-5 py-5 font-medium text-[#111111]">
+                  <div className="rounded-2xl bg-pink-50 px-5 py-5 font-medium text-[var(--text)]">
                     Instagram founder storytelling
                   </div>
 
-                  <div className="rounded-2xl bg-blue-50 px-5 py-5 font-medium text-[#111111]">
+                  <div className="rounded-2xl bg-blue-50 px-5 py-5 font-medium text-[var(--text)]">
                     X/Twitter visibility loops
                   </div>
 
@@ -215,17 +215,17 @@ export default function EditorialProof() {
               </div>
 
               {/* TRUST BLOCK */}
-              <div className="hover-card rounded-[36px] border border-slate-200 bg-white p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
+              <div className="hover-card rounded-[36px] border border-slate-200 bg-[var(--surface)] p-8 shadow-[0_20px_50px_rgba(124,58,237,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.08)]">
 
                 <div className="text-sm font-semibold uppercase tracking-[0.2em] text-violet-600">
                   Trust Signal
                 </div>
 
-                <h3 className="mt-8 text-4xl font-black leading-tight text-[#111111]">
+                <h3 className="mt-8 text-4xl font-black leading-tight text-[var(--text)]">
                   Strong positioning reduces trust friction dramatically.
                 </h3>
 
-                <p className="mt-8 text-lg leading-relaxed text-slate-600">
+                <p className="mt-8 text-lg leading-relaxed text-[var(--muted)]">
                   Modern buyers trust founders they consistently recognize online.
                 </p>
 

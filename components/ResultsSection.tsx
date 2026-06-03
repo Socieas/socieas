@@ -13,7 +13,7 @@ export default function ResultsSection() {
 
           </div>
 
-          <h2 className="mt-6 text-4xl font-bold leading-tight text-[#111111] md:text-6xl">
+          <h2 className="mt-6 text-4xl font-bold leading-tight text-[var(--text)] md:text-6xl">
 
             Visibility changes how people perceive your business.
 
@@ -25,7 +25,7 @@ export default function ResultsSection() {
         <div className="mt-20 grid gap-8 lg:grid-cols-3">
 
           {/* CARD 1 */}
-          <div className="rounded-[36px] bg-[#F7F7F5] p-10">
+          <div className="rounded-[36px] bg-[var(--background)] p-10">
 
             <div className="text-5xl font-bold text-violet-600">
 
@@ -33,7 +33,7 @@ export default function ResultsSection() {
 
             </div>
 
-            <h3 className="mt-8 text-2xl font-semibold text-[#111111]">
+            <h3 className="mt-8 text-2xl font-semibold text-[var(--text)]">
 
               Audience Growth
 
@@ -72,7 +72,7 @@ export default function ResultsSection() {
           </div>
 
           {/* CARD 3 */}
-          <div className="rounded-[36px] bg-[#111111] p-10 text-white">
+          <div className="rounded-[36px] bg-[var(--text)] p-10 text-white">
 
             <div className="text-5xl font-bold">
 

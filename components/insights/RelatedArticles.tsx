@@ -1,134 +1,106 @@
 import Link from "next/link";
+import { SanityPost } from "@/lib/types";
 
-import { urlFor } from "@/sanity/lib/image";
-
-export default function RelatedArticles({
-  posts,
-}: any) {
+export default function RelatedArticles({ posts }: { posts: SanityPost[] }) {
   return (
     <section
       style={{
-        padding: "0 24px 90px",
+        padding: "80px 24px",
+        background: "white",
+        borderTop: "1px solid #E5E7EB",
       }}
     >
       <div
         style={{
-          maxWidth: "1280px",
+          maxWidth: "1180px",
           margin: "0 auto",
         }}
       >
         <div
           style={{
             display: "flex",
-
-            justifyContent:
-              "space-between",
-
-            alignItems: "center",
-
-            marginBottom: "34px",
+            justifyContent: "space-between",
+            alignItems: "end",
+            marginBottom: "40px",
           }}
         >
-          <h2
-            style={{
-              fontSize: "2rem",
-
-              fontWeight: 700,
-
-              color: "#111111",
-            }}
-          >
-            Related Insights
-          </h2>
+          <div>
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "#7C3AED",
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+              }}
+            >
+              Keep Reading
+            </span>
+            <h2
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: 700,
+                color: "var(--text)",
+                marginTop: "12px",
+              }}
+            >
+              Related Insights
+            </h2>
+          </div>
         </div>
 
         <div
           style={{
             display: "grid",
-
-            gridTemplateColumns:
-              "repeat(auto-fit,minmax(280px,1fr))",
-
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "24px",
           }}
         >
-          {posts.map((item: any) => (
+          {posts.map((post) => (
             <Link
-              key={item._id}
-              href={`/insights/blogs/${item.slug.current}`}
+              key={post._id}
+              href={`/insights/${post.type === "article" ? "articles" : post.type === "case-study" ? "case-studies" : "blogs"}/${post.slug?.current}`}
               style={{
                 textDecoration: "none",
-
-                color: "inherit",
               }}
+              className="group"
             >
-              <article
+              <div
                 style={{
-                  background: "white",
-
-                  borderRadius: "20px",
-
+                  borderRadius: "24px",
                   overflow: "hidden",
-
-                  border:
-                    "1px solid #E5E7EB",
-
-                  boxShadow:
-                    "0 2px 8px rgba(0,0,0,0.03)",
-
-                  height: "100%",
+                  background: "var(--soft-surface)",
+                  aspectRatio: "16/9",
+                  position: "relative",
+                  marginBottom: "20px",
                 }}
               >
-                {item.coverImage && (
-                  <img
-                    src={urlFor(
-                      item.coverImage
-                    ).url()}
-                    alt={item.title}
-                    style={{
-                      width: "100%",
+                {/* Fallback for image */}
+                <div style={{ width: '100%', height: '100%', background: '#7C3AED', opacity: 0.1 }} />
+              </div>
 
-                      height: "190px",
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "#7C3AED",
+                }}
+              >
+                {post.category?.title}
+              </span>
 
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
-
-                <div
-                  style={{
-                    padding: "20px",
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontSize: "1.15rem",
-
-                      lineHeight: 1.4,
-
-                      fontWeight: 700,
-
-                      color: "#111111",
-
-                      marginBottom: "12px",
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-
-                  <p
-                    style={{
-                      color: "#6B7280",
-
-                      lineHeight: 1.7,
-
-                      fontSize: "14px",
-                    }}
-                  >
-                    {item.excerpt}
-                  </p>
-                </div>
-              </article>
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "var(--text)",
+                  marginTop: "8px",
+                  lineHeight: 1.3,
+                }}
+                className="group-hover:text-violet-600 transition"
+              >
+                {post.title}
+              </h3>
             </Link>
           ))}
         </div>

@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FadeUp from "@/components/FadeUp";
-import { motion } from "framer-motion";
 import ContactFormWrapper from "@/components/contact/ContactFormWrapper";
 
 // —— DATA ————————————————————————————————————————————————————————————————————
@@ -40,10 +37,6 @@ const recentUpdates = [
   },
 ];
 
-// —— STYLES ———————————————————————————————————————————————————————————————
-const inputCls =
-  "mt-2 block w-full rounded-2xl border border-black/10 bg-[#F9FAFB] px-4 py-3 text-sm text-foreground placeholder:text-muted/50 focus:border-black/30 focus:outline-none focus:ring-0 transition";
-
 // —— INFO PANEL ———————————————————————————————————————————————————————————————
 function InfoPanel() {
   return (
@@ -70,7 +63,7 @@ function InfoPanel() {
         {pillars.map((p) => (
           <span
             key={p}
-            className="rounded-full border border-black/10 px-4 py-1.5 text-xs font-medium text-foreground"
+            className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-medium text-foreground"
           >
             {p}
           </span>
@@ -124,7 +117,7 @@ export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#F9FAFB] px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[var(--soft-surface)] px-4 pb-24 pt-32 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
             <InfoPanel />
