@@ -52,8 +52,9 @@ export async function POST(req: Request) {
 
     // ADMIN EMAIL
     await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: process.env.CONTACT_RECEIVER,
+      from: process.env.RESEND_FROM_EMAIL || process.env.SMTP_USER,
+      to: process.env.CONTACT_RECEIVER || process.env.NOTIFY_EMAIL,
+      replyTo: email,
       subject: `New Lead Received | ${name}`,
       html: `
       <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
 
     // USER CONFIRMATION EMAIL
     await transporter.sendMail({
-      from: process.env.SMTP_USER,
+      from: process.env.RESEND_FROM_EMAIL || process.env.SMTP_USER,
       to: email,
       subject: "We have received your inquiry | Socieas",
       html: `
