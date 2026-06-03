@@ -4,10 +4,13 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT),
-  secure: false,
+  secure: Number(process.env.SMTP_PORT) === 465, // Use SSL for port 465
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false, // Helps with some shared hosting/private SMTP issues
   },
 });
 
@@ -15,7 +18,30 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { name, email, company, service, message } = body;
+    const { name, email, company, service, message, turnstileToken } = body;
+
+    // Verify Cloudflare Turnstile
+    const turnstileRes = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: process.env.TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+        }),
+      }
+    );
+
+    const turnstileData = await turnstileRes.json();
+
+    if (!turnstileData.success) {
+      console.error("Turnstile verification failed:", turnstileData);
+      return NextResponse.json(
+        { error: "Security check failed. Please try again." },
+        { status: 400 }
+      );
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json(

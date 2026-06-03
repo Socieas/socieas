@@ -58,6 +58,8 @@ export default function FormPanel() {
       turnstileToken,
     };
 
+    console.log("Submitting payload:", payload);
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
