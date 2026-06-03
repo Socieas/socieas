@@ -3,7 +3,7 @@ import {
   allPostsQuery,
 } from "@/sanity/lib/queries";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, safeFetchSingle } from "@/sanity/lib/client";
 
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
 
@@ -16,38 +16,30 @@ export async function generateMetadata({
     slug: string;
   }>;
 }) {
+  const { slug } = await params;
 
-  const { slug } =
-    await params;
-
-  const post =
-    await client.fetch(
-      singlePostQuery,
-      {
-        slug,
-      }
-    );
+  const post = await safeFetchSingle<any>(
+    singlePostQuery,
+    {
+      slug,
+    }
+  );
 
   if (!post) {
-
     return {
-      title:
-        "Not Found | Socieas",
+      title: "Not Found | Socieas",
     };
   }
 
   return {
-
     title:
-      post.seoTitle ||
-      post.title,
+      post.seoTitle || post.title,
 
     description:
       post.seoDescription ||
       post.excerpt,
 
     openGraph: {
-
       title:
         post.seoTitle ||
         post.title,
@@ -55,13 +47,14 @@ export async function generateMetadata({
       description:
         post.seoDescription ||
         post.excerpt,
-type: "article",
+
+      type: "article",
+
       images: [
         `/og?title=${encodeURIComponent(
           post.title
         )}&category=${encodeURIComponent(
-          post.category
-            ?.title ||
+          post.category?.title ||
             "Insights"
         )}`,
       ],
@@ -76,45 +69,41 @@ export default async function BlogPage({
     slug: string;
   }>;
 }) {
+  const { slug } = await params;
 
-  const { slug } =
-    await params;
+  const post = await safeFetchSingle<any>(
+    singlePostQuery,
+    {
+      slug,
+    }
+  );
 
-  const post =
-    await client.fetch(
-      singlePostQuery,
-      {
-        slug,
-      }
-    );
+  const allPosts = await safeFetch<any[]>(
+    allPostsQuery,
+    {},
+    []
+  );
 
-  const allPosts =
-    await client.fetch(
-      allPostsQuery
-    );
-
-  const relatedPosts =
-    allPosts
-      .filter(
-        (item: any) =>
-          item.slug
-            ?.current !==
-            slug &&
-          item.type ===
-            "blog"
-      )
-      .slice(0, 3);
+  const relatedPosts = allPosts
+    .filter(
+      (item: any) =>
+        item.slug?.current !==
+          slug &&
+        item.type ===
+          "blog"
+    )
+    .slice(0, 3);
 
   if (!post) {
-
     return (
       <div
         style={{
-          padding:
-            "120px 24px",
+          padding: "120px 24px",
+          textAlign: "center"
         }}
       >
-        Not found
+        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Post Not Found</h1>
+        <p>The post you are looking for does not exist or has been removed.</p>
       </div>
     );
   }

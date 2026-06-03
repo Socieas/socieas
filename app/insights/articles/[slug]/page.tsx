@@ -3,7 +3,7 @@ import {
   allPostsQuery,
 } from "@/sanity/lib/queries";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch, safeFetchSingle } from "@/sanity/lib/client";
 
 import InsightPageTemplate from "@/components/insights/InsightPageTemplate";
 
@@ -12,13 +12,13 @@ export const revalidate = 60;
 export async function generateMetadata({
   params,
 }: {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
-  const post = await client.fetch(
+  const post = await safeFetchSingle<any>(
     singlePostQuery,
     {
       slug,
@@ -65,21 +65,23 @@ export async function generateMetadata({
 export default async function ArticlePage({
   params,
 }: {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
-  const post = await client.fetch(
+  const post = await safeFetchSingle<any>(
     singlePostQuery,
     {
       slug,
     }
   );
 
-  const allPosts = await client.fetch(
-    allPostsQuery
+  const allPosts = await safeFetch<any[]>(
+    allPostsQuery,
+    {},
+    []
   );
 
   const relatedPosts = allPosts
@@ -97,9 +99,11 @@ export default async function ArticlePage({
       <div
         style={{
           padding: "120px 24px",
+          textAlign: "center"
         }}
       >
-        Not found
+        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Post Not Found</h1>
+        <p>The post you are looking for does not exist or has been removed.</p>
       </div>
     );
   }

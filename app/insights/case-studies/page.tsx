@@ -1,6 +1,6 @@
 import InsightsListingTemplate from "@/components/insights/InsightsListingTemplate";
 
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 
 import { generateSEOMetadata } from "@/lib/seo";
@@ -27,7 +27,7 @@ export default async function CaseStudiesPage({
 }) {
   const params = searchParams;
 
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch<any[]>(allPostsQuery, {}, []);
 
   const caseStudies = posts.filter(
     (post: any) => post.type === "case-study"

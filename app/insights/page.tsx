@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { client } from "@/sanity/lib/client";
+import { safeFetch } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 import { generateSEOMetadata } from "@/lib/seo";
 
@@ -15,7 +15,7 @@ export const metadata = generateSEOMetadata({
 export const revalidate = 60;
 
 export default async function InsightsHubPage() {
-  const posts = await client.fetch(allPostsQuery);
+  const posts = await safeFetch<any[]>(allPostsQuery, {}, []);
 
   const blogs = posts.filter((p: any) => p.type === "blog").slice(0, 3);
   const articles = posts.filter((p: any) => p.type === "article").slice(0, 3);
