@@ -58,19 +58,19 @@ function InfoPanel() {
           Something <br />
           <span className="italic"> That Lasts</span>
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-muted/80">
+        <p className="mt-6 text-base text-muted/70 leading-relaxed">
           Whether you&apos;re scaling a business, building a personal brand, or
-          systemising your growth &mdash; we&apos;re here to help you move with
-          clarity and precision.
+          systemising your growth — we&apos;re here to help you move with clarity
+          and precision.
         </p>
       </div>
 
       {/* Pillars */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-3">
         {pillars.map((p) => (
           <span
             key={p}
-            className="rounded-full border border-black/10 px-4 py-1.5 text-xs font-medium text-foreground"
+            className="rounded-full border border-black/10 px-4 py-1.5 text-xs font-semibold text-foreground"
           >
             {p}
           </span>
@@ -79,37 +79,40 @@ function InfoPanel() {
 
       {/* Growth Needs */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted/60">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted/60">
           We help with
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {growthNeeds.map((n) => (
-            <span
+            <motion.span
               key={n}
-              className="rounded-xl bg-black/5 px-3 py-1 text-xs text-foreground"
+              whileHover={{ scale: 1.04 }}
+              className="rounded-xl bg-foreground/5 px-3 py-1.5 text-sm text-foreground"
             >
               {n}
-            </span>
+            </motion.span>
           ))}
         </div>
       </div>
 
       {/* Recent Updates */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted/60">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted/60">
           Recent Insights
         </p>
-        <ul className="space-y-3">
+        <ul className="mt-4 space-y-3">
           {recentUpdates.map((u) => (
             <li key={u.title}>
               <Link
                 href={u.link}
-                className="group flex flex-col gap-0.5 rounded-xl p-3 transition hover:bg-black/5"
+                className="group flex items-start gap-3 rounded-2xl border border-black/5 bg-white p-4 transition hover:border-black/20"
               >
-                <span className="text-sm font-medium text-foreground group-hover:underline">
-                  {u.title}
-                </span>
-                <span className="text-xs text-muted/60">{u.category}</span>
+                <div>
+                  <p className="text-sm font-medium text-foreground group-hover:underline">
+                    {u.title}
+                  </p>
+                  <p className="mt-1 text-xs text-muted/60">{u.category}</p>
+                </div>
               </Link>
             </li>
           ))}
@@ -125,35 +128,27 @@ function FormPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
-  const turnstileRef = useRef<HTMLDivElement>(null);
+  const turnstileRef = useRef(null);
 
   useEffect(() => {
-  // Load Cloudflare Turnstile script
-  const script = document.createElement("script");
-
-  (window as any).onTurnstileSuccess = setTurnstileToken;
-
-  script.src =
-    "https://challenges.cloudflare.com/turnstile/v0/api.js";
-
-  script.async = true;
-  script.defer = true;
-
-  document.head.appendChild(script);
-
-  return () => {
-    document.head.removeChild(script);
-  };
-}, []);
+    // Load Cloudflare Turnstile script
+    const script = document.createElement("script");
+    (window as any).onTurnstileSuccess = setTurnstileToken;
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
     if (!turnstileToken) {
       setError("Please complete the security check.");
       return;
     }
-
     setLoading(true);
     setError("");
     const formEl = e.currentTarget;
@@ -169,7 +164,7 @@ function FormPanel() {
       name: formData.get("name"),
       email: formData.get("email"),
       company: formData.get("company"),
-      goal: formData.get("goal"),
+      service: formData.get("service"),
       message: formData.get("message"),
       turnstileToken,
     };
@@ -180,34 +175,15 @@ function FormPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      try {
-  const response = await fetch("/api/contact", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json();
-
-  console.log("API Response:", data);
-
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed");
-  }
-
-  formEl.reset();
-  router.push("/insights");
-
-} catch (err: any) {
-  console.error("Form submit error:", err);
-  setError(err.message || "Something went wrong.");
-} finally {
-  setLoading(false);
-}
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Request failed");
+      }
       formEl.reset();
       router.push("/insights");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error("Form submit error:", err);
+      setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -215,7 +191,7 @@ function FormPanel() {
 
   return (
     <FadeUp>
-      <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-8 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Honeypot */}
         <input
           type="text"
@@ -226,16 +202,21 @@ function FormPanel() {
           style={{ display: "none" }}
         />
 
-        <h2 className="text-2xl font-bold text-foreground">Start a Conversation</h2>
-        <p className="mt-1 text-sm text-muted/70">
-          Fill in the details below and we&apos;ll get back to you within 1&ndash;2 business days.
-        </p>
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">
+            Start a Conversation
+          </h2>
+          <p className="mt-2 text-sm text-muted/60">
+            Fill in the details below and we&apos;ll get back to you within 1–2
+            business days.
+          </p>
+        </div>
 
         {/* Two-column on md+, single column on mobile */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
-              Full Name <span className="text-red-400">*</span>
+            <label className="text-sm font-medium text-foreground">
+              Full Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -245,9 +226,10 @@ function FormPanel() {
               className={inputCls}
             />
           </div>
+
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
-              Email Address <span className="text-red-400">*</span>
+            <label className="text-sm font-medium text-foreground">
+              Email Address <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -257,8 +239,9 @@ function FormPanel() {
               className={inputCls}
             />
           </div>
+
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+            <label className="text-sm font-medium text-foreground">
               Company Name
             </label>
             <input
@@ -268,12 +251,13 @@ function FormPanel() {
               className={inputCls}
             />
           </div>
+
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+            <label className="text-sm font-medium text-foreground">
               Primary Goal
             </label>
-            <select name="goal" className={inputCls}>
-              <option value="">Select a goal&hellip;</option>
+            <select name="service" className={inputCls}>
+              <option value="">Select a goal…</option>
               <option>Personal Branding</option>
               <option>CRM Implementation</option>
               <option>SEO Optimization</option>
@@ -285,10 +269,10 @@ function FormPanel() {
         </div>
 
         {/* Message — full width */}
-        <div className="mt-4">
-          <label className="text-xs font-semibold uppercase tracking-wide text-muted/60">
+        <div>
+          <label className="text-sm font-medium text-foreground">
             What&apos;s Your Biggest Challenge Right Now?{" "}
-            <span className="text-red-400">*</span>
+            <span className="text-red-500">*</span>
           </label>
           <textarea
             rows={5}
@@ -320,6 +304,7 @@ function FormPanel() {
         >
           {loading ? "Sending…" : "Send Inquiry →"}
         </button>
+
         <p className="mt-4 text-center text-xs text-muted/60">
           No spam. We respect your privacy.
         </p>
