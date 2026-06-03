@@ -254,10 +254,10 @@ function FormPanel() {
 
           <div>
             <label className="text-sm font-medium text-foreground">
-              Primary Goal
+              Primary Service
             </label>
             <select name="service" className={inputCls}>
-              <option value="">Select a goal…</option>
+              <option value="">Select a service…</option>
               <option>Personal Branding</option>
               <option>CRM Implementation</option>
               <option>SEO Optimization</option>
