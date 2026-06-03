@@ -129,8 +129,10 @@ function FormPanel() {
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstileRef = useRef(null);
+  const hasTurnstile = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   useEffect(() => {
+    if (!hasTurnstile) return;
     // Load Cloudflare Turnstile script
     const script = document.createElement("script");
     (window as any).onTurnstileSuccess = setTurnstileToken;
@@ -141,14 +143,10 @@ function FormPanel() {
     return () => {
       document.head.removeChild(script);
     };
-  }, []);
+  }, [hasTurnstile]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!turnstileToken) {
-      setError("Please complete the security check.");
-      return;
-    }
     setLoading(true);
     setError("");
     const formEl = e.currentTarget;
@@ -160,14 +158,18 @@ function FormPanel() {
       return;
     }
 
-    const payload = {
+    const payload: any = {
       name: formData.get("name"),
       email: formData.get("email"),
       company: formData.get("company"),
       service: formData.get("service"),
       message: formData.get("message"),
-      turnstileToken,
     };
+
+    // Only include turnstileToken if it exists
+    if (turnstileToken) {
+      payload.turnstileToken = turnstileToken;
+    }
 
     try {
       const response = await fetch("/api/contact", {
@@ -254,10 +256,10 @@ function FormPanel() {
 
           <div>
             <label className="text-sm font-medium text-foreground">
-              Primary Service
+              Primary Goal
             </label>
             <select name="service" className={inputCls}>
-              <option value="">Select a service…</option>
+              <option value="">Select a goal…</option>
               <option>Personal Branding</option>
               <option>CRM Implementation</option>
               <option>SEO Optimization</option>
@@ -283,15 +285,17 @@ function FormPanel() {
           />
         </div>
 
-        {/* Cloudflare Turnstile */}
-        <div className="mt-6">
-          <div
-            ref={turnstileRef}
-            className="cf-turnstile"
-            data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            data-callback="onTurnstileSuccess"
-          />
-        </div>
+        {/* Cloudflare Turnstile - only render if configured */}
+        {hasTurnstile && (
+          <div className="mt-6">
+            <div
+              ref={turnstileRef}
+              className="cf-turnstile"
+              data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              data-callback="onTurnstileSuccess"
+            />
+          </div>
+        )}
 
         {error && (
           <p className="mt-4 text-sm text-red-500">{error}</p>
