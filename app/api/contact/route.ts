@@ -14,21 +14,17 @@ async function sendEmail(to: string, subject: string, html: string) {
       html,
     }),
   });
-
   if (!res.ok) {
     const error = await res.text();
     throw new Error(`Resend API error: ${error}`);
   }
-
   return res.json();
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const { name, email, company, service, message } = body;
-
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: "Required fields missing" },
@@ -39,45 +35,156 @@ export async function POST(req: Request) {
     // ADMIN NOTIFICATION EMAIL
     await sendEmail(
       process.env.CONTACT_RECEIVER!,
-      `New Lead Received | ${name}`,
-      `
-        <div style="max-width:700px; margin:auto; background:white; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; border:1px solid #e0e0e0;">
-          <div style="background:#4F46E5; padding:24px 32px;">
-            <h1 style="color:white; margin:0; font-size:22px;">New Lead Received</h1>
-          </div>
-          <div style="padding:32px;">
-            <table style="width:100%; border-collapse:collapse;">
-              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666; width:140px;">Name</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; font-weight:600;">${name}</td></tr>
-              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666;">Email</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${email}</td></tr>
-              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666;">Company</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${company || "Not provided"}</td></tr>
-              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666;">Service</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${service || "Not specified"}</td></tr>
-              <tr><td style="padding:10px 0; color:#666; vertical-align:top;">Message</td><td style="padding:10px 0; white-space:pre-wrap;">${message}</td></tr>
-            </table>
-          </div>
-        </div>
-      `
+      `New Opportunity | ${name}`,
+      `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Opportunity | Socieas</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f5f8;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f5f8;padding:30px 15px;">
+<tr>
+<td align="center">
+<table width="700" cellpadding="0" cellspacing="0" border="0" style="max-width:700px;background:#ffffff;border-radius:18px;overflow:hidden;">
+<tr>
+<td style="background:#44006D;padding:35px 40px;">
+<div style="font-size:48px;font-weight:800;color:#ffffff;">Socieas<span style="color:#F57F20;">.</span></div>
+<p style="margin:15px 0 0;color:#F57F20;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">New Opportunity Received</p>
+<h1 style="margin:15px 0 0;color:#ffffff;font-size:32px;">A new lead has arrived</h1>
+</td>
+</tr>
+<tr>
+<td style="padding:40px;">
+<div style="background:#fafafa;border:1px solid #eeeeee;border-radius:14px;padding:25px;">
+<h2 style="margin-top:0;color:#111111;">Lead Details</h2>
+<p style="margin:12px 0;font-size:16px;"><strong>Name:</strong> ${name}</p>
+<p style="margin:12px 0;font-size:16px;"><strong>Email:</strong> ${email}</p>
+<p style="margin:12px 0;font-size:16px;"><strong>Company:</strong> ${company || "Not Provided"}</p>
+<p style="margin:12px 0;font-size:16px;"><strong>Interested Service:</strong> ${service || "Not Specified"}</p>
+</div>
+<div style="margin-top:25px;background:#faf7ff;border:1px solid #e8dcf7;border-radius:14px;padding:25px;">
+<h3 style="margin-top:0;color:#44006D;">Message</h3>
+<p style="margin:0;color:#444444;line-height:1.9;font-size:15px;">${message}</p>
+</div>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:30px;">
+<tr>
+<td width="50%" style="padding-right:8px;">
+<a href="mailto:${email}" style="display:block;text-align:center;background:#44006D;color:#ffffff;text-decoration:none;padding:16px;border-radius:10px;font-weight:700;">Reply to Lead</a>
+</td>
+<td width="50%" style="padding-left:8px;">
+<a href="https://mail.google.com" style="display:block;text-align:center;background:#F57F20;color:#ffffff;text-decoration:none;padding:16px;border-radius:10px;font-weight:700;">Open Inbox</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:30px 40px;background:#fafafa;">
+<h3 style="margin-top:0;color:#111111;">Quick Lead Summary</h3>
+<p style="margin:8px 0;color:#666666;">&#10003; Inquiry submitted from website</p>
+<p style="margin:8px 0;color:#666666;">&#10003; Contact email captured</p>
+<p style="margin:8px 0;color:#666666;">&#10003; Service interest recorded</p>
+<p style="margin:8px 0;color:#666666;">&#10003; Ready for follow-up</p>
+</td>
+</tr>
+<tr>
+<td style="background:#111111;padding:30px;text-align:center;">
+<div style="font-size:34px;font-weight:800;color:#ffffff;">Socieas<span style="color:#F57F20;">.</span></div>
+<p style="margin-top:15px;color:#999999;font-size:13px;">Website Lead Notification System</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>`
     );
 
     // USER CONFIRMATION EMAIL
     await sendEmail(
       email,
       "Thanks for reaching out to Socieas!",
-      `
-        <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; border:1px solid #e0e0e0;">
-          <div style="background:#4F46E5; padding:24px 32px;">
-            <h1 style="color:white; margin:0; font-size:22px;">Thank You, ${name}!</h1>
-          </div>
-          <div style="padding:32px;">
-            <p style="color:#333; line-height:1.6;">We've received your message and will get back to you within 24 hours.</p>
-            <p style="color:#333; line-height:1.6;">Here's a summary of what you sent:</p>
-            <div style="background:#f9f9f9; border-radius:8px; padding:20px; margin:20px 0;">
-              <p style="margin:0 0 8px;"><strong>Service Interested In:</strong> ${service || "General Inquiry"}</p>
-              <p style="margin:0; color:#666;">${message}</p>
-            </div>
-            <p style="color:#333;">Best regards,<br><strong>The Socieas Team</strong></p>
-          </div>
-        </div>
-      `
+      `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Socieas</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f5f8;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f5f8;padding:30px 15px;">
+<tr>
+<td align="center">
+<table width="650" cellpadding="0" cellspacing="0" border="0" style="max-width:650px;background:#ffffff;border-radius:18px;overflow:hidden;">
+<tr>
+<td style="background:#ffffff;padding:35px 40px;border-bottom:1px solid #eeeeee;">
+<div style="font-size:52px;font-weight:800;color:#111111;line-height:1;">Socieas<span style="color:#44006D;">.</span></div>
+</td>
+</tr>
+<tr>
+<td style="background:#44006D;padding:55px 40px;">
+<p style="margin:0;color:#F57F20;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Inquiry Received</p>
+<h1 style="margin:15px 0 0;color:#ffffff;font-size:34px;line-height:1.3;">Hi ${name},</h1>
+<p style="margin:20px 0 0;color:#ffffff;font-size:18px;line-height:1.8;">Thank you for reaching out to us.</p>
+<p style="margin:15px 0 0;color:#d9d9d9;font-size:16px;line-height:1.9;">We've received your message and one of our team members will review it shortly. If there's a good fit, we'll get back to you with the next steps and recommendations.</p>
+</td>
+</tr>
+<tr>
+<td style="padding:40px;">
+<h2 style="margin-top:0;color:#111111;font-size:24px;">Here's what we received</h2>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;background:#fafafa;border:1px solid #eeeeee;border-radius:12px;">
+<tr>
+<td style="padding:25px;">
+<p style="margin:10px 0;color:#333333;"><strong>Name:</strong> ${name}</p>
+<p style="margin:10px 0;color:#333333;"><strong>Email:</strong> ${email}</p>
+<p style="margin:10px 0;color:#333333;"><strong>Company:</strong> ${company || "Not Provided"}</p>
+<p style="margin:10px 0;color:#333333;"><strong>Service:</strong> ${service || "Not Specified"}</p>
+</td>
+</tr>
+</table>
+<p style="margin-top:35px;color:#555555;font-size:16px;line-height:1.8;">While our team reviews your inquiry, feel free to explore some of our resources and services.</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:30px;">
+<tr>
+<td width="50%" style="padding-right:8px;">
+<a href="https://socieas.com/services" style="display:block;text-align:center;padding:16px;background:#44006D;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:700;">Explore Services</a>
+</td>
+<td width="50%" style="padding-left:8px;">
+<a href="https://socieas.com/insights" style="display:block;text-align:center;padding:16px;background:#F57F20;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:700;">Read Insights</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:40px;background:#fafafa;">
+<h3 style="margin-top:0;color:#111111;">Stay Connected</h3>
+<p style="color:#666666;line-height:1.8;">Follow Socieas for industry insights, technology updates, marketing strategies, Salesforce expertise, AI automation trends, and business growth content.</p>
+<table cellpadding="0" cellspacing="0" style="margin-top:20px;">
+<tr>
+<td style="padding-right:12px;"><a href="https://www.linkedin.com/company/socieas/" style="color:#44006D;text-decoration:none;font-weight:700;">LinkedIn</a></td>
+<td style="padding-right:12px;"><a href="https://www.facebook.com/socieas" style="color:#44006D;text-decoration:none;font-weight:700;">Facebook</a></td>
+<td style="padding-right:12px;"><a href="https://www.instagram.com/socieas" style="color:#44006D;text-decoration:none;font-weight:700;">Instagram</a></td>
+<td><a href="https://x.com/socieas" style="color:#44006D;text-decoration:none;font-weight:700;">X</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:35px 40px;background:#111111;text-align:center;">
+<div style="font-size:36px;font-weight:800;color:#ffffff;">Socieas<span style="color:#F57F20;">.</span></div>
+<p style="margin-top:15px;color:#cccccc;font-size:14px;line-height:1.8;">Building Growth Through Digital Innovation</p>
+<p style="margin-top:20px;color:#999999;font-size:13px;">&#169; 2026 Socieas. All rights reserved.</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>`
     );
 
     return NextResponse.json({ success: true });
