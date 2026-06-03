@@ -1,16 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -24,41 +14,37 @@ export async function POST(req: Request) {
       );
     }
 
+    const port = Number(process.env.SMTP_PORT) || 465;
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: port,
+      secure: port === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
     // ADMIN EMAIL
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: process.env.CONTACT_RECEIVER,
       subject: `New Lead Received | ${name}`,
       html: `
-      <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
-        <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
-          
-          <div style="background:#44006D; padding:30px; text-align:center;">
-            <h1 style="color:white; margin:0;">SOCIEAS</h1>
-            <p style="color:#F57F20; margin-top:8px;">New Lead Notification</p>
+        <div style="max-width:700px; margin:auto; background:white; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; border:1px solid #e0e0e0;">
+          <div style="background:#4F46E5; padding:24px 32px;">
+            <h1 style="color:white; margin:0; font-size:22px;">New Lead Received</h1>
           </div>
-
           <div style="padding:32px;">
-            <h2 style="color:#111;">A new inquiry has arrived</h2>
-
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Company:</strong> ${company || "Not provided"}</p>
-            <p><strong>Service:</strong> ${service || "Not selected"}</p>
-
-            <div style="margin-top:24px; padding:20px; background:#f9fafb; border-radius:12px;">
-              <strong>Message:</strong>
-              <p style="margin-top:10px;">${message}</p>
-            </div>
-
-            <div style="margin-top:30px;">
-              <a href="mailto:${email}" style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px;">
-                Reply to Lead
-              </a>
-            </div>
+            <table style="width:100%; border-collapse:collapse;">
+              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666; width:140px;">Name</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; font-weight:600;">${name}</td></tr>
+              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666;">Email</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${email}</td></tr>
+              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666;">Company</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${company || "Not provided"}</td></tr>
+              <tr><td style="padding:10px 0; border-bottom:1px solid #f0f0f0; color:#666;">Service</td><td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${service || "Not specified"}</td></tr>
+              <tr><td style="padding:10px 0; color:#666; vertical-align:top;">Message</td><td style="padding:10px 0; white-space:pre-wrap;">${message}</td></tr>
+            </table>
           </div>
         </div>
-      </div>
       `,
     });
 
@@ -66,59 +52,28 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: email,
-      subject: "We have received your inquiry | Socieas",
+      subject: "Thanks for reaching out to Socieas!",
       html: `
-      <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:40px;">
-        <div style="max-width:700px; margin:auto; background:white; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
-          
-          <div style="background:#44006D; padding:30px; text-align:center;">
-            <h1 style="color:white; margin:0;">SOCIEAS</h1>
-            <p style="color:#F57F20; margin-top:8px;">
-              Building Growth Through Digital Innovation
-            </p>
+        <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; border:1px solid #e0e0e0;">
+          <div style="background:#4F46E5; padding:24px 32px;">
+            <h1 style="color:white; margin:0; font-size:22px;">Thank You, ${name}!</h1>
           </div>
-
           <div style="padding:32px;">
-            <h2 style="color:#111;">Hi ${name},</h2>
-
-            <p>
-              Thank you for reaching out to Socieas.
-            </p>
-
-            <p>
-              We’ve successfully received your inquiry and our team is reviewing it.
-              You can expect a response within 24 hours.
-            </p>
-
-            <p>
-              We’re excited to explore how we can help elevate your digital presence.
-            </p>
-
-            <div style="margin-top:30px;">
-              <a href="https://socieas.com"
-                 style="background:#F57F20; color:white; padding:14px 24px; text-decoration:none; border-radius:10px;">
-                 Visit Socieas
-              </a>
+            <p style="color:#333; line-height:1.6;">We've received your message and will get back to you within 24 hours.</p>
+            <p style="color:#333; line-height:1.6;">Here's a summary of what you sent:</p>
+            <div style="background:#f9f9f9; border-radius:8px; padding:20px; margin:20px 0;">
+              <p style="margin:0 0 8px;"><strong>Service Interested In:</strong> ${service || "General Inquiry"}</p>
+              <p style="margin:0; color:#666;">${message}</p>
             </div>
-
-            <p style="margin-top:30px; color:#666;">
-              Team Socieas
-            </p>
-          </div>
-
-          <div style="padding:20px; text-align:center; background:#f9fafb; font-size:14px;">
-            socieas.com
+            <p style="color:#333;">Best regards,<br><strong>The Socieas Team</strong></p>
           </div>
         </div>
-      </div>
       `,
     });
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
-    console.error("CONTACT ERROR:", error);
-
+    console.error("Contact form error:", error);
     return NextResponse.json(
       { error: "Failed to send email" },
       { status: 500 }
