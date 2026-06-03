@@ -1,5 +1,27 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+
+async function sendEmail(to: string, subject: string, html: string) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+    },
+    body: JSON.stringify({
+      from: process.env.RESEND_FROM_EMAIL,
+      to,
+      subject,
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(`Resend API error: ${error}`);
+  }
+
+  return res.json();
+}
 
 export async function POST(req: Request) {
   try {
@@ -14,23 +36,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const port = Number(process.env.SMTP_PORT) || 465;
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: port,
-      secure: port === 465,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    // ADMIN EMAIL
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: process.env.CONTACT_RECEIVER,
-      subject: `New Lead Received | ${name}`,
-      html: `
+    // ADMIN NOTIFICATION EMAIL
+    await sendEmail(
+      process.env.CONTACT_RECEIVER!,
+      `New Lead Received | ${name}`,
+      `
         <div style="max-width:700px; margin:auto; background:white; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; border:1px solid #e0e0e0;">
           <div style="background:#4F46E5; padding:24px 32px;">
             <h1 style="color:white; margin:0; font-size:22px;">New Lead Received</h1>
@@ -45,15 +55,14 @@ export async function POST(req: Request) {
             </table>
           </div>
         </div>
-      `,
-    });
+      `
+    );
 
     // USER CONFIRMATION EMAIL
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: email,
-      subject: "Thanks for reaching out to Socieas!",
-      html: `
+    await sendEmail(
+      email,
+      "Thanks for reaching out to Socieas!",
+      `
         <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; border:1px solid #e0e0e0;">
           <div style="background:#4F46E5; padding:24px 32px;">
             <h1 style="color:white; margin:0; font-size:22px;">Thank You, ${name}!</h1>
@@ -68,8 +77,8 @@ export async function POST(req: Request) {
             <p style="color:#333;">Best regards,<br><strong>The Socieas Team</strong></p>
           </div>
         </div>
-      `,
-    });
+      `
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {
