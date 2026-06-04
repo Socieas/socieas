@@ -155,13 +155,15 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed left-0 top-0 z-50 w-full px-3 pt-3 sm:px-5">
+      <header className={`fixed left-0 top-0 z-50 w-full px-3 pt-3 transition-all duration-300 sm:px-5 ${
+        mobileMenuOpen ? "h-screen" : "h-auto pointer-events-none"
+      }`}>
 
-        <div className="mx-auto max-w-[1380px]">
+        <div className="mx-auto max-w-[1380px] pointer-events-none">
 
           {/* NAVBAR */}
 
-          <div className="relative flex h-[68px] items-center justify-between rounded-[24px] border border-white/40 bg-white/80 px-5 shadow-[0_8px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl transition-all duration-300 sm:px-7">
+          <div className="relative flex h-[68px] items-center justify-between rounded-[24px] border border-white/40 bg-white/80 px-5 shadow-[0_8px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl transition-all duration-300 pointer-events-auto sm:px-7">
 
             {/* LEFT */}
 
@@ -533,7 +535,7 @@ export default function Navbar() {
           {/* MOBILE MENU */}
 
           <div
-            className={`xl:hidden transition-all duration-500 ${
+            className={`xl:hidden transition-all duration-500 pointer-events-auto ${
               mobileMenuOpen
                 ? "visible mt-3 translate-y-0 opacity-100"
                 : "invisible pointer-events-none -translate-y-4 opacity-0"
