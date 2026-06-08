@@ -14,6 +14,18 @@
 
   --text-dark: #111111;
   --text-muted-dark: #5f6470;
+
+  --surface: #F3F4F6;
+  --border: rgba(0, 0, 0, 0.1);
+  --text: #111111;
+}
+
+.dark {
+  --background: #111111;
+  --foreground: #ffffff;
+  --surface: #171717;
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #ffffff;
 }
 /* =========================
    SOCIEAS DESIGN SYSTEM
@@ -51,8 +63,8 @@ html {
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-body);
   overflow-x: hidden;
   text-rendering: optimizeLegibility;

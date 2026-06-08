@@ -4,20 +4,21 @@ import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
 
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState<boolean | null>(null);
 
   useEffect(() => {
-
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-      setDark(true);
-      document.documentElement.classList.add("dark");
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme");
+      const isDark = savedTheme === "dark";
+      // Use requestAnimationFrame to avoid synchronous setState in effect
+      requestAnimationFrame(() => {
+        setDark(isDark);
+      });
     }
-
   }, []);
 
   useEffect(() => {
+    if (dark === null) return;
 
     if (dark) {
       document.documentElement.classList.add("dark");
@@ -28,6 +29,12 @@ export default function ThemeToggle() {
     }
 
   }, [dark]);
+
+  if (dark === null) {
+    return (
+      <div className="h-11 w-11 rounded-full border border-[var(--border)] bg-[var(--surface)]" />
+    );
+  }
 
   return (
     <button

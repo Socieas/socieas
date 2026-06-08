@@ -70,7 +70,7 @@ export default function Testimonials() {
 
                   <p className="mt-8 text-lg leading-relaxed text-[var(--muted)]">
 
-                    "{item.text}"
+                    &ldquo;{item.text}&rdquo;
 
                   </p>
 
