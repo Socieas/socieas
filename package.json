@@ -1,0 +1,40 @@
+{
+  "name": "socieas",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@next/third-parties": "^16.2.6",
+    "@portabletext/react": "^6.2.0",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^5.24.0",
+    "framer-motion": "^12.40.0",
+    "isomorphic-dompurify": "^3.12.0",
+    "lucide-react": "^0.468.0",
+    "next": "16.2.6",
+    "next-sanity": "^12.4.5",
+    "nodemailer": "^6.10.1",
+    "prismjs": "^1.30.0",
+    "react": "^19.2.2",
+    "react-dom": "^19.2.2",
+    "react-simple-code-editor": "^0.14.1",
+    "resend": "^6.12.4",
+    "sanity": "^5.24.0",
+    "styled-components": "^6.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.7",
+    "@types/node": "^20.17.30",
+    "@types/nodemailer": "^6.4.17",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "eslint": "^9.25.1",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.8.3"
+  }
+}
