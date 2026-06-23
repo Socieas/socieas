@@ -1,4 +1,5 @@
 "use client";
+import Script from "next/script";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -329,6 +330,24 @@ export default function ContactPage() {
             <FormPanel />
           </div>
         </div>
+        <Script
+          id="contact-page-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "@id": "https://socieas.com/contact#webpage",
+            name: "Contact Socieas",
+            description: "Get in touch with Socieas for IT staffing, CRM implementation, AI automation, digital marketing, and full-stack development services.",
+            url: "https://socieas.com/contact",
+            isPartOf: { "@id": "https://socieas.com/#website" },
+            mainEntity: {
+              "@type": "ContactPoint",
+              contactType: "customer support",
+              availableLanguage: ["English", "Hindi"],
+            },
+          }) }}
+        />
       </main>
       <Footer />
     </>
