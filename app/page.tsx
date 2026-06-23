@@ -1,3 +1,5 @@
+import JsonLd from "@/components/seo/JsonLd";
+import { webPageSchema } from "@/lib/schema/pages";
 import { generateSEOMetadata } from "@/lib/seo";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -26,8 +28,14 @@ export const metadata =
     path: "/",
   });
 export default function Home() {
-  return (
+  const schema = webPageSchema({
+    name: "Socieas | AI Automation, CRM & IT Staffing Agency in India",
+    description: "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
+    url: "https://socieas.com",
+  });
+    return (
     <main className="overflow-x-hidden bg-[var(--background)] text-[var(--text)]">
+            <JsonLd schema={schema} id="homepage-schema" />
 
       <Navbar />
 
