@@ -1,3 +1,6 @@
+import JsonLd from "@/components/seo/JsonLd";
+import { aboutPageSchema } from "@/lib/schema/pages";
+import { breadcrumbSchema } from "@/lib/schema/breadcrumb";
 import AboutPage from "@/components/about/AboutPage";
 
 import { generateSEOMetadata } from "@/lib/seo";
@@ -18,5 +21,13 @@ export const metadata =
 
 export default function Page() {
 
-  return <AboutPage />;
+    return (
+    <>
+      <JsonLd schema={[aboutPageSchema(), breadcrumbSchema([
+        { name: "Home", url: "https://socieas.com" },
+        { name: "About", url: "https://socieas.com/about" },
+      ])]} id="about-schema" />
+      <AboutPage />
+    </>
+  );
 }
