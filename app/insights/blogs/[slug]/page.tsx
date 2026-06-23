@@ -1,3 +1,6 @@
+import JsonLd from "@/components/seo/JsonLd";
+import { articleSchema } from "@/lib/schema/article";
+import { breadcrumbSchema } from "@/lib/schema/breadcrumb";
 import {
   singlePostQuery,
   allPostsQuery,
@@ -120,11 +123,27 @@ export default async function BlogPage({
   }
 
   return (
-    <InsightPageTemplate
-      post={post}
-      relatedPosts={
-        relatedPosts
-      }
-    />
+    <>
+      <JsonLd
+        schema={[
+          articleSchema({
+            headline: post.title,
+            description: post.seoDescription || post.excerpt || "",
+            url: `https://socieas.com/insights/blogs/${slug}`,
+            datePublished: post.publishedAt || undefined,
+            dateModified: post._updatedAt || undefined,
+            authorName: post.author?.name || undefined,
+            imageUrl: post.mainImage?.asset?.url || undefined,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "https://socieas.com" },
+            { name: "Insights", url: "https://socieas.com/insights" },
+            { name: "Blogs", url: "https://socieas.com/insights/blogs" },
+            { name: post.title, url: `https://socieas.com/insights/blogs/${slug}` },
+          ]),
+        ]}
+        id="blog-post-schema"
+      />
+      <InsightPageTemplate post={post} relatedPosts={relatedPosts} />
+    </>
   );
-}
