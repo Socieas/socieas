@@ -5,12 +5,10 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ScrollingProof from "@/components/ScrollingProof";
 import TrustSignals from "@/components/TrustSignals";
-import ServicesGrid from "@/components/ServicesGrid";
 import FounderProblem from "@/components/FounderProblem";
+import ServicesGrid from "@/components/ServicesGrid";
 import StickyStory from "@/components/StickyStory";
 import EditorialTimeline from "@/components/EditorialTimeline";
-import EditorialProof from "@/components/EditorialProof";
-import PlatformPresence from "@/components/PlatformPresence";
 import InsightsPreview from "@/components/InsightsPreview";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
@@ -34,33 +32,17 @@ export default function Home() {
   return (
     <main className="overflow-x-hidden bg-[var(--background)] text-[var(--text)]">
       <JsonLd schema={schema} id="homepage-schema" />
-
       <Navbar />
-
       <Hero />
-
       <ScrollingProof />
-
       <TrustSignals />
-
-      <ServicesGrid />
-
       <FounderProblem />
-
+      <ServicesGrid />
       <StickyStory />
-
       <EditorialTimeline />
-
-      <EditorialProof />
-
-      <PlatformPresence />
-
       <InsightsPreview />
-
       <FAQ />
-
       <FinalCTA />
-
       <Footer />
     </main>
   );
