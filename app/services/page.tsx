@@ -316,7 +316,7 @@ function ServicesHero() {
           variants={bannerVariants}
           initial="hidden"
           animate="show"
-          className="relative mt-14 h-[240px] w-full overflow-hidden rounded-[40px] border border-slate-200 shadow-[0_20px_80px_rgba(124,58,237,0.12)] md:h-[400px]"
+          className="relative mt-14 aspect-[21/9] w-full overflow-hidden rounded-3xl border border-slate-200 shadow-[0_20px_80px_rgba(124,58,237,0.12)] md:rounded-[40px]"
         >
           <Image
             src="/images/services/services-hero.webp"
