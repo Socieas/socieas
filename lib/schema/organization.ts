@@ -13,6 +13,22 @@ export const organizationSchema = {
   },
   description:
     "Socieas helps businesses scale through AI automation, CRM systems, IT staffing, digital marketing, full-stack development, and personal branding.",
+  telephone: "+91-9142874636",
+  email: "hello@socieas.com",
+  areaServed: [
+    { "@type": "Country", name: "India" },
+    { "@type": "Country", name: "United States" },
+    { "@type": "Country", name: "United Kingdom" },
+    { "@type": "Country", name: "Australia" },
+    { "@type": "Country", name: "United Arab Emirates" },
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    telephone: "+91-9142874636",
+    email: "hello@socieas.com",
+    availableLanguage: ["English", "Hindi"],
+  },
   sameAs: [
     "https://www.linkedin.com/company/socieas",
     "https://www.instagram.com/socieas",
