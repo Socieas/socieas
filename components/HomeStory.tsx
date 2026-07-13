@@ -22,6 +22,21 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
+const slideLeftVariants: Variants = {
+  hidden: { opacity: 0, x: -40 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const slideRightVariants: Variants = {
+  hidden: { opacity: 0, x: 40 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const fadeVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+};
+
 const growXVariants: Variants = {
   hidden: { scaleX: 0 },
   show: { scaleX: 1, transition: { duration: 1, ease: "easeOut" } },
@@ -103,6 +118,20 @@ const storyLines = [
   { text: "Clients come to you.", highlight: true },
 ];
 
+const oldWay = [
+  "Cold messages strangers ignore",
+  "Posting whenever you remember",
+  "Leads scattered across spreadsheets",
+  "Growth stops the moment you stop",
+];
+
+const newWay = [
+  "Buyers arrive already convinced",
+  "Content shipped daily, on schedule",
+  "Every lead tracked and followed up",
+  "Growth compounds while you deliver",
+];
+
 const funnel = [
   { label: "Strangers see your content", width: "w-full", tone: "bg-violet-700" },
   { label: "Followers start to trust you", width: "w-2/3", tone: "bg-violet-600" },
@@ -129,6 +158,45 @@ const method = [
     number: "04",
     title: "Convert",
     description: "You take warm calls with people who already trust you.",
+  },
+];
+
+const formats = [
+  {
+    name: "LinkedIn",
+    headline: "Where B2B decisions start.",
+    points: [
+      "Daily posts written in your voice",
+      "Comment strategy that builds real relationships",
+      "A profile optimized to convert visits into calls",
+    ],
+  },
+  {
+    name: "Instagram",
+    headline: "Reach beyond your network.",
+    points: [
+      "Reels scripted from your core story",
+      "Carousels people save and share",
+      "Stories that build daily familiarity",
+    ],
+  },
+  {
+    name: "YouTube",
+    headline: "Depth builds authority.",
+    points: [
+      "Long form videos that answer real buyer questions",
+      "Each video cut into weeks of short clips",
+      "Titles and descriptions built for search",
+    ],
+  },
+  {
+    name: "Newsletter & Blog",
+    headline: "Own your audience.",
+    points: [
+      "Articles built to rank on Google and AI search",
+      "Emails your list actually opens",
+      "An asset you own forever, not rented reach",
+    ],
   },
 ];
 
@@ -171,6 +239,37 @@ const services = [
   },
 ];
 
+const countries = [
+  { name: "India", zone: "IST" },
+  { name: "United States", zone: "EST to PST" },
+  { name: "United Kingdom", zone: "GMT" },
+  { name: "Australia", zone: "AEST" },
+  { name: "UAE", zone: "GST" },
+];
+
+const principles = [
+  {
+    number: "01",
+    title: "Systems over hacks",
+    text: "Nothing we build depends on luck, trends, or one viral post.",
+  },
+  {
+    number: "02",
+    title: "Consistency over intensity",
+    text: "Daily beats viral, every single quarter. We engineer the daily.",
+  },
+  {
+    number: "03",
+    title: "Evidence over hype",
+    text: "If we cannot measure it, we do not sell it. You see every number.",
+  },
+  {
+    number: "04",
+    title: "Ownership over rented reach",
+    text: "Your audience, your data, your asset. It stays yours forever.",
+  },
+];
+
 const timeline = [
   {
     period: "Week 1",
@@ -202,6 +301,24 @@ const fitNo = [
   "You want bought followers and inflated numbers.",
   "You are not ready to publish consistently.",
   "You expect a magic button instead of a system.",
+];
+
+const nextSteps = [
+  {
+    number: "01",
+    title: "Book the call",
+    text: "Thirty minutes about your goals. Not a sales pitch.",
+  },
+  {
+    number: "02",
+    title: "Get your plan",
+    text: "A written visibility plan for your brand within 48 hours.",
+  },
+  {
+    number: "03",
+    title: "You decide",
+    text: "Build it with us, or take the plan and run it yourself.",
+  },
 ];
 
 const faqs = [
@@ -271,14 +388,6 @@ function Counter(props: { value: number; suffix: string }) {
   );
 }
 
-function Eyebrow(props: { children: string }) {
-  return (
-    <div className="text-sm font-semibold uppercase tracking-[0.25em] text-violet-600">
-      {props.children}
-    </div>
-  );
-}
-
 /* ================= SECTIONS ================= */
 
 function Marquee() {
@@ -304,20 +413,18 @@ function Marquee() {
   );
 }
 
-function Today() {
+function Expertise() {
   return (
     <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <Eyebrow>Today</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            We are early. That is{" "}
-            <span className="text-violet-600">your advantage.</span>
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Specialists, <span className="text-violet-600">not generalists.</span>
           </h2>
           <p className="mt-4 text-lg leading-8 text-slate-600">
-            No layers. No junior handoffs. The people who plan your growth are
-            the people who build it. Here is what we can prove today, and
-            nothing we cannot.
+            Socieas runs on senior expertise across branding, content, CRM,
+            and AI automation. The people who plan your growth are the people
+            who build it. No layers, no juniors, no handoffs.
           </p>
         </div>
 
@@ -381,8 +488,7 @@ function Problem() {
     <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <Eyebrow>The Problem</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             Being great is not enough.{" "}
             <span className="text-violet-600">Being seen is.</span>
           </h2>
@@ -438,8 +544,7 @@ function Shift() {
   return (
     <section className="bg-white py-12 md:py-20">
       <div className="mx-auto max-w-4xl px-6 text-center">
-        <Eyebrow>The Shift</Eyebrow>
-        <div className="mt-10 space-y-10 md:space-y-14">
+        <div className="space-y-10 md:space-y-14">
           {storyLines.map((line) => (
             <motion.p
               key={line.text}
@@ -462,13 +567,64 @@ function Shift() {
   );
 }
 
-function Funnel() {
+function OldWayNewWay() {
   return (
     <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Two ways to grow. <span className="text-violet-600">Only one compounds.</span>
+          </h2>
+        </div>
+
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <motion.div
+            variants={slideLeftVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="rounded-3xl border border-slate-200 bg-white p-8"
+          >
+            <h3 className="text-xl font-black text-slate-500">Without a system</h3>
+            <ul className="mt-5 space-y-4">
+              {oldWay.map((item) => (
+                <li key={item} className="flex gap-3 leading-7 text-slate-500">
+                  <span className="font-black text-slate-400">✕</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            variants={slideRightVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="rounded-3xl border-2 border-violet-300 bg-white p-8 shadow-[0_20px_60px_rgba(139,92,246,0.12)]"
+          >
+            <h3 className="text-xl font-black text-[#111111]">With Socieas</h3>
+            <ul className="mt-5 space-y-4">
+              {newWay.map((item) => (
+                <li key={item} className="flex gap-3 leading-7 text-slate-700">
+                  <span className="font-black text-violet-600">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Funnel() {
+  return (
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-4xl px-6">
         <div className="text-center">
-          <Eyebrow>The Math</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             Attention becomes <span className="text-violet-600">revenue.</span>
           </h2>
         </div>
@@ -504,11 +660,10 @@ function Funnel() {
 
 function Method() {
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <Eyebrow>The Method</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             One system. <span className="text-violet-600">Four stages.</span>
           </h2>
         </div>
@@ -539,7 +694,7 @@ function Method() {
                 <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white shadow-md">
                   {item.number}
                 </div>
-                <div className="mt-4 rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6 transition-colors duration-300 hover:border-violet-300">
+                <div className="mt-4 rounded-3xl border border-slate-200 bg-white p-6 transition-colors duration-300 hover:border-violet-300">
                   <h3 className="text-xl font-black text-[#111111]">{item.title}</h3>
                   <p className="mt-2 leading-7 text-slate-600">{item.description}</p>
                 </div>
@@ -547,6 +702,64 @@ function Method() {
             ))}
           </motion.div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function ContentFormats() {
+  const [active, setActive] = useState(0);
+  const current = formats[active];
+
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="text-center">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            One story. <span className="text-violet-600">Every platform.</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-600">
+            We turn your positioning into content built for how each platform
+            actually works. Tap a channel to see what ships.
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          {formats.map((format, index) => (
+            <button
+              key={format.name}
+              type="button"
+              onClick={() => setActive(index)}
+              className={
+                active === index
+                  ? "rounded-full bg-violet-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300"
+                  : "rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-violet-300 hover:text-violet-700"
+              }
+            >
+              {format.name}
+            </button>
+          ))}
+        </div>
+
+        <motion.div
+          key={active}
+          variants={fadeVariants}
+          initial="hidden"
+          animate="show"
+          className="mx-auto mt-8 max-w-3xl rounded-3xl border border-slate-200 bg-[#F8F8F6] p-8 md:p-10"
+        >
+          <h3 className="text-2xl font-black text-[#111111] md:text-3xl">
+            {current.headline}
+          </h3>
+          <ul className="mt-6 space-y-4">
+            {current.points.map((point) => (
+              <li key={point} className="flex gap-3 text-lg leading-8 text-slate-700">
+                <span className="font-black text-violet-600">✓</span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
       </div>
     </section>
   );
@@ -565,13 +778,10 @@ function ServicesCarousel() {
     <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <Eyebrow>What We Build</Eyebrow>
-            <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-              Start with one system.{" "}
-              <span className="text-violet-600">Stack the rest.</span>
-            </h2>
-          </div>
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Start with one system.{" "}
+            <span className="text-violet-600">Stack the rest.</span>
+          </h2>
           <div className="flex gap-3">
             <button
               type="button"
@@ -631,13 +841,128 @@ function ServicesCarousel() {
   );
 }
 
-function NinetyDays() {
+function GlobalReach() {
   return (
     <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            One team. <span className="text-violet-600">Five markets.</span>
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            Async first, with calls scheduled in your timezone.
+          </p>
+        </div>
+
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportSoft}
+          className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5"
+        >
+          {countries.map((country) => (
+            <motion.div
+              key={country.name}
+              variants={itemVariants}
+              whileHover={hoverLift}
+              className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6 text-center transition-colors duration-300 hover:border-violet-300"
+            >
+              <span className="mx-auto flex h-3 w-3 items-center justify-center">
+                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-violet-600" />
+              </span>
+              <div className="mt-3 font-black text-[#111111]">{country.name}</div>
+              <div className="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-500">
+                {country.zone}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Principles() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            How we <span className="text-violet-600">work.</span>
+          </h2>
+        </div>
+
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportSoft}
+          className="mt-10 grid gap-5 sm:grid-cols-2"
+        >
+          {principles.map((principle) => (
+            <motion.div
+              key={principle.number}
+              variants={itemVariants}
+              whileHover={hoverLift}
+              className="rounded-3xl border-t-4 border-violet-600 bg-white p-7 shadow-sm"
+            >
+              <div className="text-sm font-black tracking-widest text-violet-600">
+                {principle.number}
+              </div>
+              <h3 className="mt-3 text-2xl font-black text-[#111111]">
+                {principle.title}
+              </h3>
+              <p className="mt-2 text-lg leading-8 text-slate-600">{principle.text}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Manifesto() {
+  return (
+    <section className="bg-white py-14 md:py-24">
+      <div className="mx-auto max-w-4xl px-6 text-center">
+        <motion.h2
+          variants={itemVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="text-4xl font-black tracking-tight text-[#111111] md:text-6xl"
+        >
+          People buy from people.
+        </motion.h2>
+        <motion.div
+          variants={growXVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mx-auto mt-6 h-1.5 w-40 origin-left rounded-full bg-violet-600 md:w-56"
+        />
+        <motion.p
+          variants={itemVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mx-auto mt-8 max-w-2xl text-xl leading-9 text-slate-600 md:text-2xl md:leading-10"
+        >
+          Your buyers are not searching for another agency. They are searching
+          for someone they can trust. We make sure that someone is you.
+        </motion.p>
+      </div>
+    </section>
+  );
+}
+
+function NinetyDays() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-4xl px-6">
         <div className="text-center">
-          <Eyebrow>The Timeline</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             Your first 90 days, <span className="text-violet-600">mapped.</span>
           </h2>
         </div>
@@ -672,7 +997,7 @@ function NinetyDays() {
           </motion.div>
         </div>
 
-        <div className="mt-10 rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6 text-center">
+        <div className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 text-center">
           <p className="text-base leading-7 text-slate-600">
             We will not promise you leads by a fixed date. Nobody honest can.
             We promise the system, the consistency, and reporting so clear you
@@ -686,25 +1011,21 @@ function NinetyDays() {
 
 function FitCheck() {
   return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-5xl px-6">
         <div className="text-center">
-          <Eyebrow>Fit Check</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             This only works for <span className="text-violet-600">some people.</span>
           </h2>
         </div>
 
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewportSoft}
-          className="mt-10 grid gap-5 md:grid-cols-2"
-        >
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
           <motion.div
-            variants={itemVariants}
-            className="rounded-3xl border border-violet-200 bg-white p-8"
+            variants={slideLeftVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="rounded-3xl border border-violet-200 bg-[#F8F8F6] p-8"
           >
             <h3 className="text-xl font-black text-[#111111]">Work with us if</h3>
             <ul className="mt-5 space-y-4">
@@ -718,8 +1039,11 @@ function FitCheck() {
           </motion.div>
 
           <motion.div
-            variants={itemVariants}
-            className="rounded-3xl border border-slate-200 bg-white p-8"
+            variants={slideRightVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-8"
           >
             <h3 className="text-xl font-black text-[#111111]">Skip us if</h3>
             <ul className="mt-5 space-y-4">
@@ -731,6 +1055,43 @@ function FitCheck() {
               ))}
             </ul>
           </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NextSteps() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            What happens when <span className="text-violet-600">you reach out.</span>
+          </h2>
+        </div>
+
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportSoft}
+          className="mt-10 grid gap-5 md:grid-cols-3"
+        >
+          {nextSteps.map((step) => (
+            <motion.div
+              key={step.number}
+              variants={itemVariants}
+              whileHover={hoverLift}
+              className="rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-sm transition-colors duration-300 hover:border-violet-300"
+            >
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white">
+                {step.number}
+              </div>
+              <h3 className="mt-4 text-xl font-black text-[#111111]">{step.title}</h3>
+              <p className="mt-2 leading-7 text-slate-600">{step.text}</p>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
@@ -742,8 +1103,7 @@ function FAQBlock() {
     <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-4xl px-6">
         <div className="text-center">
-          <Eyebrow>FAQ</Eyebrow>
-          <h2 className="mt-4 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             Frequently asked questions
           </h2>
         </div>
@@ -784,14 +1144,20 @@ export default function HomeStory() {
         style={progressStyle}
       />
       <Marquee />
-      <Today />
+      <Expertise />
       <Problem />
       <Shift />
+      <OldWayNewWay />
       <Funnel />
       <Method />
+      <ContentFormats />
       <ServicesCarousel />
+      <GlobalReach />
+      <Principles />
+      <Manifesto />
       <NinetyDays />
       <FitCheck />
+      <NextSteps />
       <FAQBlock />
     </>
   );
