@@ -67,9 +67,6 @@ export default function FinalCTA() {
           </div>
         </div>
       </div>
-    </main>
-  );
-}
     </section>
   );
 }
