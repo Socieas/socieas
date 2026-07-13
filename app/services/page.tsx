@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 
 import Navbar from "@/components/Navbar";
@@ -29,6 +30,11 @@ const fadeVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
 };
 
+const bannerVariants: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+};
+
 const growXVariants: Variants = {
   hidden: { scaleX: 0 },
   show: { scaleX: 1, transition: { duration: 1, ease: "easeOut" } },
@@ -41,20 +47,16 @@ const growYVariants: Variants = {
 
 const hoverLift = { y: -6 };
 
-const tileVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
-};
-
 /* ================= DATA ================= */
 
-const services = [
+const chapters = [
   {
+    number: "01",
     name: "Personal Branding",
     slug: "/services/personal-branding",
-    short: "Become the founder your market recognizes.",
+    hook: "Every growth story starts with being seen.",
     description:
-      "Strategic positioning, content systems, and audience growth that make founders recognizable and trusted online.",
+      "We position you as the founder your market recognizes and trusts, with content systems that work every day.",
     items: [
       "LinkedIn Positioning",
       "Founder Content",
@@ -63,11 +65,12 @@ const services = [
     ],
   },
   {
+    number: "02",
     name: "Digital Marketing",
     slug: "/services/digital-marketing",
-    short: "Bring qualified attention to your door.",
+    hook: "Then the right people start finding you.",
     description:
-      "Search and social campaigns built to attract the right audience and turn attention into pipeline.",
+      "Search and social campaigns that attract qualified attention and turn it into pipeline, not vanity metrics.",
     items: [
       "Social Campaigns",
       "SEO Systems",
@@ -76,11 +79,21 @@ const services = [
     ],
   },
   {
+    number: "03",
+    name: "Full Stack Development",
+    slug: "/services/full-stack-development",
+    hook: "Your website turns visitors into enquiries.",
+    description:
+      "Fast, search ready websites and platforms engineered to convert, not just look pretty.",
+    items: ["Web Platforms", "Funnels", "Applications", "Scalable Systems"],
+  },
+  {
+    number: "04",
     name: "CRM Systems",
     slug: "/services/crm-solutions",
-    short: "Never lose a lead again.",
+    hook: "And no lead ever slips through again.",
     description:
-      "Clean pipelines, tracked leads, and follow up workflows so nothing slips through the cracks.",
+      "Clean pipelines, tracked leads, and follow up workflows so every enquiry gets the attention it deserves.",
     items: [
       "Lead Pipelines",
       "Client Tracking",
@@ -89,9 +102,10 @@ const services = [
     ],
   },
   {
+    number: "05",
     name: "AI Automation",
     slug: "/services/ai-automation",
-    short: "Work that runs while you sleep.",
+    hook: "The busywork starts running itself.",
     description:
       "AI workflows that answer, follow up, and keep operations moving without adding headcount.",
     items: [
@@ -102,19 +116,12 @@ const services = [
     ],
   },
   {
-    name: "Full Stack Development",
-    slug: "/services/full-stack-development",
-    short: "A website that converts, not just exists.",
-    description:
-      "Fast, search ready websites and platforms built to turn visitors into enquiries.",
-    items: ["Web Platforms", "Funnels", "Applications", "Scalable Systems"],
-  },
-  {
+    number: "06",
     name: "Staffing Solutions",
     slug: "/services/staffing-solutions",
-    short: "Scale delivery without hiring overhead.",
+    hook: "And when demand outgrows you, we scale your team.",
     description:
-      "Vetted talent and hiring systems that grow your execution capacity on demand.",
+      "Vetted talent and hiring systems that grow your execution capacity on demand, without hiring overhead.",
     items: [
       "Remote Teams",
       "Hiring Systems",
@@ -122,15 +129,6 @@ const services = [
       "Talent Scaling",
     ],
   },
-];
-
-const heroTiles = [
-  { number: "01", name: "Personal Branding" },
-  { number: "02", name: "Digital Marketing" },
-  { number: "03", name: "CRM Systems" },
-  { number: "04", name: "AI Automation" },
-  { number: "05", name: "Development" },
-  { number: "06", name: "Staffing" },
 ];
 
 const bottlenecks = [
@@ -178,27 +176,6 @@ const bottlenecks = [
   },
 ];
 
-const ladder = [
-  {
-    step: "01",
-    title: "Get seen",
-    text: "Personal branding and digital marketing put you in front of the right people every day.",
-    tags: ["Personal Branding", "Digital Marketing"],
-  },
-  {
-    step: "02",
-    title: "Capture demand",
-    text: "A converting website and a clean CRM make sure attention turns into tracked enquiries.",
-    tags: ["Full Stack Development", "CRM Systems"],
-  },
-  {
-    step: "03",
-    title: "Scale without breaking",
-    text: "Automation and staffing grow your capacity so delivery keeps up with demand.",
-    tags: ["AI Automation", "Staffing Solutions"],
-  },
-];
-
 const stackCategories = [
   {
     name: "Websites & Platforms",
@@ -242,29 +219,6 @@ const engineeringPrinciples = [
     number: "04",
     title: "Built to scale",
     text: "Clean, documented code that grows with you instead of collapsing at your first traffic spike.",
-  },
-];
-
-const integrationFlow = [
-  {
-    step: "01",
-    title: "Website captures",
-    text: "Every enquiry lands with context: goal, stage, and source.",
-  },
-  {
-    step: "02",
-    title: "CRM logs it",
-    text: "The lead is tracked and scored the second it arrives.",
-  },
-  {
-    step: "03",
-    title: "Automation responds",
-    text: "Follow up goes out in minutes, not days.",
-  },
-  {
-    step: "04",
-    title: "You close",
-    text: "You step in for the one thing machines cannot do: the relationship.",
   },
 ];
 
@@ -321,141 +275,146 @@ function ServicesHero() {
     <section className="relative overflow-hidden pb-16 pt-36 md:pt-40">
       <div className="pointer-events-none absolute left-[-100px] top-0 h-[320px] w-[320px] rounded-full bg-violet-100 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <motion.div variants={listVariants} initial="hidden" animate="show">
-            <motion.h1
-              variants={itemVariants}
-              className="text-5xl font-black leading-[0.98] tracking-tight text-[#111111] md:text-7xl"
-            >
-              Six systems.
-              <br />
-              One growth <span className="text-violet-600">engine.</span>
-            </motion.h1>
-            <motion.div
-              variants={growXVariants}
-              className="mt-6 h-1.5 w-32 origin-left rounded-full bg-violet-600 md:w-44"
-            />
-            <motion.p
-              variants={itemVariants}
-              className="mt-8 max-w-xl text-xl leading-relaxed text-slate-600"
-            >
-              Every service here exists for one reason: to turn attention into
-              revenue. Start with the one that removes your biggest
-              bottleneck, then stack the rest as results compound.
-            </motion.p>
-            <motion.div variants={itemVariants} className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/contact"
-                className="inline-flex items-center rounded-2xl bg-violet-700 px-7 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
-              >
-                Book a Free Strategy Call
-              </Link>
-              <a
-                href="#explore"
-                className="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-7 py-4 font-semibold text-[#111111] transition-all duration-300 hover:border-violet-400"
-              >
-                Explore the Systems
-              </a>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            variants={listVariants}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-2 gap-4 sm:grid-cols-3"
+        <motion.div variants={listVariants} initial="hidden" animate="show">
+          <motion.h1
+            variants={itemVariants}
+            className="max-w-4xl text-5xl font-black leading-[0.98] tracking-tight text-[#111111] md:text-7xl"
           >
-            {heroTiles.map((tile) => (
-              <motion.div
-                key={tile.number}
-                variants={tileVariants}
-                whileHover={hoverLift}
-                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-violet-300"
-              >
-                <div className="text-sm font-black tracking-widest text-violet-600">
-                  {tile.number}
-                </div>
-                <div className="mt-2 font-black leading-tight text-[#111111]">
-                  {tile.name}
-                </div>
-              </motion.div>
-            ))}
+            Six systems.
+            <br />
+            One growth <span className="text-violet-600">engine.</span>
+          </motion.h1>
+          <motion.div
+            variants={growXVariants}
+            className="mt-6 h-1.5 w-32 origin-left rounded-full bg-violet-600 md:w-44"
+          />
+          <motion.p
+            variants={itemVariants}
+            className="mt-8 max-w-2xl text-xl leading-relaxed text-slate-600"
+          >
+            Every service here exists for one reason: to turn attention into
+            revenue. Start with the one that removes your biggest bottleneck,
+            then stack the rest as results compound.
+          </motion.p>
+          <motion.div variants={itemVariants} className="mt-8 flex flex-wrap gap-4">
+            <Link
+              href="/contact"
+              className="inline-flex items-center rounded-2xl bg-violet-700 px-7 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
+            >
+              Book a Free Strategy Call
+            </Link>
+            <a
+              href="#story"
+              className="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-7 py-4 font-semibold text-[#111111] transition-all duration-300 hover:border-violet-400"
+            >
+              See How It Works
+            </a>
           </motion.div>
-        </div>
+        </motion.div>
+
+        <motion.div
+          variants={bannerVariants}
+          initial="hidden"
+          animate="show"
+          className="relative mt-14 h-[240px] w-full overflow-hidden rounded-[40px] border border-slate-200 shadow-[0_20px_80px_rgba(124,58,237,0.12)] md:h-[400px]"
+        >
+          <Image
+            src="/images/services/services-hero.webp"
+            alt="Six connected growth systems rising step by step"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </motion.div>
       </div>
     </section>
   );
 }
 
-function ServiceExplorer() {
-  const [activeService, setActiveService] = useState(0);
-  const current = services[activeService];
+function ServicesStory() {
+  const [open, setOpen] = useState(0);
 
   return (
-    <section id="explore" className="pb-20 md:pb-24">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[0.42fr_1fr] lg:px-8">
-        <div className="space-y-4">
-          {services.map((service, index) => (
-            <button
-              key={service.name}
-              onClick={() => setActiveService(index)}
-              className={
-                activeService === index
-                  ? "w-full rounded-[28px] border-2 border-violet-400 bg-violet-50 p-6 text-left shadow-md transition-all duration-300"
-                  : "w-full rounded-[28px] border border-slate-200 bg-white p-6 text-left transition-all duration-300 hover:border-violet-300 hover:bg-violet-50/40"
-              }
-            >
-              <div className="text-2xl font-black leading-tight text-[#111111]">
-                {service.name}
-              </div>
-              <div className="mt-2 leading-relaxed text-slate-600">
-                {service.short}
-              </div>
-            </button>
-          ))}
+    <section id="story" className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="max-w-3xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Read it like <span className="text-violet-600">a story.</span>
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            Because that is how growth actually happens. Six chapters, in the
+            order that makes results compound.
+          </p>
         </div>
 
-        <motion.div
-          key={activeService}
-          variants={fadeVariants}
-          initial="hidden"
-          animate="show"
-          className="h-fit rounded-[40px] border border-slate-200 bg-white p-10 shadow-[0_20px_80px_rgba(124,58,237,0.08)] md:p-14 lg:sticky lg:top-28"
-        >
-          <h2 className="text-4xl font-black leading-tight tracking-tight text-[#111111] md:text-5xl">
-            {current.name}
-          </h2>
-
-          <p className="mt-6 max-w-3xl text-xl leading-relaxed text-slate-600">
-            {current.description}
-          </p>
-
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {current.items.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-slate-200 bg-[#F8F8F6] px-6 py-5 font-medium text-[#111111] transition-all duration-300 hover:border-violet-300"
+        <div className="mt-10 border-t border-slate-200">
+          {chapters.map((chapter, index) => (
+            <div key={chapter.number} className="border-b border-slate-200">
+              <button
+                type="button"
+                onClick={() => setOpen(open === index ? -1 : index)}
+                className="flex w-full items-center gap-5 py-6 text-left md:gap-8"
               >
-                {item}
-              </div>
-            ))}
-          </div>
+                <span
+                  className={
+                    open === index
+                      ? "text-2xl font-black text-violet-600 md:text-3xl"
+                      : "text-2xl font-black text-slate-300 md:text-3xl"
+                  }
+                >
+                  {chapter.number}
+                </span>
+                <span className="flex-1">
+                  <span className="block text-2xl font-black tracking-tight text-[#111111] md:text-3xl">
+                    {chapter.name}
+                  </span>
+                  <span className="mt-1 block text-slate-500 md:text-lg">
+                    {chapter.hook}
+                  </span>
+                </span>
+                <span
+                  className={
+                    open === index
+                      ? "flex h-10 w-10 shrink-0 rotate-45 items-center justify-center rounded-full bg-violet-600 text-xl font-black text-white transition-transform duration-300"
+                      : "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-300 text-xl font-black text-slate-500 transition-transform duration-300"
+                  }
+                >
+                  +
+                </span>
+              </button>
 
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link
-              href={current.slug}
-              className="inline-flex items-center justify-center rounded-2xl bg-violet-700 px-7 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
-            >
-              Explore This System
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-7 py-4 font-semibold text-[#111111] transition-all duration-300 hover:border-violet-400"
-            >
-              Book a Free Strategy Call
-            </Link>
-          </div>
-        </motion.div>
+              {open === index && (
+                <motion.div
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="show"
+                  className="pb-8 pl-12 md:pl-20"
+                >
+                  <p className="max-w-2xl text-lg leading-8 text-slate-600">
+                    {chapter.description}
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {chapter.items.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    href={chapter.slug}
+                    className="mt-6 inline-flex items-center rounded-2xl bg-violet-700 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
+                  >
+                    Explore {chapter.name}
+                  </Link>
+                </motion.div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -466,7 +425,7 @@ function BottleneckPicker() {
   const pick = selected >= 0 ? bottlenecks[selected] : null;
 
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
@@ -498,7 +457,7 @@ function BottleneckPicker() {
             variants={fadeVariants}
             initial="hidden"
             animate="show"
-            className="mt-8 rounded-[32px] border-2 border-violet-300 bg-[#F8F8F6] p-8 md:p-10"
+            className="mt-8 rounded-[32px] border-2 border-violet-300 bg-white p-8 md:p-10"
           >
             <p className="text-xs font-semibold uppercase tracking-widest text-violet-600">
               Start here
@@ -517,59 +476,6 @@ function BottleneckPicker() {
             </Link>
           </motion.div>
         )}
-      </div>
-    </section>
-  );
-}
-
-function StackLadder() {
-  return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="max-w-3xl">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            The order <span className="text-violet-600">matters.</span>
-          </h2>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
-            Most businesses buy tools in the wrong order and wonder why nothing
-            compounds. This is the sequence that works.
-          </p>
-        </div>
-
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewportSoft}
-          className="mt-10 grid gap-5 md:grid-cols-3"
-        >
-          {ladder.map((rung) => (
-            <motion.div
-              key={rung.step}
-              variants={itemVariants}
-              whileHover={hoverLift}
-              className="rounded-3xl border border-slate-200 bg-white p-7 transition-colors duration-300 hover:border-violet-300"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white">
-                {rung.step}
-              </div>
-              <h3 className="mt-4 text-2xl font-black text-[#111111]">
-                {rung.title}
-              </h3>
-              <p className="mt-2 leading-7 text-slate-600">{rung.text}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {rung.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-700"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );
@@ -680,56 +586,9 @@ function EngineeringPrinciples() {
   );
 }
 
-function IntegrationFlow() {
-  return (
-    <section className="bg-white py-12 md:py-16">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            Your tools, <span className="text-violet-600">finally talking.</span>
-          </h2>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
-            Most businesses run disconnected tools. We wire yours into one
-            pipeline where nothing gets lost between systems.
-          </p>
-        </div>
-
-        <div className="relative mt-12">
-          <motion.div
-            variants={growXVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewportOnce}
-            className="absolute left-0 top-6 hidden h-1 w-full origin-left rounded-full bg-violet-600 lg:block"
-          />
-          <motion.div
-            variants={listVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewportSoft}
-            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {integrationFlow.map((node) => (
-              <motion.div key={node.step} variants={itemVariants} className="relative">
-                <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white shadow-md">
-                  {node.step}
-                </div>
-                <div className="mt-4 rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6 transition-colors duration-300 hover:border-violet-300">
-                  <h3 className="text-xl font-black text-[#111111]">{node.title}</h3>
-                  <p className="mt-2 leading-7 text-slate-600">{node.text}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function DeliveryProcess() {
   return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid items-start gap-10 lg:grid-cols-2">
           <div className="lg:sticky lg:top-28">
@@ -778,7 +637,7 @@ function DeliveryProcess() {
 
 function BuildChecklist() {
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
@@ -801,7 +660,7 @@ function BuildChecklist() {
             <motion.div
               key={item}
               variants={itemVariants}
-              className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-[#F8F8F6] px-6 py-5 transition-colors duration-300 hover:border-violet-300"
+              className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-5 transition-colors duration-300 hover:border-violet-300"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-black text-white">
                 ✓
@@ -817,7 +676,7 @@ function BuildChecklist() {
 
 function Ownership() {
   return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-5xl px-6 text-center">
         <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
           You own <span className="text-violet-600">everything we build.</span>
@@ -839,7 +698,7 @@ function Ownership() {
               key={item}
               variants={itemVariants}
               whileHover={hoverLift}
-              className="flex items-start gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+              className="flex items-start gap-4 rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-black text-white">
                 ✓
@@ -867,12 +726,10 @@ export default function ServicesPage() {
     <main className="overflow-x-hidden bg-[#F7F7F5] text-[#111111]">
       <Navbar />
       <ServicesHero />
-      <ServiceExplorer />
+      <ServicesStory />
       <BottleneckPicker />
-      <StackLadder />
       <TechStack />
       <EngineeringPrinciples />
-      <IntegrationFlow />
       <DeliveryProcess />
       <BuildChecklist />
       <Ownership />
