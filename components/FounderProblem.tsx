@@ -1,5 +1,21 @@
-import Image from "next/image";
-import FadeUp from "./FadeUp";
+"use client";
+
+import Link from "next/link";
+import { motion, type Variants } from "framer-motion";
+
+const viewportOnce = { once: true, amount: 0.2 };
+
+const listVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.15 } },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 32 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+const hoverLift = { y: -8, scale: 1.02 };
 
 const pains = [
   {
@@ -21,47 +37,70 @@ const pains = [
 
 export default function FounderProblem() {
   return (
-    <FadeUp>
-      <section className="bg-[var(--surface)] py-12 md:py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold uppercase tracking-[0.22em] text-violet-700">
-              The Hard Truth
-            </div>
-            <h2 className="mt-5 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-              Being great is not enough.{" "}
-              <span className="text-violet-700">Being seen is.</span>
-            </h2>
+    <section className="bg-white py-14 md:py-20">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold uppercase tracking-[0.22em] text-violet-700">
+            The Hard Truth
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {pains.map((pain) => (
-              <div
-                key={pain.title}
-                className="rounded-3xl border border-slate-200 bg-white p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl"
-              >
-                <div className="text-4xl">{pain.icon}</div>
-                <h3 className="mt-3 text-xl font-black text-[#111111]">
-                  {pain.title}
-                </h3>
-                <p className="mt-2 leading-7 text-slate-600">{pain.line}</p>
-              </div>
-            ))}
-          </div>
-          <div className="relative mt-10">
-            <div className="absolute inset-0 rounded-[40px] bg-violet-500/10 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-black shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
-              <Image
-                src="/images/home/visibility-compoundsv2.webp"
-                alt="How founder visibility compounds over time"
-                width={1600}
-                height={900}
-                priority={false}
-                className="h-auto w-full object-cover transition duration-700 hover:scale-[1.01]"
-              />
-            </div>
-          </div>
+          <h2 className="mt-5 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Being great is not enough.{" "}
+            <span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
+              Being seen is.
+            </span>
+          </h2>
         </div>
-      </section>
-    </FadeUp>
+
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mt-10 grid gap-5 md:grid-cols-3"
+        >
+          {pains.map((pain) => (
+            <motion.div
+              key={pain.title}
+              variants={itemVariants}
+              whileHover={hoverLift}
+              className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-7 text-center shadow-sm transition-colors duration-300 hover:border-violet-200"
+            >
+              <div className="text-5xl">{pain.icon}</div>
+              <h3 className="mt-4 text-2xl font-black text-[#111111]">
+                {pain.title}
+              </h3>
+              <p className="mt-2 text-lg leading-7 text-slate-600">
+                {pain.line}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          variants={itemVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mt-8 overflow-hidden rounded-[32px] bg-gradient-to-r from-violet-700 via-violet-600 to-fuchsia-600 p-8 md:p-10"
+        >
+          <div className="flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
+            <div>
+              <h3 className="text-3xl font-black text-white md:text-4xl">
+                The fix? Become impossible to ignore.
+              </h3>
+              <p className="mt-2 text-lg text-violet-100">
+                Visibility solves all three. We build it for you.
+              </p>
+            </div>
+            <Link
+              href="/services/personal-branding"
+              className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-white px-8 py-4 text-base font-bold text-violet-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+            >
+              See How We Do It
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 }
