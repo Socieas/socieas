@@ -98,11 +98,16 @@ export default function PersonalBrandingPage() {
     <main className="min-h-screen bg-white text-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML= __html: JSON.stringify(jsonLd) 
+        dangerouslySetInnerHTML=
+          __html: JSON.stringify(jsonLd),
+        
       />
+
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML= __html: JSON.stringify(faqJsonLd) 
+        dangerouslySetInnerHTML=
+          __html: JSON.stringify(faqJsonLd),
+        
       />
 
       <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,#ede9fe,transparent_35%),linear-gradient(135deg,#ffffff,#f8fafc)] px-6 py-24 sm:px-10 lg:px-20">
