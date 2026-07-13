@@ -39,9 +39,9 @@ export default function Hero() {
 
               {/* Description */}
               <p className="mt-5 max-w-lg text-lg leading-8 text-slate-600">
-                We build your brand — and the systems behind it. Content, CRM,
-                and AI automation for founders in India, USA, UK, Australia
-                &amp; UAE.
+                We build your brand and the systems that grow it. Content,
+                CRM, and AI automation for founders in India, USA, UK,
+                Australia &amp; UAE.
               </p>
 
               {/* Buttons */}
