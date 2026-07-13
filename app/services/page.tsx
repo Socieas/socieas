@@ -11,11 +11,12 @@ import InsightsEcosystem from "@/components/InsightsEcosystem";
 
 /* ================= ANIMATION CONSTANTS ================= */
 
+const viewportOnce = { once: true, amount: 0.25 };
 const viewportSoft = { once: true, amount: 0.1 };
 
 const listVariants: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.14 } },
+  show: { transition: { staggerChildren: 0.12 } },
 };
 
 const itemVariants: Variants = {
@@ -28,7 +29,22 @@ const fadeVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
 };
 
+const growXVariants: Variants = {
+  hidden: { scaleX: 0 },
+  show: { scaleX: 1, transition: { duration: 1, ease: "easeOut" } },
+};
+
+const growYVariants: Variants = {
+  hidden: { scaleY: 0 },
+  show: { scaleY: 1, transition: { duration: 1.4, ease: "easeOut" } },
+};
+
 const hoverLift = { y: -6 };
+
+const tileVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
+};
 
 /* ================= DATA ================= */
 
@@ -108,6 +124,15 @@ const services = [
   },
 ];
 
+const heroTiles = [
+  { number: "01", name: "Personal Branding" },
+  { number: "02", name: "Digital Marketing" },
+  { number: "03", name: "CRM Systems" },
+  { number: "04", name: "AI Automation" },
+  { number: "05", name: "Development" },
+  { number: "06", name: "Staffing" },
+];
+
 const bottlenecks = [
   {
     label: "Nobody knows I exist",
@@ -174,36 +199,189 @@ const ladder = [
   },
 ];
 
+const stackCategories = [
+  {
+    name: "Websites & Platforms",
+    line: "The same stack powering the fastest sites on the internet.",
+    tools: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Sanity CMS", "Node.js"],
+  },
+  {
+    name: "CRM & Sales",
+    line: "We build on the platforms your future team already knows.",
+    tools: ["Salesforce", "HubSpot", "Zoho CRM", "Pipedrive"],
+  },
+  {
+    name: "AI & Automation",
+    line: "Modern AI tooling, wired into your real workflows.",
+    tools: ["OpenAI", "Make", "Zapier", "n8n"],
+  },
+  {
+    name: "Infrastructure & Analytics",
+    line: "Version controlled, protected, and measured from day one.",
+    tools: ["GitHub", "Cloudflare", "Google Analytics", "Search Console"],
+  },
+];
+
+const engineeringPrinciples = [
+  {
+    number: "01",
+    title: "Speed first",
+    text: "Slow sites lose buyers and rankings. We build for fast loads on real phones, not just office wifi.",
+  },
+  {
+    number: "02",
+    title: "Search ready",
+    text: "Structured data, clean markup, and sitemaps on every page, so Google and AI search can read you perfectly.",
+  },
+  {
+    number: "03",
+    title: "Secure by default",
+    text: "Spam protection, security headers, and safe forms ship with every build. Not as an upsell.",
+  },
+  {
+    number: "04",
+    title: "Built to scale",
+    text: "Clean, documented code that grows with you instead of collapsing at your first traffic spike.",
+  },
+];
+
+const integrationFlow = [
+  {
+    step: "01",
+    title: "Website captures",
+    text: "Every enquiry lands with context: goal, stage, and source.",
+  },
+  {
+    step: "02",
+    title: "CRM logs it",
+    text: "The lead is tracked and scored the second it arrives.",
+  },
+  {
+    step: "03",
+    title: "Automation responds",
+    text: "Follow up goes out in minutes, not days.",
+  },
+  {
+    step: "04",
+    title: "You close",
+    text: "You step in for the one thing machines cannot do: the relationship.",
+  },
+];
+
+const deliverySteps = [
+  {
+    step: "01",
+    title: "Discover",
+    text: "We map your goals, market, and current systems before touching anything.",
+  },
+  {
+    step: "02",
+    title: "Blueprint",
+    text: "You get a written plan with scope, sequence, and what success looks like.",
+  },
+  {
+    step: "03",
+    title: "Build",
+    text: "We build in short cycles and show you progress as it happens.",
+  },
+  {
+    step: "04",
+    title: "Launch",
+    text: "Tested on real devices, wired to analytics, and live without drama.",
+  },
+  {
+    step: "05",
+    title: "Improve",
+    text: "We watch the data and keep tuning what the numbers tell us to tune.",
+  },
+];
+
+const buildChecklist = [
+  "Structured data on every page",
+  "Speed optimization for real world devices",
+  "Mobile first responsive design",
+  "SEO titles, descriptions, and sitemaps",
+  "AI search readiness for ChatGPT and Gemini",
+  "Analytics and conversion tracking",
+  "Security headers and spam protection",
+  "Documentation and handover training",
+];
+
+const ownership = [
+  "Full ownership of your code, content, and design",
+  "CRM and data live in accounts under your name",
+  "No lock in contracts, leave whenever you want",
+  "Documentation any developer can pick up and continue",
+];
+
 /* ================= SECTIONS ================= */
 
 function ServicesHero() {
   return (
-    <section className="relative overflow-hidden pb-16 pt-40">
+    <section className="relative overflow-hidden pb-16 pt-36 md:pt-40">
       <div className="pointer-events-none absolute left-[-100px] top-0 h-[320px] w-[320px] rounded-full bg-violet-100 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          animate="show"
-          className="max-w-4xl"
-        >
-          <motion.h1
-            variants={itemVariants}
-            className="text-5xl font-black leading-[0.98] tracking-tight text-[#111111] md:text-7xl"
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <motion.div variants={listVariants} initial="hidden" animate="show">
+            <motion.h1
+              variants={itemVariants}
+              className="text-5xl font-black leading-[0.98] tracking-tight text-[#111111] md:text-7xl"
+            >
+              Six systems.
+              <br />
+              One growth <span className="text-violet-600">engine.</span>
+            </motion.h1>
+            <motion.div
+              variants={growXVariants}
+              className="mt-6 h-1.5 w-32 origin-left rounded-full bg-violet-600 md:w-44"
+            />
+            <motion.p
+              variants={itemVariants}
+              className="mt-8 max-w-xl text-xl leading-relaxed text-slate-600"
+            >
+              Every service here exists for one reason: to turn attention into
+              revenue. Start with the one that removes your biggest
+              bottleneck, then stack the rest as results compound.
+            </motion.p>
+            <motion.div variants={itemVariants} className="mt-8 flex flex-wrap gap-4">
+              <Link
+                href="/contact"
+                className="inline-flex items-center rounded-2xl bg-violet-700 px-7 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
+              >
+                Book a Free Strategy Call
+              </Link>
+              <a
+                href="#explore"
+                className="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-7 py-4 font-semibold text-[#111111] transition-all duration-300 hover:border-violet-400"
+              >
+                Explore the Systems
+              </a>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 gap-4 sm:grid-cols-3"
           >
-            Six systems.
-            <br />
-            One growth engine.
-          </motion.h1>
-          <motion.p
-            variants={itemVariants}
-            className="mt-8 max-w-2xl text-xl leading-relaxed text-slate-600"
-          >
-            Every service here exists for one reason: to turn attention into
-            revenue. Start with the one that removes your biggest bottleneck,
-            then stack the rest as results compound.
-          </motion.p>
-        </motion.div>
+            {heroTiles.map((tile) => (
+              <motion.div
+                key={tile.number}
+                variants={tileVariants}
+                whileHover={hoverLift}
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-violet-300"
+              >
+                <div className="text-sm font-black tracking-widest text-violet-600">
+                  {tile.number}
+                </div>
+                <div className="mt-2 font-black leading-tight text-[#111111]">
+                  {tile.name}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -214,7 +392,7 @@ function ServiceExplorer() {
   const current = services[activeService];
 
   return (
-    <section className="pb-20 md:pb-24">
+    <section id="explore" className="pb-20 md:pb-24">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[0.42fr_1fr] lg:px-8">
         <div className="space-y-4">
           {services.map((service, index) => (
@@ -392,15 +570,291 @@ function StackLadder() {
             </motion.div>
           ))}
         </motion.div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-10 text-center">
-          <Link
-            href="/contact"
-            className="inline-flex items-center rounded-2xl bg-violet-700 px-8 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
+function TechStack() {
+  const [active, setActive] = useState(0);
+  const current = stackCategories[active];
+
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
+          <div>
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              The stack behind <span className="text-violet-600">the systems.</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              No mystery tools, no proprietary traps. We build on the same
+              technology the best product teams in the world use, so anything
+              we ship for you is fast, provable, and portable.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {stackCategories.map((category, index) => (
+                <button
+                  key={category.name}
+                  type="button"
+                  onClick={() => setActive(index)}
+                  className={
+                    active === index
+                      ? "rounded-full bg-violet-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300"
+                      : "rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-violet-300 hover:text-violet-700"
+                  }
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <motion.div
+            key={active}
+            variants={fadeVariants}
+            initial="hidden"
+            animate="show"
+            className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-8 md:p-10"
           >
-            Find My Starting Point
-          </Link>
+            <p className="text-lg font-bold text-[#111111]">{current.line}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              {current.tools.map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-semibold text-[#111111]"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </motion.div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function EngineeringPrinciples() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-3">
+          <div className="lg:sticky lg:top-28">
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              How we <span className="text-violet-600">build.</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              Marketing gets you seen. Engineering decides whether that
+              attention converts. We take both seriously.
+            </p>
+          </div>
+
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="grid gap-5 sm:grid-cols-2 lg:col-span-2"
+          >
+            {engineeringPrinciples.map((principle) => (
+              <motion.div
+                key={principle.number}
+                variants={itemVariants}
+                whileHover={hoverLift}
+                className="rounded-3xl border-t-4 border-violet-600 bg-white p-7 shadow-sm"
+              >
+                <div className="text-sm font-black tracking-widest text-violet-600">
+                  {principle.number}
+                </div>
+                <h3 className="mt-3 text-xl font-black text-[#111111]">
+                  {principle.title}
+                </h3>
+                <p className="mt-2 leading-7 text-slate-600">{principle.text}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IntegrationFlow() {
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Your tools, <span className="text-violet-600">finally talking.</span>
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            Most businesses run disconnected tools. We wire yours into one
+            pipeline where nothing gets lost between systems.
+          </p>
+        </div>
+
+        <div className="relative mt-12">
+          <motion.div
+            variants={growXVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportOnce}
+            className="absolute left-0 top-6 hidden h-1 w-full origin-left rounded-full bg-violet-600 lg:block"
+          />
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {integrationFlow.map((node) => (
+              <motion.div key={node.step} variants={itemVariants} className="relative">
+                <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white shadow-md">
+                  {node.step}
+                </div>
+                <div className="mt-4 rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6 transition-colors duration-300 hover:border-violet-300">
+                  <h3 className="text-xl font-black text-[#111111]">{node.title}</h3>
+                  <p className="mt-2 leading-7 text-slate-600">{node.text}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DeliveryProcess() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
+          <div className="lg:sticky lg:top-28">
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              From first call <span className="text-violet-600">to launch.</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              No black box. You see the plan before we build, and you see the
+              build while it happens.
+            </p>
+          </div>
+
+          <div className="relative pl-8 md:pl-10">
+            <motion.div
+              variants={growYVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportSoft}
+              className="absolute bottom-2 left-2 top-2 w-1 origin-top rounded-full bg-violet-600 md:left-3"
+            />
+            <motion.div
+              variants={listVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportSoft}
+              className="space-y-8"
+            >
+              {deliverySteps.map((step) => (
+                <motion.div key={step.step} variants={itemVariants} className="relative">
+                  <div className="absolute -left-8 top-1.5 h-4 w-4 rounded-full border-4 border-white bg-violet-600 shadow md:-left-9" />
+                  <div className="text-sm font-black uppercase tracking-widest text-violet-600">
+                    {step.step} {step.title}
+                  </div>
+                  <p className="mt-1 text-lg font-medium leading-8 text-[#111111]">
+                    {step.text}
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BuildChecklist() {
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="max-w-3xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Every build <span className="text-violet-600">ships with this.</span>
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            Not add ons. Not upsells. This is the baseline on every project we
+            deliver.
+          </p>
+        </div>
+
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportSoft}
+          className="mt-10 grid gap-4 sm:grid-cols-2"
+        >
+          {buildChecklist.map((item) => (
+            <motion.div
+              key={item}
+              variants={itemVariants}
+              className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-[#F8F8F6] px-6 py-5 transition-colors duration-300 hover:border-violet-300"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-black text-white">
+                ✓
+              </span>
+              <span className="font-medium text-[#111111]">{item}</span>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Ownership() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-5xl px-6 text-center">
+        <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          You own <span className="text-violet-600">everything we build.</span>
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-600">
+          Agencies that lock you in are betting on your exit being painful. We
+          bet on results instead.
+        </p>
+
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportSoft}
+          className="mt-10 grid gap-4 text-left sm:grid-cols-2"
+        >
+          {ownership.map((item) => (
+            <motion.div
+              key={item}
+              variants={itemVariants}
+              whileHover={hoverLift}
+              className="flex items-start gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-black text-white">
+                ✓
+              </span>
+              <span className="font-medium leading-7 text-[#111111]">{item}</span>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <Link
+          href="/contact"
+          className="mt-10 inline-flex items-center rounded-2xl bg-violet-700 px-8 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
+        >
+          Book a Free Strategy Call
+        </Link>
       </div>
     </section>
   );
@@ -416,6 +870,12 @@ export default function ServicesPage() {
       <ServiceExplorer />
       <BottleneckPicker />
       <StackLadder />
+      <TechStack />
+      <EngineeringPrinciples />
+      <IntegrationFlow />
+      <DeliveryProcess />
+      <BuildChecklist />
+      <Ownership />
       <Testimonials />
       <InsightsEcosystem />
       <Footer />
