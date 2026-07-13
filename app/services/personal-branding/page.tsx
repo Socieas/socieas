@@ -246,7 +246,7 @@ function Hero() {
           >
             <div className="overflow-hidden rounded-[30px]">
               <Image
-                src="/images/services/personal-branding-banner.webp"
+                src="/images/personal-branding-banner.webp"
                 alt="Personal branding services for founders by Socieas"
                 width={1600}
                 height={1400}
