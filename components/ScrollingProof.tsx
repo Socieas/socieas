@@ -17,6 +17,16 @@ const items = [
   "Modern Authority",
 ];
 
+const marqueeAnimation = {
+  x: ["0%", "-50%"],
+};
+
+const marqueeTransition = {
+  duration: 40,
+  repeat: Infinity,
+  ease: "linear",
+} as const;
+
 export default function ScrollingProof() {
   const marqueeItems = [...items, ...items];
 
@@ -28,8 +38,8 @@ export default function ScrollingProof() {
 
       <motion.div
         className="flex w-max items-center gap-10"
-        animate= x: ["0%", "-50%"] 
-        transition= duration: 40, repeat: Infinity, ease: "linear" 
+        animate={marqueeAnimation}
+        transition={marqueeTransition}
       >
         {marqueeItems.map((item, index) => (
           <div
