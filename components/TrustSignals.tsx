@@ -25,27 +25,26 @@ const platforms = [
 export default function TrustSignals() {
   return (
     <FadeUp>
-      <section className="bg-[#F8F8F6] py-24">
+      <section className="bg-[#F8F8F6] py-20">
         <div className="mx-auto max-w-7xl px-6">
-
           {/* Header */}
           <div className="mx-auto max-w-3xl text-center">
             <div className="text-sm font-medium uppercase tracking-[0.25em] text-violet-600">
               Independent Reviews
             </div>
 
-            <h2 className="mt-6 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-              Reputation built through real client experiences.
+            <h2 className="mt-5 text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              Don&apos;t take our word for it.
             </h2>
 
-            <p className="mt-6 text-lg leading-8 text-slate-600">
-              Explore public reviews and feedback from founders and businesses
-              who have worked with Socieas.
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              Every review below is public and written by real clients. Read
+              them before you book a call. We prefer it that way.
             </p>
           </div>
 
           {/* Cards */}
-          <div className="mt-16 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
             {platforms.map((platform) => (
               <a
                 key={platform.name}
@@ -64,7 +63,7 @@ export default function TrustSignals() {
                   />
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-6">
                   <h3 className="text-xl font-semibold text-[#111111]">
                     {platform.name}
                   </h3>
@@ -76,7 +75,6 @@ export default function TrustSignals() {
               </a>
             ))}
           </div>
-
         </div>
       </section>
     </FadeUp>
