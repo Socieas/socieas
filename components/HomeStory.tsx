@@ -70,9 +70,9 @@ const marqueeItems = [
 
 const stats = [
   { value: 5, suffix: "", label: "Countries Served" },
-  { value: 6, suffix: "", label: "Growth Systems" },
-  { value: 24, suffix: "h", label: "Response Time" },
-  { value: 7, suffix: "", label: "Days a Week" },
+  { value: 48, suffix: "h", label: "Plan Delivery" },
+  { value: 30, suffix: "", label: "Days Planned Ahead" },
+  { value: 90, suffix: "", label: "Days To Full System" },
 ];
 
 const platforms = [
@@ -92,6 +92,8 @@ const platforms = [
     href: "https://www.smartcustomer.com/reviews/socieas.com",
   },
 ];
+
+const hookWords = ["clients", "trust", "authority", "reach", "freedom"];
 
 const pains = [
   {
@@ -138,6 +140,14 @@ const funnel = [
   { label: "Buyers book a call", width: "w-1/3", tone: "bg-violet-500" },
 ];
 
+const auditItems = [
+  "Buyers can find me by name on Google",
+  "I publish content at least 3 times a week",
+  "My last 10 leads came inbound",
+  "Every lead I get is tracked in a CRM",
+  "Enquiries get a reply within one business day",
+];
+
 const method = [
   {
     number: "01",
@@ -159,6 +169,14 @@ const method = [
     title: "Convert",
     description: "You take warm calls with people who already trust you.",
   },
+];
+
+const yearStages = [
+  { from: 1, to: 2, text: "Foundations. Positioning and publishing rhythm lock in." },
+  { from: 3, to: 4, text: "Familiar faces. Your name starts ringing bells in your niche." },
+  { from: 5, to: 6, text: "Warm replies. Comments and DMs turn friendly and specific." },
+  { from: 7, to: 9, text: "Inbound trickle. Strangers start booking calls on their own." },
+  { from: 10, to: 12, text: "Compounding. Your content keeps selling while you deliver." },
 ];
 
 const formats = [
@@ -237,6 +255,20 @@ const services = [
     desc: "Vetted talent to scale your delivery without the hiring overhead.",
     href: "/services/staffing-solutions",
   },
+];
+
+const yourPart = [
+  "Approve content in minutes, not hours",
+  "Record raw thoughts on your phone",
+  "Show up to warm calls",
+];
+
+const ourPart = [
+  "Strategy, writing, design, and publishing",
+  "Comments, DMs, and engagement",
+  "CRM setup and lead tracking",
+  "Automated follow ups",
+  "Reporting you can read in 5 minutes",
 ];
 
 const countries = [
@@ -388,6 +420,18 @@ function Counter(props: { value: number; suffix: string }) {
   );
 }
 
+function auditMessage(score: number) {
+  if (score <= 1) return "You are invisible right now. That means massive upside.";
+  if (score <= 3) return "You have sparks, but no system. This is fixable fast.";
+  if (score === 4) return "Close. One or two gaps are costing you leads.";
+  return "Strong. Now let us make it scale without you.";
+}
+
+function stageForMonth(month: number) {
+  const stage = yearStages.find((item) => month >= item.from && month <= item.to);
+  return stage ? stage.text : yearStages[0].text;
+}
+
 /* ================= SECTIONS ================= */
 
 function Marquee() {
@@ -417,42 +461,54 @@ function Expertise() {
   return (
     <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            Specialists, <span className="text-violet-600">not generalists.</span>
-          </h2>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
-            Socieas runs on senior expertise across branding, content, CRM,
-            and AI automation. The people who plan your growth are the people
-            who build it. No layers, no juniors, no handoffs.
-          </p>
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <motion.div
+            variants={slideLeftVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+          >
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              Everything you need to be seen.{" "}
+              <span className="text-violet-600">Nothing you do not.</span>
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              Personal branding, content, CRM, and AI automation, engineered as
+              one connected system. You bring the expertise. We turn it into
+              demand. These are our working commitments on every engagement.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="grid grid-cols-2 gap-6"
+          >
+            {stats.map((stat) => (
+              <motion.div
+                key={stat.label}
+                variants={itemVariants}
+                className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6 text-center"
+              >
+                <div className="text-4xl font-black text-[#111111] md:text-5xl">
+                  <Counter value={stat.value} suffix={stat.suffix} />
+                </div>
+                <div className="mt-2 text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
 
         <motion.div
           variants={listVariants}
           initial="hidden"
           whileInView="show"
-          viewport={viewportOnce}
-          className="mt-10 grid grid-cols-2 gap-8 md:grid-cols-4"
-        >
-          {stats.map((stat) => (
-            <motion.div key={stat.label} variants={itemVariants} className="text-center">
-              <div className="text-4xl font-black text-[#111111] md:text-6xl">
-                <Counter value={stat.value} suffix={stat.suffix} />
-              </div>
-              <div className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          whileInView="show"
           viewport={viewportSoft}
-          className="mt-10 grid gap-4 md:grid-cols-3"
+          className="mt-12 grid gap-4 md:grid-cols-3"
         >
           {platforms.map((platform) => (
             <motion.a
@@ -483,11 +539,41 @@ function Expertise() {
   );
 }
 
-function Problem() {
+function RotatingHook() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((current) => (current + 1) % hookWords.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-5xl px-6 text-center">
+        <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-6xl">
+          A strong personal brand brings you{" "}
+          <motion.span
+            key={hookWords[index]}
+            variants={fadeVariants}
+            initial="hidden"
+            animate="show"
+            className="inline-block text-violet-600"
+          >
+            {hookWords[index]}.
+          </motion.span>
+        </h2>
+      </div>
+    </section>
+  );
+}
+
+function Problem() {
+  return (
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             Being great is not enough.{" "}
             <span className="text-violet-600">Being seen is.</span>
@@ -506,7 +592,7 @@ function Problem() {
               key={pain.number}
               variants={itemVariants}
               whileHover={hoverLift}
-              className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-colors duration-300 hover:border-violet-300"
+              className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-7 transition-colors duration-300 hover:border-violet-300"
             >
               <div className="text-sm font-black tracking-widest text-violet-600">
                 {pain.number}
@@ -542,7 +628,7 @@ function Problem() {
 
 function Shift() {
   return (
-    <section className="bg-white py-12 md:py-20">
+    <section className="bg-[#F8F8F6] py-12 md:py-20">
       <div className="mx-auto max-w-4xl px-6 text-center">
         <div className="space-y-10 md:space-y-14">
           {storyLines.map((line) => (
@@ -569,11 +655,12 @@ function Shift() {
 
 function OldWayNewWay() {
   return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            Two ways to grow. <span className="text-violet-600">Only one compounds.</span>
+            Two ways to grow.{" "}
+            <span className="text-violet-600">Only one compounds.</span>
           </h2>
         </div>
 
@@ -583,7 +670,7 @@ function OldWayNewWay() {
             initial="hidden"
             whileInView="show"
             viewport={viewportSoft}
-            className="rounded-3xl border border-slate-200 bg-white p-8"
+            className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-8"
           >
             <h3 className="text-xl font-black text-slate-500">Without a system</h3>
             <ul className="mt-5 space-y-4">
@@ -621,38 +708,126 @@ function OldWayNewWay() {
 
 function Funnel() {
   return (
-    <section className="bg-white py-12 md:py-16">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            Attention becomes <span className="text-violet-600">revenue.</span>
-          </h2>
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <motion.div
+            variants={slideLeftVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+          >
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              Attention becomes <span className="text-violet-600">revenue.</span>
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              Most of your market will never buy. The system exists to find
+              the ones who will, and to make you unmissable when they are
+              ready.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportOnce}
+            className="flex flex-col items-center gap-4"
+          >
+            {funnel.map((stage) => (
+              <motion.div
+                key={stage.label}
+                variants={growXVariants}
+                className={`${stage.width} ${stage.tone} origin-center rounded-2xl px-6 py-5 text-center shadow-md`}
+              >
+                <span className="text-base font-bold text-white md:text-lg">
+                  {stage.label}
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewportOnce}
-          className="mt-10 flex flex-col items-center gap-4"
-        >
-          {funnel.map((stage) => (
-            <motion.div
-              key={stage.label}
-              variants={growXVariants}
-              className={`${stage.width} ${stage.tone} origin-center rounded-2xl px-6 py-5 text-center shadow-md`}
-            >
-              <span className="text-base font-bold text-white md:text-lg">
-                {stage.label}
-              </span>
-            </motion.div>
-          ))}
-        </motion.div>
+function SelfAudit() {
+  const [checks, setChecks] = useState([false, false, false, false, false]);
 
-        <p className="mx-auto mt-8 max-w-2xl text-center text-lg leading-8 text-slate-600">
-          Most of your market will never buy. The system exists to find the
-          ones who will, and to make you unmissable when they are ready.
-        </p>
+  const toggle = (target: number) => {
+    setChecks((current) =>
+      current.map((value, index) => (index === target ? !value : value))
+    );
+  };
+
+  const score = checks.filter(Boolean).length;
+
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
+          <div>
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              Score your visibility in{" "}
+              <span className="text-violet-600">20 seconds.</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              Tap every statement that is true for you today.
+            </p>
+
+            <div className="mt-8 space-y-3">
+              {auditItems.map((item, index) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => toggle(index)}
+                  className={
+                    checks[index]
+                      ? "flex w-full items-center gap-4 rounded-2xl border-2 border-violet-400 bg-violet-50 p-4 text-left font-semibold text-[#111111] transition-all duration-300"
+                      : "flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-[#F8F8F6] p-4 text-left font-medium text-slate-600 transition-all duration-300 hover:border-violet-300"
+                  }
+                >
+                  <span
+                    className={
+                      checks[index]
+                        ? "flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-black text-white"
+                        : "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-xs font-black text-transparent"
+                    }
+                  >
+                    ✓
+                  </span>
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:sticky lg:top-28">
+            <div className="rounded-[32px] border border-slate-200 bg-[#F8F8F6] p-10 text-center">
+              <div className="text-7xl font-black text-violet-600 md:text-8xl">
+                {score}
+                <span className="text-3xl text-slate-400 md:text-4xl">/5</span>
+              </div>
+              <motion.p
+                key={score}
+                variants={fadeVariants}
+                initial="hidden"
+                animate="show"
+                className="mt-4 text-xl font-bold text-[#111111]"
+              >
+                {auditMessage(score)}
+              </motion.p>
+              <Link
+                href="/contact"
+                className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-violet-700 px-7 py-3.5 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
+              >
+                Fix the gaps
+                <ArrowUpRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -662,7 +837,7 @@ function Method() {
   return (
     <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             One system. <span className="text-violet-600">Four stages.</span>
           </h2>
@@ -707,59 +882,114 @@ function Method() {
   );
 }
 
+function YearSlider() {
+  const [month, setMonth] = useState(3);
+  const barStyle = { width: `${(month / 12) * 100}%` };
+
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-4xl px-6">
+        <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          Drag through your <span className="text-violet-600">first year.</span>
+        </h2>
+
+        <div className="mt-10 rounded-[32px] border border-slate-200 bg-[#F8F8F6] p-8 md:p-10">
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm font-black uppercase tracking-widest text-violet-600">
+              Month {month}
+            </span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+              Slide me
+            </span>
+          </div>
+
+          <input
+            type="range"
+            min={1}
+            max={12}
+            value={month}
+            onChange={(event) => setMonth(Number(event.target.value))}
+            aria-label="Month of your first year"
+            className="mt-4 w-full accent-violet-600"
+          />
+
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200">
+            <div
+              className="h-full rounded-full bg-violet-600 transition-all duration-300"
+              style={barStyle}
+            />
+          </div>
+
+          <motion.p
+            key={stageForMonth(month)}
+            variants={fadeVariants}
+            initial="hidden"
+            animate="show"
+            className="mt-6 text-xl font-bold leading-9 text-[#111111] md:text-2xl"
+          >
+            {stageForMonth(month)}
+          </motion.p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ContentFormats() {
   const [active, setActive] = useState(0);
   const current = formats[active];
 
   return (
-    <section className="bg-white py-12 md:py-16">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            One story. <span className="text-violet-600">Every platform.</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-600">
-            We turn your positioning into content built for how each platform
-            actually works. Tap a channel to see what ships.
-          </p>
-        </div>
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
+          <div>
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              One story. <span className="text-violet-600">Every platform.</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              We turn your positioning into content built for how each
+              platform actually works. Tap a channel to see what ships.
+            </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {formats.map((format, index) => (
-            <button
-              key={format.name}
-              type="button"
-              onClick={() => setActive(index)}
-              className={
-                active === index
-                  ? "rounded-full bg-violet-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300"
-                  : "rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-violet-300 hover:text-violet-700"
-              }
-            >
-              {format.name}
-            </button>
-          ))}
-        </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {formats.map((format, index) => (
+                <button
+                  key={format.name}
+                  type="button"
+                  onClick={() => setActive(index)}
+                  className={
+                    active === index
+                      ? "rounded-full bg-violet-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300"
+                      : "rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-violet-300 hover:text-violet-700"
+                  }
+                >
+                  {format.name}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <motion.div
-          key={active}
-          variants={fadeVariants}
-          initial="hidden"
-          animate="show"
-          className="mx-auto mt-8 max-w-3xl rounded-3xl border border-slate-200 bg-[#F8F8F6] p-8 md:p-10"
-        >
-          <h3 className="text-2xl font-black text-[#111111] md:text-3xl">
-            {current.headline}
-          </h3>
-          <ul className="mt-6 space-y-4">
-            {current.points.map((point) => (
-              <li key={point} className="flex gap-3 text-lg leading-8 text-slate-700">
-                <span className="font-black text-violet-600">✓</span>
-                {point}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
+          <motion.div
+            key={active}
+            variants={fadeVariants}
+            initial="hidden"
+            animate="show"
+            className="rounded-3xl border border-slate-200 bg-white p-8 md:p-10"
+          >
+            <h3 className="text-2xl font-black text-[#111111] md:text-3xl">
+              {current.headline}
+            </h3>
+            <ul className="mt-6 space-y-4">
+              {current.points.map((point) => (
+                <li key={point} className="flex gap-3 text-lg leading-8 text-slate-700">
+                  <span className="font-black text-violet-600">✓</span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -775,7 +1005,7 @@ function ServicesCarousel() {
   };
 
   return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
@@ -810,7 +1040,7 @@ function ServicesCarousel() {
             <Link
               key={service.number}
               href={service.href}
-              className="group min-w-[300px] max-w-[340px] shrink-0 snap-start rounded-3xl border border-slate-200 bg-white p-7 transition-all duration-300 hover:-translate-y-2 hover:border-violet-300 hover:shadow-xl"
+              className="group min-w-[300px] max-w-[340px] shrink-0 snap-start rounded-3xl border border-slate-200 bg-[#F8F8F6] p-7 transition-all duration-300 hover:-translate-y-2 hover:border-violet-300 hover:bg-white hover:shadow-xl"
             >
               <div className="flex items-start justify-between">
                 <div className="text-sm font-black tracking-widest text-violet-600">
@@ -841,11 +1071,67 @@ function ServicesCarousel() {
   );
 }
 
+function YouVsUs() {
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="max-w-3xl">
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+            Your part is small. <span className="text-violet-600">By design.</span>
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            The system only asks for what nobody else can give: your voice.
+            Everything else is our job.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <motion.div
+            variants={slideLeftVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="rounded-3xl border border-slate-200 bg-white p-8"
+          >
+            <h3 className="text-xl font-black text-[#111111]">You</h3>
+            <ul className="mt-5 space-y-4">
+              {yourPart.map((item) => (
+                <li key={item} className="flex gap-3 leading-7 text-slate-700">
+                  <span className="font-black text-violet-600">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            variants={slideRightVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="rounded-3xl border-2 border-violet-300 bg-white p-8 shadow-[0_20px_60px_rgba(139,92,246,0.12)]"
+          >
+            <h3 className="text-xl font-black text-[#111111]">Socieas</h3>
+            <ul className="mt-5 space-y-4">
+              {ourPart.map((item) => (
+                <li key={item} className="flex gap-3 leading-7 text-slate-700">
+                  <span className="font-black text-violet-600">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function GlobalReach() {
   return (
     <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             One team. <span className="text-violet-600">Five markets.</span>
           </h2>
@@ -887,36 +1173,38 @@ function Principles() {
   return (
     <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            How we <span className="text-violet-600">work.</span>
-          </h2>
-        </div>
+        <div className="grid items-start gap-10 lg:grid-cols-3">
+          <div className="lg:sticky lg:top-28">
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              How we <span className="text-violet-600">work.</span>
+            </h2>
+          </div>
 
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewportSoft}
-          className="mt-10 grid gap-5 sm:grid-cols-2"
-        >
-          {principles.map((principle) => (
-            <motion.div
-              key={principle.number}
-              variants={itemVariants}
-              whileHover={hoverLift}
-              className="rounded-3xl border-t-4 border-violet-600 bg-white p-7 shadow-sm"
-            >
-              <div className="text-sm font-black tracking-widest text-violet-600">
-                {principle.number}
-              </div>
-              <h3 className="mt-3 text-2xl font-black text-[#111111]">
-                {principle.title}
-              </h3>
-              <p className="mt-2 text-lg leading-8 text-slate-600">{principle.text}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportSoft}
+            className="grid gap-5 sm:grid-cols-2 lg:col-span-2"
+          >
+            {principles.map((principle) => (
+              <motion.div
+                key={principle.number}
+                variants={itemVariants}
+                whileHover={hoverLift}
+                className="rounded-3xl border-t-4 border-violet-600 bg-white p-7 shadow-sm"
+              >
+                <div className="text-sm font-black tracking-widest text-violet-600">
+                  {principle.number}
+                </div>
+                <h3 className="mt-3 text-xl font-black text-[#111111]">
+                  {principle.title}
+                </h3>
+                <p className="mt-2 leading-7 text-slate-600">{principle.text}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -957,52 +1245,112 @@ function Manifesto() {
   );
 }
 
-function NinetyDays() {
+function CostOfWaiting() {
+  const [waiting, setWaiting] = useState(false);
+
   return (
     <section className="bg-[#F8F8F6] py-12 md:py-16">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            Your first 90 days, <span className="text-violet-600">mapped.</span>
-          </h2>
-        </div>
+      <div className="mx-auto max-w-4xl px-6 text-center">
+        <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          Six months from now, <span className="text-violet-600">where are you?</span>
+        </h2>
 
-        <div className="relative mt-12 pl-8 md:pl-10">
-          <motion.div
-            variants={growYVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewportSoft}
-            className="absolute bottom-2 left-2 top-2 w-1 origin-top rounded-full bg-violet-600 md:left-3"
-          />
-
-          <motion.div
-            variants={listVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewportSoft}
-            className="space-y-8"
+        <div className="mt-8 inline-flex rounded-full border border-slate-300 bg-white p-1.5">
+          <button
+            type="button"
+            onClick={() => setWaiting(false)}
+            className={
+              waiting
+                ? "rounded-full px-6 py-3 text-sm font-semibold text-slate-600 transition-all duration-300"
+                : "rounded-full bg-violet-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300"
+            }
           >
-            {timeline.map((step) => (
-              <motion.div key={step.period} variants={itemVariants} className="relative">
-                <div className="absolute -left-8 top-1.5 h-4 w-4 rounded-full border-4 border-white bg-violet-600 shadow md:-left-9" />
-                <div className="text-sm font-black uppercase tracking-widest text-violet-600">
-                  {step.period}
-                </div>
-                <p className="mt-1 text-lg font-medium leading-8 text-[#111111]">
-                  {step.text}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
+            Start this quarter
+          </button>
+          <button
+            type="button"
+            onClick={() => setWaiting(true)}
+            className={
+              waiting
+                ? "rounded-full bg-violet-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300"
+                : "rounded-full px-6 py-3 text-sm font-semibold text-slate-600 transition-all duration-300"
+            }
+          >
+            Wait six months
+          </button>
         </div>
 
-        <div className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 text-center">
-          <p className="text-base leading-7 text-slate-600">
-            We will not promise you leads by a fixed date. Nobody honest can.
-            We promise the system, the consistency, and reporting so clear you
-            can see it working.
-          </p>
+        <motion.div
+          key={String(waiting)}
+          variants={fadeVariants}
+          initial="hidden"
+          animate="show"
+          className="mx-auto mt-8 max-w-2xl rounded-3xl border border-slate-200 bg-white p-8 md:p-10"
+        >
+          {waiting ? (
+            <p className="text-xl font-bold leading-9 text-slate-500 md:text-2xl">
+              You are exactly where you are today, watching competitors become
+              the obvious choice in your market.
+            </p>
+          ) : (
+            <p className="text-xl font-bold leading-9 text-[#111111] md:text-2xl">
+              You have roughly 180 pieces of content working for you, a warm
+              audience that knows your name, and a pipeline that fills itself.
+            </p>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function NinetyDays() {
+  return (
+    <section className="bg-white py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
+          <div className="lg:sticky lg:top-28">
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              Your first 90 days, <span className="text-violet-600">mapped.</span>
+            </h2>
+            <div className="mt-8 rounded-3xl border border-slate-200 bg-[#F8F8F6] p-6">
+              <p className="text-base leading-7 text-slate-600">
+                We will not promise you leads by a fixed date. Nobody honest
+                can. We promise the system, the consistency, and reporting so
+                clear you can see it working.
+              </p>
+            </div>
+          </div>
+
+          <div className="relative pl-8 md:pl-10">
+            <motion.div
+              variants={growYVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportSoft}
+              className="absolute bottom-2 left-2 top-2 w-1 origin-top rounded-full bg-violet-600 md:left-3"
+            />
+
+            <motion.div
+              variants={listVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportSoft}
+              className="space-y-8"
+            >
+              {timeline.map((step) => (
+                <motion.div key={step.period} variants={itemVariants} className="relative">
+                  <div className="absolute -left-8 top-1.5 h-4 w-4 rounded-full border-4 border-white bg-violet-600 shadow md:-left-9" />
+                  <div className="text-sm font-black uppercase tracking-widest text-violet-600">
+                    {step.period}
+                  </div>
+                  <p className="mt-1 text-lg font-medium leading-8 text-[#111111]">
+                    {step.text}
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -1011,7 +1359,7 @@ function NinetyDays() {
 
 function FitCheck() {
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
       <div className="mx-auto max-w-5xl px-6">
         <div className="text-center">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
@@ -1025,7 +1373,7 @@ function FitCheck() {
             initial="hidden"
             whileInView="show"
             viewport={viewportSoft}
-            className="rounded-3xl border border-violet-200 bg-[#F8F8F6] p-8"
+            className="rounded-3xl border border-violet-200 bg-white p-8"
           >
             <h3 className="text-xl font-black text-[#111111]">Work with us if</h3>
             <ul className="mt-5 space-y-4">
@@ -1043,7 +1391,7 @@ function FitCheck() {
             initial="hidden"
             whileInView="show"
             viewport={viewportSoft}
-            className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-8"
+            className="rounded-3xl border border-slate-200 bg-white p-8"
           >
             <h3 className="text-xl font-black text-[#111111]">Skip us if</h3>
             <ul className="mt-5 space-y-4">
@@ -1063,9 +1411,9 @@ function FitCheck() {
 
 function NextSteps() {
   return (
-    <section className="bg-[#F8F8F6] py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-3xl">
           <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
             What happens when <span className="text-violet-600">you reach out.</span>
           </h2>
@@ -1083,9 +1431,9 @@ function NextSteps() {
               key={step.number}
               variants={itemVariants}
               whileHover={hoverLift}
-              className="rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-sm transition-colors duration-300 hover:border-violet-300"
+              className="rounded-3xl border border-slate-200 bg-[#F8F8F6] p-7 transition-colors duration-300 hover:border-violet-300"
             >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-black text-white">
                 {step.number}
               </div>
               <h3 className="mt-4 text-xl font-black text-[#111111]">{step.title}</h3>
@@ -1098,32 +1446,85 @@ function NextSteps() {
   );
 }
 
+function ContactStrip() {
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("hello@socieas.com");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <section className="bg-[#F8F8F6] py-12 md:py-16">
+      <div className="mx-auto max-w-4xl px-6 text-center">
+        <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+          Talk to a <span className="text-violet-600">human.</span>
+        </h2>
+        <p className="mt-4 text-lg leading-8 text-slate-600">
+          Replies within one business day. No bots, no scripts.
+        </p>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={copyEmail}
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-7 py-4 text-base font-semibold text-[#111111] transition-all duration-300 hover:-translate-y-1 hover:border-violet-400"
+          >
+            {copied ? "Copied ✓" : "hello@socieas.com"}
+          </button>
+          <a
+            href="https://wa.me/919142874636"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-7 py-4 text-base font-semibold text-[#111111] transition-all duration-300 hover:-translate-y-1 hover:border-violet-400"
+          >
+            WhatsApp us
+          </a>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 rounded-2xl bg-violet-700 px-7 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-violet-800"
+          >
+            Book a Free Strategy Call
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FAQBlock() {
   return (
     <section className="bg-white py-12 md:py-16">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="text-center">
-          <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
-            Frequently asked questions
-          </h2>
-        </div>
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-10 lg:grid-cols-3">
+          <div className="lg:sticky lg:top-28">
+            <h2 className="text-4xl font-black tracking-tight text-[#111111] md:text-5xl">
+              Questions, <span className="text-violet-600">answered.</span>
+            </h2>
+          </div>
 
-        <div className="mt-8 space-y-3">
-          {faqs.map((faq) => (
-            <details
-              key={faq.q}
-              className="group rounded-3xl border border-slate-200 bg-[#F8F8F6] p-5 transition-all duration-300 hover:border-violet-300 open:bg-white open:shadow-lg"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-[#111111]">
-                {faq.q}
-                <ChevronDown
-                  size={20}
-                  className="shrink-0 text-violet-600 transition-transform duration-300 group-open:rotate-180"
-                />
-              </summary>
-              <p className="mt-3 leading-7 text-slate-600">{faq.a}</p>
-            </details>
-          ))}
+          <div className="space-y-3 lg:col-span-2">
+            {faqs.map((faq) => (
+              <details
+                key={faq.q}
+                className="group rounded-3xl border border-slate-200 bg-[#F8F8F6] p-5 transition-all duration-300 hover:border-violet-300 open:bg-white open:shadow-lg"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-[#111111]">
+                  {faq.q}
+                  <ChevronDown
+                    size={20}
+                    className="shrink-0 text-violet-600 transition-transform duration-300 group-open:rotate-180"
+                  />
+                </summary>
+                <p className="mt-3 leading-7 text-slate-600">{faq.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
       <JsonLd id="faq-schema" schema={faqSchema} />
@@ -1145,19 +1546,25 @@ export default function HomeStory() {
       />
       <Marquee />
       <Expertise />
+      <RotatingHook />
       <Problem />
       <Shift />
       <OldWayNewWay />
       <Funnel />
+      <SelfAudit />
       <Method />
+      <YearSlider />
       <ContentFormats />
       <ServicesCarousel />
+      <YouVsUs />
       <GlobalReach />
       <Principles />
       <Manifesto />
+      <CostOfWaiting />
       <NinetyDays />
       <FitCheck />
       <NextSteps />
+      <ContactStrip />
       <FAQBlock />
     </>
   );
