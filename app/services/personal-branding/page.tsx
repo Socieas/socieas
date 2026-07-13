@@ -93,21 +93,20 @@ const faqJsonLd = {
   })),
 };
 
+const serviceSchemaMarkup = { __html: JSON.stringify(jsonLd) };
+const faqSchemaMarkup = { __html: JSON.stringify(faqJsonLd) };
+
 export default function PersonalBrandingPage() {
   return (
     <main className="min-h-screen bg-white text-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML=
-          __html: JSON.stringify(jsonLd),
-        
+        dangerouslySetInnerHTML={serviceSchemaMarkup}
       />
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML=
-          __html: JSON.stringify(faqJsonLd),
-        
+        dangerouslySetInnerHTML={faqSchemaMarkup}
       />
 
       <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,#ede9fe,transparent_35%),linear-gradient(135deg,#ffffff,#f8fafc)] px-6 py-24 sm:px-10 lg:px-20">
