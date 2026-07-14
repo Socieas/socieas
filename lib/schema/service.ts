@@ -1,4 +1,4 @@
-// Service schema builder — used in each service page.tsx (server component)
+/* Service schema builder used in each service page.tsx (server component) */
 
 interface ServiceSchemaOptions {
   name: string;
@@ -21,9 +21,6 @@ export function serviceSchema({
     url,
     serviceType,
     provider: { "@id": "https://socieas.com/#organization" },
-    areaServed: {
-      "@type": "Place",
-      name: "India",
-    },
+    areaServed: "Worldwide",
   };
 }
