@@ -1,7 +1,8 @@
-// Canonical Organization schema — referenced by layout and other schemas
+/* Canonical Organization schema referenced by layout and other schemas */
+
 export const organizationSchema = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": "Organization",
   "@id": "https://socieas.com/#organization",
   name: "Socieas",
   url: "https://socieas.com",
@@ -12,20 +13,14 @@ export const organizationSchema = {
     height: 512,
   },
   description:
-    "Socieas helps businesses scale through AI automation, CRM systems, IT staffing, digital marketing, full-stack development, and personal branding.",
-  telephone: "+91-9142874636",
+    "Socieas helps businesses scale through AI automation, CRM systems, IT staffing, digital marketing, full stack development, and personal branding.",
+  telephone: "+919142874636",
   email: "hello@socieas.com",
-  areaServed: [
-    { "@type": "Country", name: "India" },
-    { "@type": "Country", name: "United States" },
-    { "@type": "Country", name: "United Kingdom" },
-    { "@type": "Country", name: "Australia" },
-    { "@type": "Country", name: "United Arab Emirates" },
-  ],
+  areaServed: "Worldwide",
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "sales",
-    telephone: "+91-9142874636",
+    telephone: "+919142874636",
     email: "hello@socieas.com",
     availableLanguage: ["English", "Hindi"],
   },
