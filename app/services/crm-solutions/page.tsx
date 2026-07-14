@@ -11,9 +11,9 @@ import { breadcrumbSchema } from "@/lib/schema/breadcrumb";
 import { generateSEOMetadata } from "@/lib/seo";
 
 export const metadata = generateSEOMetadata({
-  title: "CRM Solutions and Implementation Services",
+  title: "CRM Solutions and Salesforce Implementation Services",
   description:
-    "Socieas builds CRM systems businesses actually use. Pipeline design, lead capture, follow up automation, clean data migration, and team adoption for companies worldwide.",
+    "Socieas implements Salesforce, HubSpot, and Zoho CRM systems for businesses worldwide. Sales Cloud, Service Cloud, Marketing Cloud, pipeline design, workflow automation, and team adoption.",
   path: "/services/crm-solutions",
 });
 
@@ -47,6 +47,7 @@ const pageStyles = `
 .marquee-track { display: flex; width: max-content; animation: marqueeMove 26s linear infinite; }
 .bar-fill { transform-origin: left; animation: growBar 1.6s ease-out 0.3s both; }
 .pulse-line { animation: pulseLine 2.4s ease-in-out infinite; }
+.gradient-text { background-image: linear-gradient(90deg, #7C3AED, #D946EF); -webkit-background-clip: text; background-clip: text; color: transparent; }
 `;
 
 const pipelineStages = [
@@ -54,6 +55,25 @@ const pipelineStages = [
   { step: "02", label: "Qualified", note: "Scored and assigned" },
   { step: "03", label: "Proposal Sent", note: "Follow up scheduled" },
   { step: "04", label: "Won", note: "Handed to delivery" },
+];
+
+const salesforceClouds = [
+  {
+    name: "Sales Cloud",
+    text: "Pipeline, forecasting, and follow up automation so your sales team closes more with less admin.",
+  },
+  {
+    name: "Service Cloud",
+    text: "Cases, routing, and knowledge so every customer issue is tracked and resolved fast.",
+  },
+  {
+    name: "Marketing Cloud",
+    text: "Journeys, segmentation, and email automation connected to real pipeline data.",
+  },
+  {
+    name: "Custom Development",
+    text: "Flows, Apex, and integrations when your process needs more than standard setup.",
+  },
 ];
 
 const leaks = [
@@ -85,8 +105,8 @@ const comparison = [
 ];
 
 const platforms = [
+  { name: "Salesforce", role: "The world's leading CRM for 13 straight years" },
   { name: "HubSpot", role: "Fast to adopt CRM for growing service teams" },
-  { name: "Salesforce", role: "Sales, Service, and Marketing Cloud at scale" },
   { name: "Zoho", role: "Full business suite at a practical price point" },
   { name: "Pipedrive", role: "Simple visual pipelines for small sales teams" },
   { name: "n8n", role: "Custom automations wired into your CRM" },
@@ -149,19 +169,19 @@ const faqs = [
       "A CRM is the operating system for how you win and keep clients. It gives you a visible pipeline, automatic follow ups, complete client history, and real conversion numbers instead of guesses.",
   },
   {
+    question: "Do you implement Salesforce?",
+    answer:
+      "Yes. We deliver end to end Salesforce implementation covering Sales Cloud, Service Cloud, Marketing Cloud, custom development, and workflow automation for businesses worldwide.",
+  },
+  {
     question: "Which CRM platform is right for us?",
     answer:
-      "It depends on your team size, sales process, and budget. We implement HubSpot, Salesforce, Zoho, and Pipedrive, and we recommend the platform that fits you instead of the one with the biggest logo.",
+      "It depends on your team size, sales process, and budget. We implement Salesforce, HubSpot, Zoho, and Pipedrive, and we recommend the platform that fits you instead of the one with the biggest logo.",
   },
   {
     question: "Why do most CRM implementations fail?",
     answer:
       "Research puts the CRM implementation failure rate around 55%, and the cause is almost always the same. Companies buy a tool but never design the system around how their team actually works. We build for adoption first.",
-  },
-  {
-    question: "When is the right time to implement a CRM?",
-    answer:
-      "Before revenue starts leaking, not after. If leads are coming in and follow ups already slip, a CRM pays for itself faster than any new lead source.",
   },
   {
     question: "Can you migrate our existing data?",
@@ -198,7 +218,7 @@ export default function Page() {
           serviceSchema({
             name: "CRM Solutions",
             description:
-              "Socieas designs and implements CRM systems for businesses worldwide, covering pipeline architecture, lead capture, follow up automation, data migration, reporting dashboards, and team adoption.",
+              "Socieas designs and implements CRM systems for businesses worldwide, including end to end Salesforce implementation across Sales Cloud, Service Cloud, and Marketing Cloud, plus HubSpot and Zoho, pipeline architecture, workflow automation, data migration, and team adoption.",
             url: "https://socieas.com/services/crm-solutions",
             serviceType: "CRM Implementation",
           }),
@@ -217,10 +237,10 @@ export default function Page() {
 
       <Navbar />
 
-      {/* SECTION 1 · HERO WITH BANNER */}
-      <section className="relative overflow-hidden bg-[#F8F8F6] pb-16 pt-32 md:pb-24 md:pt-40">
+      {/* SECTION 1 · HERO WITH BANNER AND GRADIENT TITLE */}
+      <section className="relative overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-24 top-0 h-80 w-80 rounded-full bg-violet-200/30 blur-3xl" />
+          <div className="absolute -left-24 top-0 h-80 w-80 rounded-full bg-violet-100/60 blur-3xl" />
           <div className="absolute right-0 top-16 h-96 w-96 rounded-full bg-fuchsia-100/40 blur-[140px]" />
           <div className="absolute inset-0 premium-grid opacity-60" />
         </div>
@@ -233,17 +253,17 @@ export default function Page() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-600" />
                 </span>
-                CRM Systems · Built For Adoption
+                Salesforce · HubSpot · Zoho Implementation
               </div>
 
               <h1 className="rise rise-2 mt-6 text-5xl font-black leading-[1.02] tracking-[-0.04em] text-[#111111] md:text-6xl lg:text-7xl">
                 Stop losing deals{" "}
-                <span className="text-violet-600">you already earned.</span>
+                <span className="gradient-text">you already earned.</span>
               </h1>
 
               <p className="rise rise-3 mt-6 max-w-lg text-lg leading-8 text-slate-600">
                 Most businesses do not have a lead problem. They have a leaky
-                bucket. We build CRM systems that capture every lead, chase
+                bucket. We implement CRM systems that capture every lead, chase
                 every follow up, and show you exactly where revenue stands.
               </p>
 
@@ -271,7 +291,7 @@ export default function Page() {
                 width={1600}
                 height={1100}
                 priority
-                className="relative rounded-[36px] border border-white/60 shadow-[0_30px_80px_rgba(109,40,217,0.15)]"
+                className="relative w-full rounded-[36px] border border-white/60 shadow-[0_30px_80px_rgba(109,40,217,0.15)]"
               />
 
               <div className="floaty glass-premium absolute -left-4 top-8 hidden items-center gap-2 rounded-2xl px-5 py-3 md:flex">
@@ -337,7 +357,7 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 3 · WHAT IS A CRM (PIPELINE DIAGRAM) */}
+      {/* SECTION 3 · WHAT IS A CRM (PIPELINE INFOGRAPHIC) */}
       <FadeUp>
         <section className="px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-6xl">
@@ -355,7 +375,7 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="mt-14 grid gap-4 md:grid-cols-4">
+            <div className="mt-14 grid gap-8 md:grid-cols-4 md:gap-4">
               {pipelineStages.map((item, index) => (
                 <div key={item.step} className="relative">
                   <div className="magnetic-hover h-full rounded-[28px] border border-slate-200 bg-white p-7">
@@ -371,7 +391,7 @@ export default function Page() {
                     </div>
                   </div>
                   {index < pipelineStages.length - 1 && (
-                    <div className="pulse-line absolute -right-4 top-1/2 hidden -translate-y-1/2 text-2xl font-black text-violet-400 md:block">
+                    <div className="pulse-line absolute -bottom-7 left-1/2 -translate-x-1/2 rotate-90 text-2xl font-black text-violet-400 md:-right-4 md:bottom-auto md:left-auto md:top-1/2 md:-translate-y-1/2 md:translate-x-0 md:rotate-0">
                       →
                     </div>
                   )}
@@ -382,9 +402,53 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 4 · THE LEAKY BUCKET PROBLEM */}
+      {/* SECTION 4 · SALESFORCE EXPERTISE */}
       <FadeUp>
         <section className="bg-white px-6 py-20 sm:px-10 lg:px-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-700">
+                Salesforce Implementation
+              </p>
+              <h2 className="mt-4 text-3xl font-black tracking-tight text-[#111111] sm:text-5xl">
+                Deep expertise in the{" "}
+                <span className="gradient-text">world's #1 CRM.</span>
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+                Salesforce has led the global CRM market for 13 consecutive
+                years. We implement it end to end, from first login to fully
+                automated revenue workflows.
+              </p>
+            </div>
+
+            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {salesforceClouds.map((item) => (
+                <div
+                  key={item.name}
+                  className="group rounded-[32px] border border-black/5 bg-[#F7F7F5] p-8 transition-all duration-300 hover:-translate-y-2 hover:border-violet-200 hover:bg-white hover:shadow-[0_25px_70px_rgba(124,58,237,0.12)]"
+                >
+                  <div className="inline-flex rounded-full bg-white px-4 py-1.5 text-sm font-black text-violet-700 transition-colors duration-300 group-hover:bg-violet-50">
+                    {item.name}
+                  </div>
+                  <p className="mt-5 text-base leading-7 text-slate-600">
+                    {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <p className="mx-auto mt-10 max-w-2xl text-center text-base text-slate-600">
+              Not sure Salesforce is the right size for you? We also implement
+              HubSpot, Zoho, and Pipedrive, and we will tell you honestly which
+              one fits.
+            </p>
+          </div>
+        </section>
+      </FadeUp>
+
+      {/* SECTION 5 · THE LEAKY BUCKET PROBLEM */}
+      <FadeUp>
+        <section className="px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-5xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-700">
               The Leaky Bucket Problem
@@ -401,7 +465,7 @@ export default function Page() {
               {leaks.map((item) => (
                 <div
                   key={item.number}
-                  className="magnetic-hover rounded-3xl border border-slate-200 bg-[#F7F7F5] p-8 text-left"
+                  className="magnetic-hover rounded-3xl border border-slate-200 bg-white p-8 text-left"
                 >
                   <div className="text-4xl font-black text-violet-200">
                     {item.number}
@@ -416,9 +480,9 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 5 · RESEARCHED STATS (ANIMATED BARS) */}
+      {/* SECTION 6 · RESEARCHED STATS (ANIMATED BARS) */}
       <FadeUp>
-        <section className="px-6 py-20 sm:px-10 lg:px-20">
+        <section className="bg-white px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-700">
@@ -450,23 +514,24 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 6 · THE 55% TRUTH */}
+      {/* SECTION 7 · THE 55% TRUTH (LIGHT DESIGN) */}
       <FadeUp>
-        <section className="px-6 py-10 sm:px-10 lg:px-20">
+        <section className="px-6 py-16 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
-            <div className="relative overflow-hidden rounded-[40px] bg-violet-600 px-8 py-14 text-center md:px-16">
-              <div className="floaty pointer-events-none absolute -left-10 top-6 h-32 w-32 rounded-full bg-white/10 blur-xl" />
-              <div className="floaty-late pointer-events-none absolute -right-8 bottom-4 h-32 w-32 rounded-full bg-fuchsia-300/20 blur-xl" />
+            <div className="relative overflow-hidden rounded-[40px] border border-violet-100 bg-white px-8 py-14 text-center shadow-[0_30px_90px_rgba(124,58,237,0.08)] md:px-16">
+              <div className="pointer-events-none absolute inset-0 premium-grid" />
+              <div className="floaty pointer-events-none absolute -left-10 top-6 h-32 w-32 rounded-full bg-violet-100 blur-xl" />
+              <div className="floaty-late pointer-events-none absolute -right-8 bottom-4 h-32 w-32 rounded-full bg-fuchsia-100 blur-xl" />
               <div className="relative">
-                <div className="text-6xl font-black text-white md:text-7xl">
+                <div className="gradient-text text-7xl font-black md:text-8xl">
                   55%
                 </div>
-                <p className="mx-auto mt-4 max-w-2xl text-xl font-bold leading-8 text-violet-100">
+                <p className="mx-auto mt-4 max-w-2xl text-xl font-bold leading-8 text-[#111111]">
                   of CRM implementations fail to hit their objectives. Not
                   because the software is bad, but because nobody designed the
                   system around how the team actually works.
                 </p>
-                <p className="mx-auto mt-4 max-w-xl text-base text-violet-200">
+                <p className="mx-auto mt-4 max-w-xl text-base text-slate-600">
                   That is why we build for adoption first, tools second.
                 </p>
               </div>
@@ -475,7 +540,7 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 7 · WHAT WE BUILD */}
+      {/* SECTION 8 · WHAT WE BUILD */}
       <FadeUp>
         <section className="bg-white px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
@@ -510,7 +575,7 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 8 · WITHOUT VS WITH */}
+      {/* SECTION 9 · WITHOUT VS WITH */}
       <FadeUp>
         <section className="px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-4xl">
@@ -532,10 +597,10 @@ export default function Page() {
                   <div className="rounded-2xl bg-[#F7F7F5] px-5 py-3 text-center font-semibold text-slate-500 line-through decoration-slate-300">
                     {item.without}
                   </div>
-                  <div className="pulse-line text-center text-2xl font-black text-violet-500">
+                  <div className="pulse-line rotate-90 text-center text-2xl font-black text-violet-500 sm:rotate-0">
                     →
                   </div>
-                  <div className="rounded-2xl bg-violet-600 px-5 py-3 text-center font-bold text-white">
+                  <div className="rounded-2xl border-2 border-violet-600 bg-violet-50 px-5 py-3 text-center font-bold text-violet-800">
                     {item.with}
                   </div>
                 </div>
@@ -550,7 +615,7 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 9 · PLATFORM STACK */}
+      {/* SECTION 10 · PLATFORM STACK */}
       <FadeUp>
         <section className="bg-white px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
@@ -586,13 +651,13 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 10 · MOTION MARQUEE */}
-      <section className="overflow-hidden border-y border-violet-100 bg-violet-50 py-10">
+      {/* SECTION 11 · MOTION MARQUEE */}
+      <section className="overflow-hidden border-y border-violet-100 py-10">
         <div className="marquee-track">
           {[...marqueeWords, ...marqueeWords].map((word, index) => (
             <span
               key={`${word}-${index}`}
-              className={`mx-8 whitespace-nowrap text-5xl font-black tracking-tight md:text-6xl ${
+              className={`mx-8 whitespace-nowrap text-4xl font-black tracking-tight md:text-6xl ${
                 index % 2 === 0 ? "text-violet-600" : "text-violet-200"
               }`}
             >
@@ -602,7 +667,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* SECTION 11 · HOW WE IMPLEMENT */}
+      {/* SECTION 12 · HOW WE IMPLEMENT */}
       <FadeUp>
         <section className="bg-white px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
@@ -635,7 +700,7 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 12 · CONNECTED ECOSYSTEM */}
+      {/* SECTION 13 · CONNECTED ECOSYSTEM */}
       <FadeUp>
         <section className="px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
@@ -671,10 +736,10 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 13 · REVIEWS */}
+      {/* SECTION 14 · REVIEWS */}
       <Testimonials />
 
-      {/* SECTION 14 · FAQ */}
+      {/* SECTION 15 · FAQ */}
       <FadeUp>
         <section className="px-6 py-20 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-4xl">
@@ -727,10 +792,10 @@ export default function Page() {
         </section>
       </FadeUp>
 
-      {/* SECTION 15 · RECENT INSIGHTS */}
+      {/* SECTION 16 · RECENT INSIGHTS */}
       <InsightsEcosystem />
 
-      {/* SECTION 16 · FINAL CTA */}
+      {/* SECTION 17 · FINAL CTA */}
       <FadeUp>
         <section className="px-6 pb-24 pt-4 sm:px-10 lg:px-20">
           <div className="mx-auto max-w-7xl">
@@ -742,7 +807,7 @@ export default function Page() {
               <div className="relative">
                 <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.05] tracking-[-0.04em] text-[#111111] md:text-6xl">
                   Fix the bucket{" "}
-                  <span className="text-violet-600">before you fill it.</span>
+                  <span className="gradient-text">before you fill it.</span>
                 </h2>
                 <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-600">
                   One call. A pipeline audit. A clear CRM roadmap for your
