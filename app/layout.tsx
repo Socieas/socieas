@@ -6,43 +6,55 @@ import { organizationSchema } from "@/lib/schema/organization";
 import { websiteSchema } from "@/lib/schema/website";
 
 /* =========================
- METADATA
+   METADATA
 ========================= */
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://socieas.com"),
-  title:
-    "Socieas | AI Automation, CRM & IT Staffing Agency in India",
+
+  title: "Socieas | Personal Branding & AI Growth Systems for Founders",
+
   description:
-    "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
+    "Socieas helps founders and growing businesses worldwide build authority and scale through personal branding, AI automation, CRM systems, digital marketing, and full stack development.",
+
   openGraph: {
-    title:
-      "Socieas | AI Automation, CRM & IT Staffing Agency in India",
+    title: "Socieas | Personal Branding & AI Growth Systems for Founders",
+
     description:
-      "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
+      "Socieas helps founders and growing businesses worldwide build authority and scale through personal branding, AI automation, CRM systems, digital marketing, and full stack development.",
+
     url: "https://socieas.com",
+
     siteName: "Socieas",
+
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Socieas - AI Automation, CRM & IT Staffing Agency",
+        alt: "Socieas | Personal Branding & AI Growth Systems",
       },
     ],
+
     locale: "en_US",
     type: "website",
   },
+
   twitter: {
     card: "summary_large_image",
-    title:
-      "Socieas | AI Automation, CRM & IT Staffing Agency in India",
+
+    title: "Socieas | Personal Branding & AI Growth Systems for Founders",
+
     description:
-      "Socieas helps startups and growing businesses scale with IT staffing, CRM implementation, AI automation, and digital marketing solutions.",
+      "Socieas helps founders and growing businesses worldwide build authority and scale through personal branding, AI automation, CRM systems, digital marketing, and full stack development.",
+
     images: ["/og-image.jpg"],
   },
+
   robots: {
     index: true,
     follow: true,
+
     googleBot: {
       index: true,
       follow: true,
@@ -54,8 +66,9 @@ export const metadata: Metadata = {
 };
 
 /* =========================
- ROOT LAYOUT
+   ROOT LAYOUT
 ========================= */
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -64,9 +77,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Global brand + website schema — injected once, not duplicated per page */}
-        <JsonLd schema={[organizationSchema, websiteSchema]} id="global-schema" />
+        <JsonLd
+          schema={[organizationSchema, websiteSchema]}
+          id="global-organization-schema"
+        />
       </head>
+
       <body className="antialiased">
         {children}
         <GoogleTagManager gtmId="GTM-NTK3Q4P9" />
