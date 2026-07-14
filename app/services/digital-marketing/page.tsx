@@ -4,7 +4,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Testimonials from "@/components/Testimonials";
 import InsightsEcosystem from "@/components/InsightsEcosystem";
-import TrustSignals from "@/components/TrustSignals";
 import JsonLd from "@/components/seo/JsonLd";
 import { serviceSchema } from "@/lib/schema/service";
 import { breadcrumbSchema } from "@/lib/schema/breadcrumb";
@@ -16,6 +15,12 @@ export const metadata = generateSEOMetadata({
     "Socieas builds digital marketing systems for founders and B2B businesses worldwide. SEO, AI search visibility, content engines, and campaigns that turn attention into pipeline.",
   path: "/services/digital-marketing",
 });
+
+const trustStats = [
+  { value: "5+", label: "Countries Served" },
+  { value: "500+", label: "Posts Published" },
+  { value: "24h", label: "Response Time" },
+];
 
 const capabilities = [
   {
@@ -268,8 +273,45 @@ export default function Page() {
         </div>
       </section>
 
-      {/* SECTION 2 · TRUST SIGNALS */}
-      <TrustSignals />
+      {/* SECTION 2 · GLOBAL TRUST STRIP */}
+      <section className="border-y border-black/5 bg-white px-6 py-14 sm:px-10 lg:px-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 text-center sm:grid-cols-3">
+            {trustStats.map((item) => (
+              <div key={item.label}>
+                <div className="text-5xl font-black text-[#111111]">
+                  {item.value}
+                </div>
+                <div className="mt-3 text-sm font-semibold uppercase tracking-[0.22em] text-violet-600">
+                  {item.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+            <span className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+              Rated by clients on
+            </span>
+            <a
+              href="https://www.trustpilot.com/review/socieas.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-800 transition hover:border-violet-300 hover:bg-violet-50"
+            >
+              Trustpilot
+            </a>
+            <a
+              href="https://g.page/r/CZRSUSQ4ceKYEBM/review"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-800 transition hover:border-violet-300 hover:bg-violet-50"
+            >
+              Google Reviews
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* SECTION 3 · THE REAL PROBLEM */}
       <section className="px-6 py-20 sm:px-10 lg:px-20">
@@ -426,21 +468,21 @@ export default function Page() {
 
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             <div className="rounded-[36px] bg-white p-10 shadow-[0_20px_60px_rgba(124,58,237,0.06)]">
+              <div className="text-5xl font-black text-violet-600">+340%</div>
+              <h3 className="mt-6 text-2xl font-bold text-[#111111]">
+                Audience Growth
+              </h3>
+              <p className="mt-3 text-base leading-7 text-slate-600">
+                Consistent positioning compounds reach and recognition.
+              </p>
+            </div>
+            <div className="rounded-[36px] bg-white p-10 shadow-[0_20px_60px_rgba(124,58,237,0.06)]">
               <div className="text-5xl font-black text-violet-600">10M+</div>
               <h3 className="mt-6 text-2xl font-bold text-[#111111]">
                 Organic Impressions
               </h3>
               <p className="mt-3 text-base leading-7 text-slate-600">
                 Strategic content systems create scalable visibility.
-              </p>
-            </div>
-            <div className="rounded-[36px] bg-white p-10 shadow-[0_20px_60px_rgba(124,58,237,0.06)]">
-              <div className="text-5xl font-black text-violet-600">500+</div>
-              <h3 className="mt-6 text-2xl font-bold text-[#111111]">
-                Posts Published
-              </h3>
-              <p className="mt-3 text-base leading-7 text-slate-600">
-                Consistency is the strategy. We ship every single week.
               </p>
             </div>
             <div className="rounded-[36px] bg-white p-10 shadow-[0_20px_60px_rgba(124,58,237,0.06)]">
