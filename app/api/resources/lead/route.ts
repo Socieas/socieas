@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     }
 
     const name = firstName && String(firstName).trim() ? String(firstName).trim() : "there";
-    const downloadUrl = `${SITE_URL}/${resource.filePath}`;
+    const downloadUrl = `${SITE_URL}/resources/view/${resource.slug}`;
 
     // Save the lead and the download (never blocks email delivery)
     await supabaseInsert(
@@ -134,7 +134,7 @@ export async function POST(req: Request) {
 </tr>
 <tr>
 <td style="padding:40px;">
-<a href="${downloadUrl}" style="display:block;text-align:center;background:#7C3AED;color:#ffffff;text-decoration:none;padding:18px;border-radius:12px;font-weight:700;font-size:17px;">Download Your ${resource.type}</a>
+<a href="${downloadUrl}" style="display:block;text-align:center;background:#7C3AED;color:#ffffff;text-decoration:none;padding:18px;border-radius:12px;font-weight:700;font-size:17px;">Open Your ${resource.type}</a>
 <p style="margin-top:30px;color:#6B7280;font-size:15px;line-height:1.8;">Quick tip: block ${resource.time} in your calendar today. Resources you save for later become resources you never use.</p>
 <div style="margin-top:30px;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:14px;padding:25px;">
 <h3 style="margin-top:0;color:#7C3AED;">Want this installed for you?</h3>
