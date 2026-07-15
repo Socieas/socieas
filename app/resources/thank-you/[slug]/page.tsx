@@ -53,8 +53,8 @@ export default async function ThankYouPage({
             </p>
             <p className="mt-2 leading-7 text-slate-600">
               Most founders who download this end up asking us one question:
-              <em> "Can you just build this for me?"</em> — If that's you,
-              skip the line.
+             <em> "Can you just build this for me?"</em> If that is you,
+skip the line.
             </p>
             <Link
               href="/contact"
