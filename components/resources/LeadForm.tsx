@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const CHALLENGES = [
-  "Nobody sees me — visibility",
+  "Low visibility, nobody sees me",
   "Not enough leads",
   "Messy systems & CRM",
   "Can't stay consistent with content",
