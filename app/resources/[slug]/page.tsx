@@ -106,9 +106,20 @@ export default async function ResourcePage({
                 {resource.title}
               </h1>
 
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-                {resource.description}
-              </p>
+           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+  {resource.description}
+</p>
+
+<div className="mt-8 overflow-hidden rounded-[32px] border border-white/60 shadow-[0_30px_80px_rgba(109,40,217,0.15)]">
+  <Image
+    src={`/images/resources/${resource.slug}.webp`}
+    alt={resource.title}
+    width={1600}
+    height={1000}
+    priority
+    className="h-auto w-full object-cover"
+  />
+</div>
 
               <div className="mt-8 space-y-3">
                 {resource.bullets.map((b) => (
