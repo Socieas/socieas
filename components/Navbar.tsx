@@ -63,7 +63,7 @@ export default function Navbar() {
   const insights = [
     {
       title: "Blogs",
-      desc: "SEO-focused educational content.",
+      desc: "SEO focused educational content.",
       href: "/insights/blogs",
     },
     {
@@ -80,11 +80,11 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed left-0 top-0 z-50 w-full px-3 pt-3 sm:px-5">
+      <header className="pointer-events-none fixed left-0 top-0 z-50 w-full px-3 pt-3 sm:px-5">
         <div className="mx-auto max-w-[1380px]">
           {/* NAVBAR */}
 
-          <div className="relative flex h-[68px] items-center justify-between rounded-[24px] border border-white/40 bg-white/80 px-5 shadow-[0_8px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl transition-all duration-300 sm:px-7">
+          <div className="pointer-events-auto relative flex h-[68px] items-center justify-between rounded-[24px] border border-white/40 bg-white/80 px-5 shadow-[0_8px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl transition-all duration-300 sm:px-7">
             {/* LEFT */}
 
             <div className="flex items-center">
@@ -384,8 +384,8 @@ export default function Navbar() {
           <div
             className={`xl:hidden transition-all duration-500 ${
               mobileMenuOpen
-                ? "visible mt-3 translate-y-0 opacity-100"
-                : "invisible pointer-events-none -translate-y-4 opacity-0"
+                ? "pointer-events-auto visible mt-3 translate-y-0 opacity-100"
+                : "pointer-events-none invisible -translate-y-4 opacity-0"
             }`}
           >
             <div className="overflow-hidden rounded-[26px] border border-black/5 bg-white/85 shadow-[0_20px_80px_rgba(0,0,0,0.08)] backdrop-blur-xl">
