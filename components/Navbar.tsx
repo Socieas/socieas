@@ -332,6 +332,19 @@ export default function Navbar() {
                   Free Resources
                 </Link>
 
+                {/* SOCIEAS SCORE */}
+
+                <Link
+                  href="/tools/linkedin-score"
+                  className={`rounded-full px-4 py-2 text-[14px] font-medium transition-all duration-300 hover:bg-violet-50 hover:text-violet-700 ${
+                    pathname.startsWith("/tools")
+                      ? "bg-violet-50 text-violet-700"
+                      : "text-[#6B7280]"
+                  }`}
+                >
+                  Socieas Score
+                </Link>
+
                 {/* ABOUT */}
 
                 <Link
@@ -417,6 +430,23 @@ export default function Navbar() {
                     Free Resources
                     <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-700">
                       New
+                    </span>
+                  </Link>
+
+                  {/* SOCIEAS SCORE */}
+
+                  <Link
+                    href="/tools/linkedin-score"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between rounded-2xl px-5 py-4 text-[15px] font-semibold transition-all duration-300 ${
+                      pathname.startsWith("/tools")
+                        ? "bg-violet-50 text-violet-700"
+                        : "text-black hover:bg-[#F8F8F8]"
+                    }`}
+                  >
+                    Socieas Score
+                    <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-700">
+                      Free
                     </span>
                   </Link>
 
