@@ -1,407 +1,353 @@
-// data/resources.ts
-import type { CategoryMeta, Resource, ResourceCategory } from "@/types/resource";
+// data/resource-content.ts
 
-export const categories: CategoryMeta[] = [
-  {
-    slug: "personal-branding",
-    label: "Personal Branding",
-    headline: "Become the founder nobody can ignore.",
-    description:
-      "Positioning, content, and visibility systems that turn your name into your best sales asset.",
-  },
-  {
-    slug: "ai-automation",
-    label: "AI Automation",
-    headline: "Let systems do the repetitive work.",
-    description:
-      "Practical AI workflows that save hours every week without an engineering team.",
-  },
-  {
-    slug: "crm",
-    label: "CRM & Pipelines",
-    headline: "Never lose a lead again.",
-    description:
-      "Pipeline structures and follow up systems that turn conversations into clients.",
-  },
-  {
-    slug: "digital-marketing",
-    label: "Digital Marketing",
-    headline: "Turn attention into pipeline.",
-    description:
-      "SEO, content, and campaign systems built for founders and B2B service businesses.",
-  },
-  {
-    slug: "staffing",
-    label: "Staffing & Hiring",
-    headline: "Hire right the first time.",
-    description:
-      "Scorecards and hiring systems that protect you from expensive hiring mistakes.",
-  },
-];
+export type ChecklistItem = {
+  title: string;
+  text: string;
+};
 
-export const resources: Resource[] = [
+export type ContentSection = {
+  title: string;
+  intro?: string;
+  numbered?: string[];
+  checklist?: ChecklistItem[];
+};
+
+export type ScoreBand = {
+  range: string;
+  label: string;
+  text: string;
+};
+
+export type ResourceContent = {
+  slug: string;
+  intro: string[];
+  sections: ContentSection[];
+  scoring?: {
+    title: string;
+    intro: string;
+    bands: ScoreBand[];
+  };
+};
+
+export const resourceContents: ResourceContent[] = [
   {
     slug: "founder-linkedin-profile-checklist",
-    title: "The Founder LinkedIn Profile Checklist",
-    promise:
-      "Turn your LinkedIn profile into an inbound lead machine in 12 minutes with the exact 21 point audit we run for clients.",
-    description:
-      "Most founder profiles read like resumes. Buyers do not hire resumes, they hire authority. This checklist walks you through the 21 fixes we make on every client profile: the headline formula, banner, featured section, about section story arc, and the credibility signals buyers scan for in the first 8 seconds.",
-    category: "personal-branding",
-    type: "Checklist",
-    time: "12 min",
-    bullets: [
-      "The headline formula that says what you do and who it is for in under 120 characters",
-      "The 8 second test: the 3 things buyers check before they read anything else",
-      "The about section story arc that turns visitors into DMs",
-      "A featured section setup that does the selling while you sleep",
-      "21 checkboxes you can finish top to bottom in 12 minutes",
+    intro: [
+      "A buyer who lands on your profile decides in about 8 seconds whether to keep reading or leave. Everything in this checklist strengthens what they see in those 8 seconds. Work top to bottom and tick each box as you go.",
     ],
-    whoFor: [
-      "Founders who get profile views but no conversations",
-      "Consultants whose profile still reads like a CV",
-      "Anyone posting content that leads to a weak profile",
-    ],
-    whoNotFor: [
-      "People looking for follower growth hacks",
-      "Brands without a real service or offer yet",
-    ],
-    faqs: [
+    sections: [
       {
-        question: "Is this really free?",
-        answer:
-          "Yes. It is the same audit we run in paid engagements. We give it away because founders who fix their profile usually want help with the next step, which is content.",
+        title: "Before you start: The 8 Second Test",
+        intro:
+          "In their first 8 seconds, buyers check exactly 3 things:",
+        numbered: [
+          "Your photo and banner. Do you look like someone worth listening to?",
+          "Your headline. Do you solve a problem they have?",
+          "Your proof. Featured section, activity, and social signals.",
+        ],
       },
       {
-        question: "How long does it take to implement?",
-        answer:
-          "12 minutes for the essential fixes. The full 21 points take about an hour.",
+        title: "Part 1: The First Impression",
+        checklist: [
+          {
+            title: "Profile photo passes the stranger test",
+            text: "Your face fills about 60 percent of the frame, the background is clean, and you are looking at the camera. No logos, no sunglasses, no cropped group photos.",
+          },
+          {
+            title: "Banner states your positioning",
+            text: "One sentence about who you help and the outcome you deliver, plus one proof point. Make it free in Canva at 1584 x 396 pixels. An empty banner is a billboard you are paying for and leaving blank.",
+          },
+          {
+            title: "Headline follows the formula",
+            text: "I help [WHO] get [OUTCOME] through [SYSTEM]. Under 120 characters. Include the keyword your buyers search, like CRM, personal branding, or AI automation. Job titles do not sell. Outcomes sell.",
+          },
+          {
+            title: "Name field contains only your name",
+            text: "No emojis, no CEO | Visionary | Speaker. Every extra word makes you look less senior, not more.",
+          },
+          {
+            title: "Custom URL is claimed",
+            text: "linkedin.com/in/yourname. Takes 30 seconds in settings and looks professional everywhere you share it.",
+          },
+          {
+            title: "Follow button is set as primary",
+            text: "This turns profile visitors into an audience that sees your content, even when they are not ready to connect.",
+          },
+        ],
+      },
+      {
+        title: "Part 2: The About Section",
+        checklist: [
+          {
+            title: "The first 3 lines hook",
+            text: "Only the first 3 lines show before see more. Name the problem your buyer wakes up with. Never open with I am a passionate professional.",
+          },
+          {
+            title: "Your story follows the arc",
+            text: "Three short paragraphs: the struggle you saw, the shift you made, the system you built. People forget titles. They remember stories.",
+          },
+          {
+            title: "One paragraph of proof",
+            text: "Numbers, client types, results. We have built pipelines for 40+ service businesses beats we are experts in CRM.",
+          },
+          {
+            title: "Formatting is skimmable",
+            text: "One to two line paragraphs with white space between them. A wall of text is a wall people walk away from.",
+          },
+          {
+            title: "It ends with one clear next step",
+            text: "Tell readers exactly what to do: message you, visit your site, or grab a free resource. One CTA, not three.",
+          },
+          {
+            title: "Keywords appear naturally",
+            text: "LinkedIn search is a lead source. Weave in the 3 terms your buyers actually search for.",
+          },
+        ],
+      },
+      {
+        title: "Part 3: Featured and Experience",
+        checklist: [
+          {
+            title: "Featured slot 1 is a free resource",
+            text: "Give value before you ask for anything. A checklist or template with your branding works best.",
+          },
+          {
+            title: "Featured slot 2 is proof",
+            text: "A case study, a testimonial, or your best performing post.",
+          },
+          {
+            title: "Featured slot 3 is a way to book a call",
+            text: "Make the path from interested to booked as short as possible.",
+          },
+          {
+            title: "Experience shows outcomes, not duties",
+            text: "Each role lists one result with a number. Grew inbound leads 3x in 6 months beats a paragraph of responsibilities.",
+          },
+          {
+            title: "Your current role links to a real company page",
+            text: "A blank grey building icon quietly costs you trust.",
+          },
+        ],
+      },
+      {
+        title: "Part 4: Credibility Signals",
+        checklist: [
+          {
+            title: "At least 3 recent recommendations",
+            text: "Ask your last 3 happy clients this week. Most people never ask. That is why most profiles have none.",
+          },
+          {
+            title: "Top 3 skills match your positioning",
+            text: "Pin the skills you want to be hired for, not everything you have ever done.",
+          },
+          {
+            title: "Your last post is under 2 weeks old",
+            text: "An inactive profile tells buyers you are not really in the game. Consistency is a credibility signal.",
+          },
+          {
+            title: "Contact info is complete",
+            text: "Email visible, website linked. Never make an interested buyer hunt for a way to reach you.",
+          },
+        ],
       },
     ],
-    related: ["100-linkedin-hooks", "founder-story-framework"],
-    featured: true,
-    filePath: "resources/founder-linkedin-profile-checklist.pdf",
-    keywords: ["linkedin", "profile", "personal branding", "founder", "audit"],
+    scoring: {
+      title: "Your Score",
+      intro: "Count your checkmarks above:",
+      bands: [
+        {
+          range: "0 to 10",
+          label: "Invisible",
+          text: "Your profile is costing you deals right now. Fix Part 1 today.",
+        },
+        {
+          range: "11 to 17",
+          label: "Solid foundation",
+          text: "You look credible but you are leaking leads. Finish Parts 3 and 4 this week.",
+        },
+        {
+          range: "18 to 21",
+          label: "Lead machine",
+          text: "Your profile works while you sleep. Now the bottleneck is content.",
+        },
+      ],
+    },
   },
   {
     slug: "100-linkedin-hooks",
-    title: "100 LinkedIn Hooks That Stop the Scroll",
-    promise:
-      "Never stare at a blank page again. 100 proven first lines, organized by post type, ready to steal.",
-    description:
-      "The first line decides whether your post lives or dies. We collected and categorized 100 hooks from top performing founder content: story hooks, contrarian hooks, list hooks, and result hooks. You can open every post with a line that earns the click on see more.",
-    category: "personal-branding",
-    type: "Swipe File",
-    time: "5 min",
-    bullets: [
-      "100 hooks across 8 categories: story, contrarian, result, mistake, list, question, statistic, and POV",
-      "A fill in the blanks format so you can swap in your industry and post",
-      "The 3 hook mistakes that kill reach instantly",
-      "Works for LinkedIn, X, and newsletter intros",
+    intro: [
+      "The first line decides whether your post lives or dies. Below are 100 proven hook patterns organized into 8 categories. The specifics are stripped out, so every hook becomes yours the moment you fill in the blanks.",
+      "How to use this: pick the category that matches your post, choose a hook, replace the [BLANKS] with your details, and write the rest of the post to pay off the promise the hook makes.",
     ],
-    whoFor: [
-      "Founders who know what to say but not how to start",
-      "Anyone whose posts die at 5 likes",
-      "Ghostwriters and marketers writing for executives",
-    ],
-    whoNotFor: ["People who want AI to write entire posts for them"],
-    faqs: [
+    sections: [
       {
-        question: "Are these copied from viral posts?",
-        answer:
-          "They are patterns, not copies. Each hook is a reusable structure with the specifics stripped out, so it becomes yours when you fill it in.",
+        title: "First: the 3 hook mistakes that kill reach",
+        numbered: [
+          "Warming up. Your first line is not an introduction, it is the whole audition. Never open with context, open with tension.",
+          "Giving away the ending. If line one answers everything, nobody clicks see more. Create a gap, then close it in the post.",
+          "Writing for everyone. A hook that speaks to everybody stops nobody. Name the specific person or problem.",
+        ],
+      },
+      {
+        title: "Story Hooks (1 to 14)",
+        intro:
+          "Best for: lessons learned, behind the scenes, founder journey posts.",
+        numbered: [
+          "I [DID UNUSUAL THING] for [TIME PERIOD]. Here is what nobody tells you.",
+          "In [YEAR] I almost quit [FIELD]. One conversation changed everything.",
+          "My first [PROJECT] made exactly zero. My tenth made [RESULT].",
+          "A client fired me in [YEAR]. It was the best thing that happened to my business.",
+          "I spent [AMOUNT] learning this lesson. You can have it in 60 seconds.",
+          "Everyone saw the launch. Nobody saw the 14 months before it.",
+          "Three years ago I could not [SKILL]. Yesterday [MILESTONE].",
+          "The email said no. Here is what I did next.",
+          "I watched a competitor copy my entire strategy. Then something strange happened.",
+          "The worst advice I ever followed came from the smartest person I know.",
+          "I lost my biggest client on a Tuesday. By Friday I understood why it had to happen.",
+          "Nobody clapped when I started. That turned out to be an advantage.",
+          "My mentor told me one sentence in [YEAR]. I still run my business on it.",
+          "I said yes to everything for one year. Here is what it cost me.",
+        ],
+      },
+      {
+        title: "Contrarian Hooks (15 to 27)",
+        intro:
+          "Best for: challenging common advice, positioning yourself against the default.",
+        numbered: [
+          "Unpopular opinion: [COMMON PRACTICE] is keeping you stuck.",
+          "Everyone tells you to [COMMON ADVICE]. Everyone is wrong.",
+          "Stop [POPULAR ACTIVITY]. It is not working and you know it.",
+          "[POPULAR TOOL] will not fix your business. Here is what will.",
+          "The best [ROLE] I know do the opposite of what the gurus teach.",
+          "Hard truth: your problem is not [ASSUMED PROBLEM]. It is [REAL PROBLEM].",
+          "You do not need more [RESOURCE]. You need [ALTERNATIVE].",
+          "Hot take: [TREND] is a distraction for most founders.",
+          "I refuse to [COMMON PRACTICE]. My results doubled.",
+          "The advice that built businesses in [PAST YEAR] is quietly killing them in [CURRENT YEAR].",
+          "Most [TOPIC] advice is written by people who never [DID THE THING].",
+          "Being good at [SKILL] is overrated. Being consistent at it is not.",
+          "Your competitors are not beating you with talent. They are beating you with [SYSTEM].",
+        ],
+      },
+      {
+        title: "Result Hooks (28 to 40)",
+        intro:
+          "Best for: case studies, proof posts, breakdowns of what worked.",
+        numbered: [
+          "[NUMBER] leads in [TIME PERIOD]. Zero ads. Here is the system.",
+          "We took a client from [BEFORE] to [AFTER] in [TIME]. The playbook:",
+          "This one change added [RESULT] to our pipeline.",
+          "[METRIC] grew [PERCENT] in [TIME]. I did exactly 3 things.",
+          "One post brought [NUMBER] inbound calls. Let me break it down.",
+          "From [LOW POINT] to [HIGH POINT] in [TIME]. No shortcuts, one system.",
+          "My best month ever came after my worst quarter ever. Here is what changed.",
+          "We tested [NUMBER] versions of [ASSET]. Only one worked. This one.",
+          "[CLIENT TYPE] came to us with [PROBLEM]. 90 days later: [RESULT].",
+          "I doubled [METRIC] by deleting half of what I was doing.",
+          "The [SYSTEM] that runs itself brought [RESULT] while I was on holiday.",
+          "Every [TIME PERIOD] this one email brings us [NUMBER] replies.",
+          "Proof beats promises: here are the numbers from our last [PROJECT].",
+        ],
+      },
+      {
+        title: "Mistake Hooks (41 to 52)",
+        intro:
+          "Best for: vulnerability posts that teach. These build trust faster than wins.",
+        numbered: [
+          "I wasted [TIME] on [ACTIVITY]. Save yourself the detour.",
+          "The [AMOUNT] mistake I made so you do not have to.",
+          "5 mistakes I made building [PROJECT]. Number 3 still hurts.",
+          "I ignored [SIGNAL] for months. It cost me [COST].",
+          "My biggest hiring mistake interviewed brilliantly.",
+          "I built the wrong thing for the right audience. Twice.",
+          "The mistake was not the strategy. It was who I listened to.",
+          "I priced my services wrong for 2 years. Here is the math that woke me up.",
+          "Everything in my business broke at [MILESTONE]. Because I designed it that way without knowing.",
+          "I confused being busy with being effective. A calendar audit fixed it.",
+          "We launched too early. Then I learned launching late is worse.",
+          "The feedback I ignored was the feedback I needed most.",
+        ],
+      },
+      {
+        title: "List Hooks (53 to 64)",
+        intro:
+          "Best for: value posts, frameworks, tool stacks. Easy to write, easy to save.",
+        numbered: [
+          "7 [TOOLS OR HABITS] that quietly run my business.",
+          "10 lessons from [NUMBER] years of [FIELD]. Free to steal.",
+          "5 questions I ask before taking any client.",
+          "The 3 systems every [ROLE] needs before scaling.",
+          "8 things I stopped doing that improved everything.",
+          "6 signs your [ASSET] needs a rebuild.",
+          "4 emails that do most of our selling.",
+          "9 habits of founders whose content actually converts.",
+          "The 5 tools I would keep if I lost everything else.",
+          "3 numbers to check every Monday morning.",
+          "7 sentences that close more deals than any pitch deck.",
+          "5 boring habits that outperform every growth hack I tried.",
+        ],
+      },
+      {
+        title: "Question Hooks (65 to 76)",
+        intro:
+          "Best for: engagement posts and making readers feel seen.",
+        numbered: [
+          "What would your business look like if [BOTTLENECK] disappeared tomorrow?",
+          "Why do buyers trust [COMPETITOR TYPE] more than you?",
+          "When did you last audit your [ASSET]? Be honest.",
+          "What if the problem is not your offer but where people find you?",
+          "How many leads did your website bring last month? Exactly.",
+          "Would you follow you? Look at your profile and answer honestly.",
+          "What is your plan for when [CHANNEL] stops working?",
+          "Who told you [BELIEF]? And why did you believe them?",
+          "If you stopped posting today, would anyone notice?",
+          "Which task do you repeat daily that a system could do better?",
+          "What is the real cost of staying invisible for another year?",
+          "Do you have a pipeline or a pile of maybes?",
+        ],
+      },
+      {
+        title: "Statistic Hooks (77 to 88)",
+        intro:
+          "Best for: authority posts. Numbers stop the scroll because they feel objective.",
+        numbered: [
+          "[PERCENT] of [AUDIENCE] never [ACTION]. Be the exception.",
+          "Buyers see [NUMBER] pieces of content before they ever book a call.",
+          "[PERCENT] of B2B deals now start with a search. Where do you show up?",
+          "The average founder spends [HOURS] a week on tasks a system could do.",
+          "[NUMBER] of every 10 CRM setups get abandoned by month two. Here is why.",
+          "A bad hire costs [MULTIPLE] of their salary. The math nobody does.",
+          "[PERCENT] of searches now end without a click. Your strategy needs to know this.",
+          "Companies that post weekly grow [MULTIPLE] faster. The data:",
+          "It takes [NUMBER] touches to close a modern B2B deal. Most stop at 2.",
+          "[PERCENT] of your website visitors leave without a trace. Fix the leak.",
+          "One stat changed our roadmap: [STATISTIC].",
+          "[NUMBER] hours. That is what this one automation saves us every month.",
+        ],
+      },
+      {
+        title: "POV Hooks (89 to 100)",
+        intro:
+          "Best for: thought leadership. Plant a flag and defend it.",
+        numbered: [
+          "After [NUMBER] years in [FIELD], one belief survived everything.",
+          "The founders winning right now share one boring trait.",
+          "In 5 years, [PREDICTION]. Position yourself now.",
+          "The market does not reward the best product. It rewards the clearest message.",
+          "Watch what top [ROLE] do, not what they say.",
+          "Personal brands will outlive company brands. Here is why I am certain.",
+          "Trust is the only channel that never changes its algorithm.",
+          "AI will not replace [ROLE]. But a [ROLE] using AI will replace one who does not.",
+          "Visibility is a system, not a personality trait.",
+          "Your network is not who you know. It is who remembers you.",
+          "The next decade belongs to founders who teach in public.",
+          "Distribution beats perfection. Every single time.",
+        ],
       },
     ],
-    related: ["founder-linkedin-profile-checklist", "30-day-content-calendar"],
-    filePath: "resources/100-linkedin-hooks.pdf",
-    keywords: ["hooks", "linkedin", "content", "writing", "viral"],
-  },
-  {
-    slug: "founder-story-framework",
-    title: "The Founder Story Framework",
-    promise:
-      "Turn your background into a story buyers remember with the 5 part narrative worksheet from our positioning sprints.",
-    description:
-      "People forget features. They remember stories. This worksheet extracts the one founder story you should be telling: the struggle, the shift, and the system. Then it shapes that story into an about section, a keynote intro, and a pinned post.",
-    category: "personal-branding",
-    type: "Worksheet",
-    time: "20 min",
-    bullets: [
-      "The 5 part arc: context, struggle, shift, system, stakes",
-      "12 extraction questions that surface stories you forgot you had",
-      "Three output formats: LinkedIn about section, short bio, and pinned post",
-      "A real before and after example included",
-    ],
-    whoFor: [
-      "Founders who freeze when asked about their story",
-      "Experts whose credentials are strong but forgettable",
-      "Anyone building a brand on trust",
-    ],
-    whoNotFor: ["Companies wanting corporate brand messaging, this one is personal"],
-    faqs: [
-      {
-        question: "What if my story feels ordinary?",
-        answer:
-          "Ordinary stories told with structure beat dramatic stories told badly. The framework works precisely because it does not need drama.",
-      },
-    ],
-    related: ["founder-linkedin-profile-checklist", "100-linkedin-hooks"],
-    filePath: "resources/founder-story-framework.pdf",
-    keywords: ["story", "storytelling", "positioning", "founder", "brand"],
-  },
-  {
-    slug: "ai-readiness-self-audit",
-    title: "The AI Readiness Self Audit",
-    promise:
-      "Find out which parts of your business AI can automate today. Score yourself across 6 areas in 10 minutes.",
-    description:
-      "Most businesses either overhype AI or ignore it. This audit cuts through both. Score your operations across 6 areas: lead handling, content, admin, reporting, support, and follow up. You get a clear picture of where automation pays off first.",
-    category: "ai-automation",
-    type: "Worksheet",
-    time: "10 min",
-    bullets: [
-      "A 6 area scoring system with clear 1 to 5 criteria",
-      "The automation priority matrix: impact versus effort",
-      "Red flags that mean you are not ready to automate yet",
-      "The first 3 automations that pay for themselves fastest",
-    ],
-    whoFor: [
-      "Founders drowning in repetitive admin work",
-      "Teams curious about AI but unsure where to start",
-      "Businesses with leads slipping through the cracks",
-    ],
-    whoNotFor: ["Developers looking for technical AI implementation guides"],
-    faqs: [
-      {
-        question: "Do I need technical skills to use this?",
-        answer:
-          "None. It is a business audit, not a technical one. You score how work happens today and the matrix shows where automation helps most.",
-      },
-    ],
-    related: ["founder-gpt-prompt-pack", "crm-implementation-checklist"],
-    filePath: "resources/ai-readiness-self-audit.pdf",
-    keywords: ["ai", "automation", "audit", "operations", "efficiency"],
-  },
-  {
-    slug: "founder-gpt-prompt-pack",
-    title: "The Founder GPT Prompt Pack",
-    promise:
-      "25 copy and paste prompts that make ChatGPT work like a strategist, ghostwriter, and analyst instead of a generic intern.",
-    description:
-      "Generic prompts get generic output. This pack contains 25 battle tested prompts we use daily for positioning, content repurposing, offer copy, competitor analysis, and follow up emails. Each one includes the context structure that makes AI output actually usable.",
-    category: "ai-automation",
-    type: "Prompt Pack",
-    time: "5 min",
-    bullets: [
-      "25 prompts across strategy, content, sales, and operations",
-      "The CRIT structure: context, role, instructions, tone",
-      "A repurposing chain that turns 1 long post into 10 pieces of content",
-      "Works with ChatGPT, Claude, and Gemini",
-    ],
-    whoFor: [
-      "Founders using AI but unhappy with generic output",
-      "Solo marketers doing the work of a full team",
-      "Anyone repurposing content across channels",
-    ],
-    whoNotFor: ["Prompt engineers, this pack is practical rather than technical"],
-    faqs: [
-      {
-        question: "Which AI tools does this work with?",
-        answer:
-          "All major ones. The prompts are structured around context and instructions, which every model responds to.",
-      },
-    ],
-    related: ["ai-readiness-self-audit", "30-day-content-calendar"],
-    filePath: "resources/founder-gpt-prompt-pack.pdf",
-    keywords: ["prompts", "chatgpt", "ai", "content", "productivity"],
-  },
-  {
-    slug: "sales-pipeline-template",
-    title: "The Service Business Sales Pipeline Template",
-    promise:
-      "The exact 7 stage pipeline we install for clients, with stage definitions, exit criteria, and follow up timing.",
-    description:
-      "Most service businesses track deals in their head and lose them there. This template gives you the 7 stages, what must happen before a deal moves forward, and the follow up cadence that revives stalled conversations.",
-    category: "crm",
-    type: "Template",
-    time: "15 min",
-    bullets: [
-      "7 stages from first touch to closed, each with clear exit criteria",
-      "The follow up cadence: day 2, day 5, day 12, day 30",
-      "Deal health signals that tell you when to push and when to walk away",
-      "Works in any CRM: HubSpot, Notion, Pipedrive, or a spreadsheet",
-    ],
-    whoFor: [
-      "Founders closing deals from memory and losing track",
-      "Service businesses with leads that go silent",
-      "Teams setting up their first real CRM",
-    ],
-    whoNotFor: ["Online stores, this template is built for service sales"],
-    faqs: [
-      {
-        question: "Do I need a specific CRM tool?",
-        answer:
-          "No. The template defines the process. You can run it in any CRM or even a spreadsheet. The stages and criteria are what matter.",
-      },
-    ],
-    related: ["crm-implementation-checklist", "ai-readiness-self-audit"],
-    filePath: "resources/sales-pipeline-template.pdf",
-    keywords: ["sales", "pipeline", "crm", "follow up", "deals"],
-  },
-  {
-    slug: "crm-implementation-checklist",
-    title: "The CRM Implementation Checklist",
-    promise:
-      "Set up a CRM your team actually uses. The 18 steps that separate adopted systems from abandoned ones.",
-    description:
-      "Most CRMs fail in month two. Not because of the tool, but because of the setup. This checklist covers the 18 implementation steps we follow on client projects: field structure, pipeline design, automation rules, and the adoption rituals that keep data clean.",
-    category: "crm",
-    type: "Checklist",
-    time: "10 min",
-    bullets: [
-      "18 steps across setup, migration, automation, and adoption",
-      "The 5 fields every lead record needs and the 10 you should delete",
-      "Automation rules that save 3 or more hours every week",
-      "The weekly ritual that keeps your CRM alive",
-    ],
-    whoFor: [
-      "Businesses setting up their first CRM",
-      "Teams whose CRM became a graveyard of stale data",
-      "Founders switching CRM tools",
-    ],
-    whoNotFor: ["Enterprise teams with dedicated RevOps staff"],
-    faqs: [
-      {
-        question: "Which CRM is this for?",
-        answer:
-          "It works with any tool. The steps apply to HubSpot, Zoho, Pipedrive, Salesforce, and Notion based systems alike.",
-      },
-    ],
-    related: ["sales-pipeline-template", "ai-readiness-self-audit"],
-    filePath: "resources/crm-implementation-checklist.pdf",
-    keywords: ["crm", "implementation", "setup", "hubspot", "automation"],
-  },
-  {
-    slug: "service-business-seo-checklist",
-    title: "The Service Business SEO Checklist",
-    promise:
-      "Rank for searches your buyers actually make. 25 fixes covering technical SEO, content, and AI search visibility.",
-    description:
-      "Service business SEO is not about traffic. It is about the 50 searches a month that turn into calls. This checklist covers the 25 highest leverage fixes: site structure, service page optimization, local signals, and the structured data that gets you cited by ChatGPT and AI Overviews.",
-    category: "digital-marketing",
-    type: "Checklist",
-    time: "15 min",
-    bullets: [
-      "25 fixes ranked by impact so you can start at the top",
-      "A service page structure that converts searchers into callers",
-      "AI search visibility: get cited by ChatGPT and Google AI Overviews",
-      "The 10 minute technical audit anyone can run",
-    ],
-    whoFor: [
-      "Service businesses invisible on Google",
-      "Founders paying for ads because organic brings nothing",
-      "Marketers adapting to AI search",
-    ],
-    whoNotFor: ["Content sites chasing traffic volume"],
-    faqs: [
-      {
-        question: "How long until results show?",
-        answer:
-          "Technical fixes can move rankings in weeks. Content gains typically compound over 3 to 6 months.",
-      },
-    ],
-    related: ["30-day-content-calendar", "founder-linkedin-profile-checklist"],
-    filePath: "resources/service-business-seo-checklist.pdf",
-    keywords: ["seo", "search", "google", "ai search", "ranking"],
-  },
-  {
-    slug: "30-day-content-calendar",
-    title: "The 30 Day Founder Content Calendar",
-    promise:
-      "A month of content mapped out. 30 post prompts across 5 proven formats so you never skip a day for lack of ideas.",
-    description:
-      "Consistency beats brilliance. This calendar gives you 30 days of specific post prompts rotating through 5 formats: story, lesson, framework, opinion, and proof. Your content builds authority instead of noise.",
-    category: "digital-marketing",
-    type: "Template",
-    time: "10 min",
-    bullets: [
-      "30 specific prompts instead of vague themes",
-      "A 5 format rotation that balances authority and relatability",
-      "The 20 minute batching system: write a week in one sitting",
-      "A repurposing map that turns every post into 3 pieces",
-    ],
-    whoFor: [
-      "Founders who post for 2 weeks then vanish",
-      "Anyone who spends more time deciding than writing",
-      "Marketers managing the presence of an executive",
-    ],
-    whoNotFor: ["Brands that need daily video scripts, this calendar is text first"],
-    faqs: [
-      {
-        question: "Which platforms does this cover?",
-        answer:
-          "Built for LinkedIn first, but the prompts work on X and in newsletters with minor tweaks.",
-      },
-    ],
-    related: ["100-linkedin-hooks", "founder-gpt-prompt-pack"],
-    filePath: "resources/30-day-content-calendar.pdf",
-    keywords: ["content", "calendar", "linkedin", "consistency", "posts"],
-  },
-  {
-    slug: "hiring-scorecard",
-    title: "The Hiring Scorecard Template",
-    promise:
-      "Stop hiring on gut feeling. The scoring system that catches red flags before they cost you 6 months of salary.",
-    description:
-      "A bad hire costs 3 to 6 months of salary and a year of momentum. This scorecard forces clarity before interviews: outcomes over responsibilities, weighted scoring criteria, and the structured questions that reveal how candidates actually work.",
-    category: "staffing",
-    type: "Template",
-    time: "15 min",
-    bullets: [
-      "Outcome based role definition: what success looks like at 90 days",
-      "Weighted scoring across skills, drive, and culture fit",
-      "12 structured interview questions with notes on what to listen for",
-      "The red flag checklist most interviewers miss",
-    ],
-    whoFor: [
-      "Founders making their first key hires",
-      "Businesses burned by a recent bad hire",
-      "Teams scaling fast without an HR department",
-    ],
-    whoNotFor: ["Enterprise recruiters with existing ATS scorecards"],
-    faqs: [
-      {
-        question: "Does this work for freelancers and contractors too?",
-        answer:
-          "Yes. Shorten the 90 day outcomes to 30 days and the same scoring applies.",
-      },
-    ],
-    related: ["crm-implementation-checklist", "ai-readiness-self-audit"],
-    filePath: "resources/hiring-scorecard.pdf",
-    keywords: ["hiring", "recruitment", "scorecard", "interview", "staffing"],
   },
 ];
 
-/* ---------- Helpers ---------- */
-
-export function getResource(slug: string): Resource | undefined {
-  return resources.find((r) => r.slug === slug);
-}
-
-export function getResourcesByCategory(category: ResourceCategory): Resource[] {
-  return resources.filter((r) => r.category === category);
-}
-
-export function getFeaturedResource(): Resource {
-  return resources.find((r) => r.featured) ?? resources[0];
-}
-
-export function getRelatedResources(resource: Resource): Resource[] {
-  return resource.related
-    .map((slug) => getResource(slug))
-    .filter((r): r is Resource => Boolean(r));
-}
-
-export function getCategoryMeta(slug: ResourceCategory): CategoryMeta {
-  return categories.find((c) => c.slug === slug) ?? categories[0];
+export function getResourceContent(slug: string): ResourceContent | undefined {
+  return resourceContents.find((c) => c.slug === slug);
 }
