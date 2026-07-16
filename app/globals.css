@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
   --background: #f7f7f5;
   --foreground: #111111;
@@ -493,4 +495,314 @@ select {
   font-size: 4rem;
   font-weight: 900;
   color: #7C3AED;
+}
+
+/* =========================================================
+   SOCIEAS DARK MODE SYSTEM
+   High contrast: near white text on deep charcoal.
+   Activated by the .dark class on <html>.
+========================================================= */
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background: #0F0F12;
+  color: #F4F4F5;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #F4F4F5;
+}
+
+.dark p {
+  color: rgba(244, 244, 245, 0.72);
+}
+
+.dark ::selection {
+  background: rgba(196, 181, 253, 0.3);
+  color: #FFFFFF;
+}
+
+/* ---------- PAGE + SECTION BACKGROUNDS ---------- */
+
+.dark .bg-\[\#F7F7F5\],
+.dark .bg-\[\#F8F8F6\],
+.dark .bg-\[\#FAFAF8\],
+.dark .bg-slate-50,
+.dark .bg-gray-50,
+.dark .bg-neutral-50 {
+  background-color: #0F0F12;
+}
+
+.dark .bg-white {
+  background-color: #1A1A1F;
+}
+
+.dark .bg-white\/95,
+.dark .bg-white\/90,
+.dark .bg-white\/80,
+.dark .bg-white\/70 {
+  background-color: rgba(26, 26, 31, 0.92);
+}
+
+.dark .bg-\[\#F3F4F6\],
+.dark .bg-slate-100,
+.dark .bg-gray-100,
+.dark .bg-neutral-100 {
+  background-color: #202027;
+}
+
+.dark .bg-violet-50,
+.dark .bg-\[\#F5F3FF\],
+.dark .bg-\[\#FAF5FF\],
+.dark .bg-fuchsia-50,
+.dark .bg-purple-50 {
+  background-color: rgba(124, 58, 237, 0.16);
+}
+
+.dark .bg-violet-100,
+.dark .bg-fuchsia-100 {
+  background-color: rgba(124, 58, 237, 0.26);
+}
+
+.dark .bg-violet-200\/30,
+.dark .bg-violet-100\/40,
+.dark .bg-fuchsia-100\/40 {
+  background-color: rgba(124, 58, 237, 0.12);
+}
+
+.dark .bg-black {
+  background-color: #7C3AED;
+}
+
+/* ---------- TEXT ---------- */
+
+.dark .text-\[\#111111\],
+.dark .text-black,
+.dark .text-slate-900,
+.dark .text-gray-900,
+.dark .text-neutral-900,
+.dark .text-slate-800,
+.dark .text-gray-800 {
+  color: #F4F4F5;
+}
+
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-neutral-600,
+.dark .text-\[\#6B7280\],
+.dark .text-\[\#4B5563\],
+.dark .text-\[\#374151\] {
+  color: rgba(244, 244, 245, 0.70);
+}
+
+.dark .text-violet-700,
+.dark .text-violet-600,
+.dark .text-violet-800 {
+  color: #C4B5FD;
+}
+
+.dark .text-fuchsia-600,
+.dark .text-fuchsia-500 {
+  color: #F0ABFC;
+}
+
+/* ---------- BORDERS ---------- */
+
+.dark .border-black\/5,
+.dark .border-black\/10,
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-neutral-200,
+.dark .border-\[\#E5E7EB\],
+.dark .border-\[\#E9E5FF\],
+.dark .border-\[\#DDD6FE\] {
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.dark .border-violet-100,
+.dark .border-violet-200 {
+  border-color: rgba(196, 181, 253, 0.28);
+}
+
+/* ---------- FORM FIELDS ---------- */
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1A1A1F;
+  color: #F4F4F5;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(244, 244, 245, 0.45);
+}
+
+/* ---------- PREMIUM UTILITIES ---------- */
+
+.dark .glass-premium {
+  background: rgba(20, 20, 25, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45);
+}
+
+.dark .premium-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+.dark .premium-pill {
+  background: rgba(124, 58, 237, 0.2);
+  color: #C4B5FD;
+}
+
+.dark .premium-card {
+  background: #1A1A1F;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.dark .premium-button-secondary {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.dark .section-title {
+  color: #F4F4F5;
+}
+
+.dark .module-button {
+  background: #1A1A1F;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .module-active {
+  background: rgba(124, 58, 237, 0.18);
+  border-color: #7C3AED;
+}
+
+.dark .progress-wrap {
+  background: #26262C;
+}
+
+.dark .tech-chip {
+  background: #1A1A1F;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .stats-card {
+  background: #1A1A1F;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .stats-card h3 {
+  color: #C4B5FD;
+}
+
+.dark .insight-box {
+  background: rgba(124, 58, 237, 0.14);
+  border-color: rgba(196, 181, 253, 0.25);
+}
+
+.dark .insight-box h3 {
+  color: #C4B5FD;
+}
+
+.dark .quote-box {
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.dark .quote-box p {
+  color: #F4F4F5;
+}
+
+/* ---------- ARTICLE CONTENT ---------- */
+
+.dark .socieas-article-content {
+  color: #E9E9EB;
+}
+
+.dark .socieas-article-content h1,
+.dark .socieas-article-content h2,
+.dark .socieas-article-content h3,
+.dark .socieas-article-content h4,
+.dark .socieas-article-content h5,
+.dark .socieas-article-content h6 {
+  color: #F4F4F5;
+}
+
+.dark .socieas-article-content p,
+.dark .socieas-article-content li {
+  color: rgba(244, 244, 245, 0.72);
+}
+
+.dark .socieas-article-content strong {
+  color: #FFFFFF;
+}
+
+.dark .socieas-article-content a {
+  color: #C4B5FD;
+}
+
+.dark .socieas-article-content blockquote {
+  background: #1A1A1F;
+  color: #F4F4F5;
+}
+
+.dark .socieas-article-content img {
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.dark .socieas-article-content td {
+  border-color: rgba(255, 255, 255, 0.10);
+  color: rgba(244, 244, 245, 0.72);
+}
+
+.dark .socieas-article-content hr {
+  border-top-color: rgba(255, 255, 255, 0.10);
+}
+
+.dark .socieas-article-content .highlight-box {
+  background: #1A1A1F;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- PRINT SAFETY ----------
+   Printing (Save as PDF on resources) always uses light colors,
+   even when dark mode is active on screen. */
+
+@media print {
+  .dark body,
+  .dark .bg-white,
+  .dark .bg-\[\#F7F7F5\],
+  .dark .bg-\[\#F8F8F6\] {
+    background: #FFFFFF !important;
+    color: #111111 !important;
+  }
+
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark p,
+  .dark li,
+  .dark .text-\[\#111111\] {
+    color: #111111 !important;
+  }
 }
