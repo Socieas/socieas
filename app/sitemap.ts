@@ -1,3 +1,5 @@
+// app/sitemap.ts
+
 import { MetadataRoute } from "next";
 
 import { client } from "@/sanity/lib/client";
@@ -7,7 +9,12 @@ import { resources } from "@/data/resources";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://socieas.com";
 
-  const posts = await client.fetch(allPostsQuery);
+  let posts: any[] = [];
+  try {
+    posts = await client.fetch(allPostsQuery);
+  } catch {
+    posts = [];
+  }
 
   const insightRoutes = posts.map((post: any) => {
     const basePath =
