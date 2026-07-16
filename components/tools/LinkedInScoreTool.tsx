@@ -14,6 +14,26 @@ export default function LinkedInScoreTool() {
   const handleComplete = (r: ScoreResult, i: AuditInput) => {
     setResult(r);
     setInput(i);
+
+    fetch("/api/tools/linkedin-score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: i.name,
+        email: i.email,
+        linkedinUrl: i.linkedinUrl,
+        headline: i.headline,
+        about: i.about,
+        answers: i.answers,
+        result: {
+          total: r.total,
+          band: r.band,
+          pillars: r.pillars,
+          topFixes: r.topFixes,
+        },
+      }),
+    }).catch(() => {});
+
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
