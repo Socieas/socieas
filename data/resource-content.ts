@@ -654,6 +654,114 @@ export const resourceContents: ResourceContent[] = [
       ],
     },
   },
+  {
+    slug: "sales-pipeline-template",
+    intro: [
+      "Service businesses rarely lose deals to competitors. They lose them to silence: the follow up that never happened, the proposal nobody chased, the warm lead that went cold in a busy week.",
+      "This template fixes that with structure. Copy the 7 stages, 5 fields, and follow up rules below into any CRM or even a plain spreadsheet. The system matters far more than the software.",
+    ],
+    sections: [
+      {
+        title: "How to use this template",
+        numbered: [
+          "Create the 7 stages below as columns in your CRM or spreadsheet. Use the exact entry rules so there is never a debate about where a deal belongs.",
+          "Add the 5 fields to every deal. Resist adding more. Fields you do not fill in are worse than fields that do not exist.",
+          "Adopt the one golden rule: every open deal has a next action with a date. A deal without a next action is not a deal, it is a hope.",
+        ],
+      },
+      {
+        title: "The 7 pipeline stages",
+        intro:
+          "Each stage has an entry rule, so a deal only moves forward when something real happened:",
+        numbered: [
+          "New Lead. Entry: someone showed interest but you have not spoken yet. A form fill, a DM, a referral intro. Exit within 48 hours, no exceptions.",
+          "Contacted. Entry: you made the first personal touch. Not an auto reply, a real message from you.",
+          "Qualified. Entry: you confirmed they have the problem you solve, a budget range that fits, and the authority to decide. If any of the three is missing, they go to Nurture instead.",
+          "Discovery Done. Entry: you held the call, understood the problem in their words, and they agreed to see a proposal.",
+          "Proposal Sent. Entry: the proposal is in their inbox with a price and a deadline for a decision. Never send a proposal without a follow up date already booked.",
+          "Verbal Yes. Entry: they said yes in words. Exit: contract signed and invoice paid. Deals in this stage need the most attention because this is where excitement quietly evaporates.",
+          "Won. Entry: money received. Trigger your onboarding here. Also create a Lost column and a Nurture column: Lost deals get a reason logged in one sentence, Nurture deals get a check in every 60 days.",
+        ],
+      },
+      {
+        title: "The 5 fields worth tracking",
+        intro:
+          "Most CRMs die from 25 empty fields. Track these 5 and nothing else until the system is a habit:",
+        numbered: [
+          "Next action and its date. The single most important field in your entire business. This is what makes deals unable to fall through cracks.",
+          "Deal value. An estimate is fine. It lets you see which deals deserve your energy this week.",
+          "Source. Where this lead came from: LinkedIn, referral, SEO, event. Three months of this data tells you where to invest.",
+          "Stage entered date. When a deal sits in one stage too long, it is stuck and needs a different move, not another identical follow up.",
+          "Last touch note. One line about the last interaction, written for your future self. What did they say, what do they care about.",
+        ],
+      },
+      {
+        title: "The follow up cadence that revives silent deals",
+        intro:
+          "When a prospect goes quiet after a proposal or a call, run this sequence. Each touch adds value instead of applying pressure:",
+        numbered: [
+          "Day 2: short check in. Ask if any questions came up. One sentence is enough.",
+          "Day 5: add value. Send something useful related to their problem: an article, an example, a relevant result you got for someone like them.",
+          "Day 10: address the silent objection. Most stalled deals have an unspoken worry. Name the most likely one openly and answer it.",
+          "Day 18: the honest question. Ask directly: has this moved down your priority list? People respect the question and usually tell you the truth.",
+          "Day 30: close the loop. Say you are closing the file for now and the door stays open. This message alone revives a surprising number of deals.",
+          "After day 30: move to Nurture and check in every 60 days. No deal gets deleted, timing changes.",
+        ],
+      },
+      {
+        title: "Setup checklist",
+        checklist: [
+          {
+            title: "The 7 stages exist in my CRM or spreadsheet",
+            text: "Named exactly, with entry rules written where the team can see them.",
+          },
+          {
+            title: "The 5 fields exist and nothing extra",
+            text: "Next action with date, deal value, source, stage entered date, last touch note.",
+          },
+          {
+            title: "Every current deal has been placed in its true stage",
+            text: "Be ruthless. A deal you have not touched in 60 days goes to Nurture, not Proposal Sent.",
+          },
+          {
+            title: "Every open deal has a next action with a date",
+            text: "This will feel tedious exactly once. After that it becomes the habit that pays your invoices.",
+          },
+          {
+            title: "The follow up cadence is saved as templates",
+            text: "Write the 5 messages once, personalize in 2 minutes each time you use them.",
+          },
+        ],
+      },
+      {
+        title: "The weekly pipeline ritual",
+        intro:
+          "Every Monday, 20 minutes, same order. Tick these off the first time you complete the ritual:",
+        checklist: [
+          {
+            title: "Clear every overdue next action",
+            text: "Do it or reschedule it consciously. Zero overdue actions is the goal, not heroics.",
+          },
+          {
+            title: "Touch every deal in Verbal Yes and Proposal Sent",
+            text: "These are your closest deals to money. They get attention before anything else.",
+          },
+          {
+            title: "Check for deals stuck longer than 14 days in one stage",
+            text: "Stuck deals need a new move: a different angle, a different person, or an honest question.",
+          },
+          {
+            title: "Log a one line reason for anything moved to Lost",
+            text: "After 10 losses, the patterns in these one liners will rewrite your sales approach.",
+          },
+          {
+            title: "Check your pipeline total against your monthly target",
+            text: "A healthy pipeline holds roughly 3x your monthly revenue goal. Below that, your Monday priority is lead generation, not delivery.",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export function getResourceContent(slug: string): ResourceContent | undefined {
