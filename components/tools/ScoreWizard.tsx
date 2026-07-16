@@ -5,11 +5,12 @@
 import { useState } from "react";
 import { questions } from "@/data/linkedin-audit";
 import { scoreAudit } from "@/lib/linkedin-scoring";
+import { parseProfileText } from "@/lib/profile-parser";
 import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
 
-type StepId = "details" | "text" | "questions";
+type StepId = "details" | "paste";
 
-const steps: StepId[] = ["details", "text", "questions"];
+const steps: StepId[] = ["details", "paste"];
 
 export default function ScoreWizard({
   onComplete,
@@ -21,9 +22,15 @@ export default function ScoreWizard({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [pasted, setPasted] = useState("");
   const [headline, setHeadline] = useState("");
   const [about, setAbout] = useState("");
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [headlineTouched, setHeadlineTouched] = useState(false);
+  const [aboutTouched, setAboutTouched] = useState(false);
+  const [bannerAnswer, setBannerAnswer] = useState("");
+  const [photoAnswer, setPhotoAnswer] = useState("");
+  const [detected, setDetected] = useState<string[]>([]);
+  const [autoAnswers, setAutoAnswers] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
 
   const stepIndex = steps.indexOf(step);
@@ -32,7 +39,10 @@ export default function ScoreWizard({
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
   const validUrl = linkedinUrl.trim().toLowerCase().includes("linkedin.com");
 
-  const goToText = () => {
+  const bannerQuestion = questions.find((q) => q.id === "q-banner");
+  const photoQuestion = questions.find((q) => q.id === "q-photo");
+
+  const goToPaste = () => {
     if (name.trim().length < 2) {
       setError("Please enter your name.");
       return;
@@ -46,24 +56,38 @@ export default function ScoreWizard({
       return;
     }
     setError("");
-    setStep("text");
+    setStep("paste");
   };
 
-  const goToQuestions = () => {
-    if (headline.trim().length === 0) {
-      setError("Please paste your headline. It is the line under your name on your profile.");
+  const handlePaste = (value: string) => {
+    setPasted(value);
+    if (value.trim().length < 50) {
+      setDetected([]);
+      setAutoAnswers({});
       return;
     }
-    setError("");
-    setStep("questions");
+    const parsed = parseProfileText(value, linkedinUrl, name);
+    setDetected(parsed.detected);
+    setAutoAnswers(parsed.answers);
+    if (!headlineTouched && parsed.headline) setHeadline(parsed.headline);
+    if (!aboutTouched && parsed.about) setAbout(parsed.about);
   };
 
-  const answeredCount = questions.filter((q) => answers[q.id]).length;
-  const allAnswered = answeredCount === questions.length;
-
   const finish = () => {
-    if (!allAnswered) {
-      setError("Please answer all questions. " + answeredCount + " of " + questions.length + " done.");
+    if (pasted.trim().length < 100) {
+      setError(
+        "The paste looks too short. Open your LinkedIn profile, press Ctrl+A to select the whole page, copy it, and paste it above."
+      );
+      return;
+    }
+    if (headline.trim().length === 0) {
+      setError(
+        "We could not detect your headline automatically. Please type the line that appears under your name on your profile."
+      );
+      return;
+    }
+    if (!bannerAnswer || !photoAnswer) {
+      setError("Please answer the two quick visual questions. Images cannot be read from pasted text.");
       return;
     }
     setError("");
@@ -73,7 +97,11 @@ export default function ScoreWizard({
       linkedinUrl: linkedinUrl.trim(),
       headline: headline.trim(),
       about: about.trim(),
-      answers,
+      answers: {
+        ...autoAnswers,
+        "q-banner": bannerAnswer,
+        "q-photo": photoAnswer,
+      },
     };
     const result = scoreAudit(input);
     onComplete(result, input);
@@ -155,7 +183,7 @@ export default function ScoreWizard({
             )}
 
             <button
-              onClick={goToText}
+              onClick={goToPaste}
               className="mt-8 w-full rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
             >
               Continue
@@ -163,52 +191,137 @@ export default function ScoreWizard({
           </div>
         )}
 
-        {/* STEP 2: HEADLINE + ABOUT */}
-        {step === "text" && (
+        {/* STEP 2: PASTE AND GO */}
+        {step === "paste" && (
           <div>
             <h2 className="text-2xl font-bold text-[#111111]">
-              Now, your actual profile text
+              Now paste your profile once
             </h2>
             <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-              We analyze your real words, not guesses. Open your LinkedIn profile in another tab and copy these two things.
+              Open your LinkedIn profile in another tab. Click anywhere on the
+              page, press Ctrl+A to select everything, then Ctrl+C to copy.
+              On a phone: tap and hold, choose Select All, then Copy. Paste it
+              all below and we analyze the rest automatically.
             </p>
 
-            <div className="mt-8 space-y-5">
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#111111]">
-                  Your headline
-                </label>
-                <p className="mb-2 text-xs text-slate-500">
-                  The line that appears directly under your name.
-                </p>
-                <input
-                  type="text"
-                  value={headline}
-                  onChange={(e) => setHeadline(e.target.value)}
-                  placeholder="Paste your headline here"
-                  className={inputClass}
-                />
-              </div>
+            <div className="mt-6">
+              <textarea
+                value={pasted}
+                onChange={(e) => handlePaste(e.target.value)}
+                rows={8}
+                placeholder="Paste your whole profile page here"
+                className={inputClass}
+              />
+            </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#111111]">
-                  Your about section
-                </label>
-                <p className="mb-2 text-xs text-slate-500">
-                  Copy the full text. If you have no about section yet, leave this empty and the audit will treat it as missing.
+            {/* DETECTIONS */}
+            {detected.length > 0 && (
+              <div className="mt-5 rounded-2xl border border-violet-100 bg-violet-50/60 p-5">
+                <p className="text-sm font-semibold text-violet-700">
+                  Detected automatically:
                 </p>
-                <textarea
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
-                  rows={8}
-                  placeholder="Paste your about section here"
-                  className={inputClass}
-                />
+                <ul className="mt-2 space-y-1">
+                  {detected.map((d) => (
+                    <li key={d} className="text-sm text-slate-600">
+                      ✓ {d}
+                    </li>
+                  ))}
+                </ul>
               </div>
+            )}
+
+            {/* DETECTED TEXT, EDITABLE */}
+            {pasted.trim().length >= 100 && (
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                    Your headline, detected from the paste. Fix it if it looks wrong.
+                  </label>
+                  <input
+                    type="text"
+                    value={headline}
+                    onChange={(e) => {
+                      setHeadline(e.target.value);
+                      setHeadlineTouched(true);
+                    }}
+                    placeholder="The line under your name on your profile"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                    Your about section, detected from the paste.
+                  </label>
+                  <textarea
+                    value={about}
+                    onChange={(e) => {
+                      setAbout(e.target.value);
+                      setAboutTouched(true);
+                    }}
+                    rows={5}
+                    placeholder="If empty, we treat your about section as missing"
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* THE ONLY 2 QUESTIONS: IMAGES */}
+            <div className="mt-8">
+              <p className="text-[15px] font-semibold text-[#111111]">
+                Two things a paste cannot show: your images.
+              </p>
+
+              {bannerQuestion && (
+                <div className="mt-4">
+                  <p className="text-sm font-semibold text-[#111111]">
+                    {bannerQuestion.question}
+                  </p>
+                  <div className="mt-2 space-y-2">
+                    {bannerQuestion.options.map((o) => (
+                      <button
+                        key={o.value}
+                        onClick={() => setBannerAnswer(o.value)}
+                        className={`block w-full rounded-2xl border px-5 py-3.5 text-left text-sm font-medium transition-all duration-300 ${
+                          bannerAnswer === o.value
+                            ? "border-violet-600 bg-violet-50 text-violet-700"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-violet-200"
+                        }`}
+                      >
+                        {o.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {photoQuestion && (
+                <div className="mt-5">
+                  <p className="text-sm font-semibold text-[#111111]">
+                    {photoQuestion.question}
+                  </p>
+                  <div className="mt-2 space-y-2">
+                    {photoQuestion.options.map((o) => (
+                      <button
+                        key={o.value}
+                        onClick={() => setPhotoAnswer(o.value)}
+                        className={`block w-full rounded-2xl border px-5 py-3.5 text-left text-sm font-medium transition-all duration-300 ${
+                          photoAnswer === o.value
+                            ? "border-violet-600 bg-violet-50 text-violet-700"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-violet-200"
+                        }`}
+                      >
+                        {o.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {error && (
-              <p className="mt-4 text-sm font-medium text-red-500">{error}</p>
+              <p className="mt-6 text-sm font-medium text-red-500">{error}</p>
             )}
 
             <div className="mt-8 flex gap-3">
@@ -219,77 +332,10 @@ export default function ScoreWizard({
                 Back
               </button>
               <button
-                onClick={goToQuestions}
+                onClick={finish}
                 className="flex-1 rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
               >
-                Continue
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: QUESTIONS */}
-        {step === "questions" && (
-          <div>
-            <h2 className="text-2xl font-bold text-[#111111]">
-              12 quick questions
-            </h2>
-            <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-              Answer honestly. Your score is only useful if it is true.
-            </p>
-
-            <div className="mt-8 space-y-8">
-              {questions.map((q, index) => (
-                <div key={q.id}>
-                  <p className="text-[15px] font-semibold text-[#111111]">
-                    {index + 1}. {q.question}
-                  </p>
-                  {q.helper && (
-                    <p className="mt-1 text-xs text-slate-500">{q.helper}</p>
-                  )}
-                  <div className="mt-3 space-y-2">
-                    {q.options.map((o) => (
-                      <button
-                        key={o.value}
-                        onClick={() =>
-                          setAnswers({ ...answers, [q.id]: o.value })
-                        }
-                        className={`block w-full rounded-2xl border px-5 py-3.5 text-left text-sm font-medium transition-all duration-300 ${
-                          answers[q.id] === o.value
-                            ? "border-violet-600 bg-violet-50 text-violet-700"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-violet-200"
-                        }`}
-                      >
-                        {o.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {error && (
-              <p className="mt-6 text-sm font-medium text-red-500">{error}</p>
-            )}
-
-            <div className="mt-8 flex gap-3">
-              <button
-                onClick={() => setStep("text")}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-4 text-base font-semibold text-slate-700 transition-all duration-300 hover:border-violet-300"
-              >
-                Back
-              </button>
-              <button
-                onClick={finish}
-                className={`flex-1 rounded-2xl px-8 py-4 text-base font-semibold text-white transition-all duration-300 ${
-                  allAnswered
-                    ? "bg-violet-700 hover:-translate-y-0.5 hover:bg-violet-800"
-                    : "cursor-not-allowed bg-slate-300"
-                }`}
-              >
-                {allAnswered
-                  ? "Get my score"
-                  : "Answered " + answeredCount + " of " + questions.length}
+                Get my Socieas Score
               </button>
             </div>
           </div>
