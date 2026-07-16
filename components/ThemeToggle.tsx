@@ -3,57 +3,66 @@
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-
   const [dark, setDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-      setDark(true);
-      document.documentElement.classList.add("dark");
-    }
-
+    setMounted(true);
+    setDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  useEffect(() => {
+  const toggleTheme = () => {
+    const next = !dark;
+    setDark(next);
 
-    if (dark) {
+    if (next) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
-
-  }, [dark]);
+  };
 
   return (
     <button
-      onClick={() => setDark(!dark)}
-      className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] transition-all duration-300"
+      onClick={toggleTheme}
+      aria-label="Toggle dark mode"
+      className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-[#111111] transition-all duration-300 hover:border-violet-300"
     >
-
-      <div className="relative h-5 w-5">
-
-        <div
-          className={`absolute inset-0 rounded-full border-2 border-[var(--text)] transition-all duration-300 ${
-            dark ? "scale-0 opacity-0" : "scale-100 opacity-100"
-          }`}
-        />
-
-        <div
-          className={`absolute inset-0 rounded-full border-2 border-[var(--text)] transition-all duration-300 ${
-            dark ? "scale-100 opacity-100" : "scale-0 opacity-0"
-          }`}
-          style={{
-            clipPath: "polygon(40% 0%, 100% 0%, 100% 100%, 40% 100%)",
-          }}
-        />
-
-      </div>
-
+      {mounted && dark ? (
+        <svg
+          className="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+      ) : (
+        <svg
+          className="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </svg>
+      )}
     </button>
   );
 }
