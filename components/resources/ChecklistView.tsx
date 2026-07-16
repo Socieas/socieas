@@ -28,33 +28,35 @@ export default function ChecklistView({
 
   return (
     <div>
-      {/* PROGRESS BAR */}
-      {total > 0 && (
-        <div className="sticky top-20 z-10 rounded-[20px] border border-violet-100 bg-white/90 p-5 shadow-sm backdrop-blur print:hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-[#111111]">
-              Your progress: {done} of {total}
-            </span>
-            <div className="flex items-center gap-3">
+      {/* TOOLBAR */}
+      <div className="sticky top-20 z-10 rounded-[20px] border border-violet-100 bg-white/90 p-5 shadow-sm backdrop-blur print:hidden">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-bold text-[#111111]">
+            {total > 0 ? `Your progress: ${done} of ${total}` : "Yours to keep, forever"}
+          </span>
+          <div className="flex items-center gap-3">
+            {total > 0 && (
               <span className="text-sm font-bold text-violet-600">
                 {percent}%
               </span>
-              <button
-                onClick={() => window.print()}
-                className="rounded-full border border-violet-200 bg-white px-4 py-1.5 text-xs font-semibold text-violet-700 transition-colors hover:bg-violet-50"
-              >
-                🖨 Save as PDF
-              </button>
-            </div>
+            )}
+            <button
+              onClick={() => window.print()}
+              className="rounded-full border border-violet-200 bg-white px-4 py-1.5 text-xs font-semibold text-violet-700 transition-colors hover:bg-violet-50"
+            >
+              🖨 Save as PDF
+            </button>
           </div>
+        </div>
+        {total > 0 && (
           <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-violet-100">
             <div
               className="h-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 transition-all duration-500"
               style={{ width: `${percent}%` }}
             />
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* INTRO */}
       <div className="mt-10 space-y-4">
