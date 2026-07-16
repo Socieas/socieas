@@ -346,6 +346,145 @@ export const resourceContents: ResourceContent[] = [
       },
     ],
   },
+  {
+    slug: "founder-story-framework",
+    intro: [
+      "Buyers forget features, prices, and titles. They remember stories. The founders who feel magnetic online are not better at their craft than you. They simply packaged their journey into a story that buyers can retell.",
+      "This worksheet builds yours in about 20 minutes. Grab a notes app or a piece of paper, answer the prompts in each beat, then assemble your three versions at the end.",
+    ],
+    sections: [
+      {
+        title: "Why your story is a business asset",
+        numbered: [
+          "Facts get filed away. Stories get retold. When a client repeats your story to a colleague, you just acquired a lead while doing nothing.",
+          "A story creates trust before the first call. People feel they already know you, so the sales conversation starts warm.",
+          "In a market full of lookalike services, your story is the one thing no competitor can copy.",
+        ],
+      },
+      {
+        title: "The 5 Beat Story Arc",
+        intro:
+          "Every memorable founder story follows the same skeleton. Yours will too:",
+        numbered: [
+          "The Before: the world you were living in when the story starts.",
+          "The Struggle: the problem you kept running into or kept watching others suffer from.",
+          "The Shift: the moment or insight that changed how you saw everything.",
+          "The Build: what you created because of that insight.",
+          "The Now: who you help today and the outcome you deliver.",
+        ],
+      },
+      {
+        title: "Beat 1: The Before",
+        intro:
+          "Set the scene. Answer in 2 to 3 sentences:",
+        numbered: [
+          "What were you doing before this business existed? Be specific: the job, the city, the daily routine.",
+          "What did you believe back then that turned out to be wrong?",
+          "What did a normal Tuesday look like? Small concrete details make stories feel real.",
+        ],
+      },
+      {
+        title: "Beat 2: The Struggle",
+        intro:
+          "This is where readers lean in. The struggle is the villain of your story, and the villain is always a problem, never a person:",
+        numbered: [
+          "What problem kept showing up again and again, for you or for people around you?",
+          "What did that problem actually cost? Money, sleep, confidence, time with family. Name the real price.",
+          "What did you try first that did not work? Failed attempts make the eventual answer believable.",
+        ],
+      },
+      {
+        title: "Beat 3: The Shift",
+        intro:
+          "Every great story has a turning point. Find yours:",
+        numbered: [
+          "Was there a specific moment, conversation, book, or client that changed how you saw the problem?",
+          "What did you suddenly understand that most people around you still did not?",
+          "Complete this sentence: I realized the real problem was not [WHAT EVERYONE THINKS], it was [WHAT YOU DISCOVERED].",
+        ],
+      },
+      {
+        title: "Beat 4: The Build",
+        intro:
+          "Now show what you did about it:",
+        numbered: [
+          "What did you build, start, or change because of that realization?",
+          "What was the first small win that told you it was working?",
+          "What does your approach do differently from the standard way? One clear contrast is enough.",
+        ],
+      },
+      {
+        title: "Beat 5: The Now",
+        intro:
+          "Land the plane. This beat connects your past to your reader:",
+        numbered: [
+          "Who exactly do you help today? Name the person, not a vague market.",
+          "What outcome do they get? Use a number or a before and after if you can.",
+          "Why does this work still matter to you personally? One honest sentence beats three polished ones.",
+        ],
+      },
+      {
+        title: "Assemble your three versions",
+        intro:
+          "Now compress your answers into three sizes. You will use all three constantly:",
+        numbered: [
+          "The One Liner (1 sentence): After [THE STRUGGLE], I built [THE BUILD] that helps [WHO] get [OUTCOME]. Use it in intros, bios, and networking.",
+          "The Short Version (3 to 4 sentences): Before + Shift + Now. Use it for podcast intros, speaker bios, and guest posts.",
+          "The Full Version (5 short paragraphs, one per beat): Use it for your LinkedIn About section and your website about page.",
+        ],
+      },
+      {
+        title: "Quality check before you publish",
+        checklist: [
+          {
+            title: "The specificity test",
+            text: "Your story contains at least 3 concrete details: a year, a place, a number, a real moment. Vague stories sound invented.",
+          },
+          {
+            title: "The villain test",
+            text: "The enemy in your story is a problem or a broken way of doing things, never a former boss, client, or competitor by name.",
+          },
+          {
+            title: "The humility test",
+            text: "You are the guide who found a way, not the hero who was always right. Readers root for learners, not legends.",
+          },
+          {
+            title: "The outcome test",
+            text: "A stranger reading your story can finish this sentence: this person helps [WHO] get [OUTCOME]. If they cannot, sharpen Beat 5.",
+          },
+          {
+            title: "The retell test",
+            text: "Read it out loud once. If you cannot retell it from memory in 30 seconds, it is too complicated to spread.",
+          },
+        ],
+      },
+      {
+        title: "Where to deploy each version",
+        checklist: [
+          {
+            title: "LinkedIn About section",
+            text: "Paste the Full Version. Put Beat 2 in the first 3 lines so the hook shows before the see more fold.",
+          },
+          {
+            title: "Website about page",
+            text: "Full Version plus a photo of you. About pages are usually the second most visited page on a service website.",
+          },
+          {
+            title: "Sales calls",
+            text: "When a prospect asks how you got started, tell the Short Version. Practiced, it takes 40 seconds and builds instant trust.",
+          },
+          {
+            title: "Podcast and event intros",
+            text: "Send hosts the Short Version so they introduce you the way you want to be remembered.",
+          },
+          {
+            title: "Content",
+            text: "Each beat is a standalone LinkedIn post. Beat 2 and Beat 3 usually perform best. That is 5 posts already written.",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export function getResourceContent(slug: string): ResourceContent | undefined {
