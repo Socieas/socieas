@@ -1,6 +1,7 @@
 // app/api/tools/linkedin-score/route.ts
 
 import { NextResponse } from "next/server";
+import { generateAiFeedback, type AiFeedback } from "@/lib/ai-feedback";
 
 interface PillarPayload {
   label: string;
@@ -35,7 +36,7 @@ function esc(text: string): string {
   return (text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function renderEmailHtml(p: ScorePayload): string {
+function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
   const pillarRows = p.result.pillars
     .map(
       (pl) =>
@@ -46,16 +47,41 @@ function renderEmailHtml(p: ScorePayload): string {
     )
     .join("");
 
+  const aiSummaryBlock = ai
+    ? `<div style="background:linear-gradient(135deg,#f5f3ff,#fdf4ff);border:1px solid #ede9fe;border-radius:16px;padding:24px;margin-top:28px;">
+        <p style="margin:0;font-size:13px;font-weight:700;letter-spacing:1px;color:#7c3aed;text-transform:uppercase;">Your expert read</p>
+        <p style="margin:12px 0 0;font-size:15px;line-height:1.8;color:#374151;">${esc(ai.summary)}</p>
+      </div>`
+    : "";
+
+  const headlineBlock = ai
+    ? `<h2 style="margin:30px 0 6px;font-size:18px;color:#111111;">Your headline, rewritten by our strategist</h2>
+      <p style="margin:6px 0 0;font-size:14px;line-height:1.7;color:#6b7280;">Your headline today: "${esc(p.headline)}"</p>
+      ${ai.headlineRewrites
+        .map(
+          (h, i) =>
+            `<div style="background:#faf7ff;border:1px solid #ede9fe;border-radius:16px;padding:18px;margin-top:12px;">
+              <p style="margin:0;font-size:13px;font-weight:700;color:#7c3aed;">Option ${i + 1}</p>
+              <p style="margin:8px 0 0;font-size:15px;line-height:1.7;color:#111111;font-weight:600;">${esc(h)}</p>
+            </div>`
+        )
+        .join("")}`
+    : "";
+
   const fixBlocks = p.result.topFixes
     .slice(0, 3)
-    .map(
-      (f, i) =>
-        `<div style="background:#faf7ff;border:1px solid #ede9fe;border-radius:16px;padding:20px;margin-top:14px;">
+    .map((f, i) => {
+      const upgrade = ai ? ai.fixUpgrades[i] : undefined;
+      const upgradeLine = upgrade
+        ? `<p style="margin:8px 0 0;font-size:14px;line-height:1.7;color:#4b5563;"><strong style="color:#7c3aed;">Expert upgrade:</strong> ${esc(upgrade.advice)}</p>`
+        : "";
+      return `<div style="background:#faf7ff;border:1px solid #ede9fe;border-radius:16px;padding:20px;margin-top:14px;">
           <p style="margin:0;font-size:16px;font-weight:700;color:#111111;">${i + 1}. ${esc(f.title)} <span style="color:#7c3aed;">(+${f.lostPoints} points)</span></p>
           <p style="margin:10px 0 0;font-size:14px;line-height:1.7;color:#4b5563;"><strong style="color:#111111;">Why it matters:</strong> ${esc(f.why)}</p>
           <p style="margin:8px 0 0;font-size:14px;line-height:1.7;color:#4b5563;"><strong style="color:#111111;">How to fix it:</strong> ${esc(f.how)}</p>
-        </div>`
-    )
+          ${upgradeLine}
+        </div>`;
+    })
     .join("");
 
   return `
@@ -66,8 +92,12 @@ function renderEmailHtml(p: ScorePayload): string {
       <p style="margin:8px 0 0;font-size:15px;color:#7c3aed;font-weight:700;">${esc(p.result.band.label)}</p>
       <p style="margin:14px 0 0;font-size:15px;line-height:1.7;color:#4b5563;">${esc(p.result.band.message)}</p>
 
+      ${aiSummaryBlock}
+
       <h2 style="margin:30px 0 6px;font-size:18px;color:#111111;">Your 5 pillar breakdown</h2>
       <table style="width:100%;border-collapse:collapse;">${pillarRows}</table>
+
+      ${headlineBlock}
 
       <h2 style="margin:30px 0 0;font-size:18px;color:#111111;">Your 3 highest impact fixes</h2>
       ${fixBlocks}
@@ -123,6 +153,29 @@ export async function POST(request: Request) {
       });
     }
 
+    let ai: AiFeedback | null = null;
+    try {
+      ai = await generateAiFeedback({
+        name: body.name,
+        headline: body.headline || "",
+        about: body.about || "",
+        total: body.result.total,
+        bandLabel: body.result.band.label,
+        pillars: body.result.pillars.map((pl) => ({
+          label: pl.label,
+          points: pl.points,
+          maxPoints: pl.maxPoints,
+        })),
+        topFixes: body.result.topFixes.slice(0, 3).map((f) => ({
+          title: f.title,
+          why: f.why,
+          how: f.how,
+        })),
+      });
+    } catch {
+      ai = null;
+    }
+
     const resendKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
 
@@ -137,7 +190,7 @@ export async function POST(request: Request) {
           from: fromEmail,
           to: body.email,
           subject: `Your Socieas Score: ${body.result.total} of 100`,
-          html: renderEmailHtml(body),
+          html: renderEmailHtml(body, ai),
         }),
       });
     }
