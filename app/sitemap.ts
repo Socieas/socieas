@@ -41,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/services/full-stack-development`, priority: 0.8 },
     { url: `${baseUrl}/services/staffing-solutions`, priority: 0.8 },
     { url: `${baseUrl}/resources`, priority: 0.9 },
+    { url: `${baseUrl}/tools/linkedin-score`, priority: 0.9 },
     { url: `${baseUrl}/insights/blogs`, priority: 0.9 },
     { url: `${baseUrl}/insights/articles`, priority: 0.9 },
     { url: `${baseUrl}/insights/case-studies`, priority: 0.9 },
