@@ -61,8 +61,8 @@ function renderEmailHtml(p: ScorePayload): string {
   return `
   <div style="background:#f7f7f5;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;">
     <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:24px;padding:36px;">
-      <p style="margin:0;font-size:13px;font-weight:700;letter-spacing:1px;color:#7c3aed;text-transform:uppercase;">Your LinkedIn Score Report</p>
-      <h1 style="margin:16px 0 0;font-size:26px;color:#111111;">Hi ${esc(p.name)}, your score is ${p.result.total} of 100</h1>
+      <p style="margin:0;font-size:13px;font-weight:700;letter-spacing:1px;color:#7c3aed;text-transform:uppercase;">Your Socieas Score Report</p>
+      <h1 style="margin:16px 0 0;font-size:26px;color:#111111;">Hi ${esc(p.name)}, your Socieas Score is ${p.result.total} of 100</h1>
       <p style="margin:8px 0 0;font-size:15px;color:#7c3aed;font-weight:700;">${esc(p.result.band.label)}</p>
       <p style="margin:14px 0 0;font-size:15px;line-height:1.7;color:#4b5563;">${esc(p.result.band.message)}</p>
 
@@ -75,10 +75,10 @@ function renderEmailHtml(p: ScorePayload): string {
       <div style="background:linear-gradient(135deg,#f5f3ff,#fdf4ff);border-radius:16px;padding:24px;margin-top:28px;">
         <p style="margin:0;font-size:16px;font-weight:700;color:#111111;">Want the full transformation?</p>
         <p style="margin:8px 0 0;font-size:14px;line-height:1.7;color:#4b5563;">The premium plan gives you a personalized 30 day branding calendar built from your weakest pillars, headline and about rewrite formulas, and a priority strategy call.</p>
-        <a href="https://socieas.com/tools/linkedin-score" style="display:inline-block;margin-top:14px;background:#6d28d9;color:#ffffff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;">Visit the tool</a>
+        <a href="https://socieas.com/tools/linkedin-score" style="display:inline-block;margin-top:14px;background:#6d28d9;color:#ffffff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;">Visit The Socieas Score</a>
       </div>
 
-      <p style="margin:28px 0 0;font-size:12px;color:#9ca3af;">Sent by Socieas because you requested your LinkedIn profile score at socieas.com.</p>
+      <p style="margin:28px 0 0;font-size:12px;color:#9ca3af;">Sent by Socieas because you requested your Socieas Score at socieas.com.</p>
     </div>
   </div>`;
 }
@@ -136,7 +136,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           from: fromEmail,
           to: body.email,
-          subject: `Your LinkedIn score: ${body.result.total} of 100`,
+          subject: `Your Socieas Score: ${body.result.total} of 100`,
           html: renderEmailHtml(body),
         }),
       });
