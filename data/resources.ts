@@ -568,6 +568,6 @@ export function getRelatedResources(resource: Resource): Resource[] {
     .filter((r): r is Resource => Boolean(r));
 }
 
-export function getCategoryMeta(slug: string): CategoryMeta | undefined {
-  return categories.find((c) => c.slug === slug);
+export function getCategoryMeta(slug: string): CategoryMeta {
+  return categories.find((c) => c.slug === slug) ?? categories[0];
 }
