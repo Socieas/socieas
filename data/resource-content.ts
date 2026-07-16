@@ -485,6 +485,175 @@ export const resourceContents: ResourceContent[] = [
       },
     ],
   },
+  {
+    slug: "ai-readiness-self-audit",
+    intro: [
+      "Most founders either fear AI or buy tools they never open again. Both groups skip the same step: finding out where automation would actually pay off in their specific business.",
+      "This audit fixes that in 15 minutes. Below are 20 statements across the 6 areas where AI helps service businesses most. Tick every statement that is true for you. Every tick is a process quietly eating your week, and your score at the end tells you exactly where to start.",
+    ],
+    sections: [
+      {
+        title: "How this audit works",
+        numbered: [
+          "Read each statement and tick it only if it is true for your business today.",
+          "Be honest. The audit only works if the ticks reflect reality, not ambition.",
+          "At the end, count your ticks and read your score band. Then build your shortlist in the final section.",
+        ],
+      },
+      {
+        title: "Area 1: Leads and follow up",
+        checklist: [
+          {
+            title: "Leads reach me through email, DMs, and forms with no single collection point",
+            text: "Scattered lead capture is the number one source of silently lost revenue in service businesses.",
+          },
+          {
+            title: "I sometimes reply to new enquiries more than a day later",
+            text: "Speed wins deals. An automated instant acknowledgment plus a fast personal follow up routinely lifts conversion.",
+          },
+          {
+            title: "Nobody follows up if a prospect goes quiet",
+            text: "A simple automated nudge sequence revives deals that would otherwise die in silence.",
+          },
+          {
+            title: "I write similar answers to the same 5 questions again and again",
+            text: "Repeated answers are templates waiting to exist. AI can draft personalized versions in seconds.",
+          },
+        ],
+      },
+      {
+        title: "Area 2: Content and marketing",
+        checklist: [
+          {
+            title: "I create every post, email, and page from a blank screen",
+            text: "Blank screens are the most expensive real estate in your business. AI drafts, you edit and approve.",
+          },
+          {
+            title: "I post inconsistently because content takes too long",
+            text: "Consistency is a systems problem, not a discipline problem. Batching with AI support fixes it.",
+          },
+          {
+            title: "I never repurpose content across formats",
+            text: "One strong post can become an email, a carousel, and a script. AI makes repurposing nearly free.",
+          },
+          {
+            title: "I do not know which content actually brings leads",
+            text: "Without a simple tracking habit, you are guessing. This is measurement, and it automates well.",
+          },
+        ],
+      },
+      {
+        title: "Area 3: Client onboarding",
+        checklist: [
+          {
+            title: "I send onboarding info manually to every new client",
+            text: "Welcome emails, questionnaires, and kickoff scheduling are the easiest automations in any service business.",
+          },
+          {
+            title: "Clients often ask questions my onboarding should have answered",
+            text: "Repeated confusion means the process lives in your head instead of in a system.",
+          },
+          {
+            title: "Onboarding steps sometimes get skipped when I am busy",
+            text: "Anything that breaks when you are busy is a process wearing a founder costume.",
+          },
+        ],
+      },
+      {
+        title: "Area 4: Delivery and reporting",
+        checklist: [
+          {
+            title: "I build client reports or updates by hand",
+            text: "Status updates and reports are structured, repetitive, and perfect for automation with a human review pass.",
+          },
+          {
+            title: "I summarize calls and meetings from memory or messy notes",
+            text: "AI meeting summaries capture decisions and action items better than memory ever will.",
+          },
+          {
+            title: "Project handoffs between people require verbal explanation",
+            text: "If work cannot move without a conversation, your delivery depends on availability instead of systems.",
+          },
+        ],
+      },
+      {
+        title: "Area 5: Admin, scheduling, and money",
+        checklist: [
+          {
+            title: "Booking a meeting with me takes back and forth messages",
+            text: "A scheduling link ends the email tennis permanently. This is a 10 minute fix.",
+          },
+          {
+            title: "I create invoices manually or forget to send them on time",
+            text: "Late invoices are free loans to your clients. Recurring invoicing automates cleanly.",
+          },
+          {
+            title: "I copy the same data between two or more tools",
+            text: "Human copy paste between tools is the clearest automation signal that exists.",
+          },
+        ],
+      },
+      {
+        title: "Area 6: Knowledge and communication",
+        checklist: [
+          {
+            title: "Important know how lives only in my head",
+            text: "Undocumented knowledge caps your growth at the size of your own calendar.",
+          },
+          {
+            title: "My team or freelancers ask me the same questions repeatedly",
+            text: "Recurring questions are documentation requests in disguise. Write once, answer forever.",
+          },
+          {
+            title: "Finding an old file, decision, or message takes more than 2 minutes",
+            text: "Search time is invisible but constant. Organized, searchable knowledge pays back daily.",
+          },
+        ],
+      },
+      {
+        title: "The 3 signs a task should stay human",
+        intro:
+          "Not everything belongs to a machine. Keep a task human when:",
+        numbered: [
+          "It builds a relationship. Sales conversations, difficult client moments, and celebrations lose their power when automated.",
+          "It requires real judgment. Strategy, pricing, and hiring decisions need context no tool fully holds.",
+          "Errors are expensive and hard to reverse. Automate the draft, keep the human approval.",
+        ],
+      },
+      {
+        title: "Build your automate first shortlist",
+        intro:
+          "Do not automate everything at once. Do this instead:",
+        numbered: [
+          "Look at your ticked boxes and pick the 3 that happen most frequently.",
+          "For each, score 1 to 5 on four things: how often it happens, how long it takes, how costly a mistake would be, and how much judgment it needs.",
+          "Automate the one with high frequency, high time cost, and low judgment first. That is your fastest payback.",
+          "Give it one week, measure hours saved, then move to the next. One automation running beats ten planned.",
+        ],
+      },
+    ],
+    scoring: {
+      title: "Your Automation Score",
+      intro: "Count your ticks across all 6 areas:",
+      bands: [
+        {
+          range: "0 to 6",
+          label: "Light lifter",
+          text: "Your operations are already lean. Automate opportunistically when a ticked item starts hurting.",
+        },
+        {
+          range: "7 to 13",
+          label: "Time leaker",
+          text: "Roughly a full workday every week is trapped in manual work. Build your shortlist today and automate your top 3.",
+        },
+        {
+          range: "14 to 20",
+          label: "Automation goldmine",
+          text: "You are likely losing 10+ hours weekly to repeatable tasks. Systematic automation will feel like hiring a new team member for free.",
+        },
+      ],
+    },
+  },
 ];
 
 export function getResourceContent(slug: string): ResourceContent | undefined {
