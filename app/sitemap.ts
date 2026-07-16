@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 
 import { client } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
+import { resources } from "@/data/resources";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://socieas.com";
@@ -24,6 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
+  const resourceRoutes: MetadataRoute.Sitemap = resources.map((r) => ({
+    url: `${baseUrl}/resources/${r.slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: baseUrl, priority: 1 },
     { url: `${baseUrl}/services`, priority: 0.9 },
@@ -33,6 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/services/digital-marketing`, priority: 0.8 },
     { url: `${baseUrl}/services/full-stack-development`, priority: 0.8 },
     { url: `${baseUrl}/services/staffing-solutions`, priority: 0.8 },
+    { url: `${baseUrl}/resources`, priority: 0.9 },
     { url: `${baseUrl}/insights/blogs`, priority: 0.9 },
     { url: `${baseUrl}/insights/articles`, priority: 0.9 },
     { url: `${baseUrl}/insights/case-studies`, priority: 0.9 },
@@ -41,5 +49,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/privacy-policy`, priority: 0.3 },
   ];
 
-  return [...staticRoutes, ...insightRoutes];
+  return [...staticRoutes, ...resourceRoutes, ...insightRoutes];
 }
