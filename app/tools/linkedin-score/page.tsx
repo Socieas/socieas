@@ -2,30 +2,35 @@
 
 import type { Metadata } from "next";
 import Image from "next/image";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import LinkedInScoreTool from "@/components/tools/LinkedInScoreTool";
 
 export const metadata: Metadata = {
   title: "The Socieas Score | Free LinkedIn Profile Audit",
   description:
-    "Get your Socieas Score: your LinkedIn profile rated out of 100 in 90 seconds. A 22 point audit across first impression, positioning, content, social proof, and conversion, with your 3 highest impact fixes free.",
+    "Get your Socieas Score: your LinkedIn profile rated out of 100 in 60 seconds. Paste your profile once and get a 22 point audit across first impression, positioning, content, social proof, and conversion, with your 3 highest impact fixes free.",
 };
 
 export default function LinkedInScorePage() {
   return (
-    <main className="min-h-screen bg-[#F8F8F6] px-4 pb-24 pt-32 sm:px-6">
+    <main className="overflow-x-hidden bg-[#F8F8F6] text-[#111111]">
+      <Navbar />
+
       {/* HERO */}
-      <section className="mx-auto max-w-3xl text-center">
+      <section className="mx-auto max-w-3xl px-4 pt-32 text-center sm:px-6">
         <span className="inline-block rounded-full border border-violet-200 bg-white px-4 py-1.5 text-sm font-semibold text-violet-700">
-          Free tool · 90 seconds
+          Free tool · 60 seconds
         </span>
         <h1 className="mt-6 text-4xl font-extrabold leading-tight text-[#111111] sm:text-5xl">
           What is your <span className="gradient-text">Socieas Score?</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
           The Socieas Score is the same 22 point LinkedIn audit we run for
-          paying clients, automated. Paste your profile details, answer 12
-          quick questions, and get your score out of 100 with your 3 highest
-          impact fixes. Free.
+          paying clients, automated. Paste your profile once and the tool
+          detects and analyzes everything by itself: your headline, about
+          section, proof, activity, and conversion setup. Your score out of
+          100 with your 3 highest impact fixes. Free.
         </p>
 
         <div className="mx-auto mt-10 max-w-2xl overflow-hidden rounded-[32px] border border-slate-200">
@@ -41,18 +46,20 @@ export default function LinkedInScorePage() {
       </section>
 
       {/* THE TOOL */}
-      <section className="mx-auto mt-16 max-w-3xl">
+      <section className="mx-auto mt-16 max-w-3xl px-4 sm:px-6">
         <LinkedInScoreTool />
       </section>
 
       {/* TRUST STRIP */}
-      <section className="mx-auto mt-16 max-w-2xl text-center">
+      <section className="mx-auto mt-16 max-w-2xl px-4 pb-24 text-center sm:px-6">
         <p className="text-sm leading-relaxed text-slate-500">
           No spam, ever. Your answers are analyzed instantly in your browser
           and your report is yours to keep. The Socieas Score is built by
           Socieas, the team behind personal brands that actually convert.
         </p>
       </section>
+
+      <Footer />
     </main>
   );
 }
