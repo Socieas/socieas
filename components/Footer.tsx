@@ -185,6 +185,10 @@ xl:grid-cols-[1.3fr_0.8fr_0.8fr_1fr]">
                 href: "/resources",
               },
               {
+                title: "The Socieas Score",
+                href: "/tools/linkedin-score",
+              },
+              {
                 title: "Blogs",
                 href: "/insights/blogs",
               },
