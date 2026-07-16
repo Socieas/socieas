@@ -17,6 +17,12 @@
 
   --text-dark: #111111;
   --text-muted-dark: #5f6470;
+
+  --surface: #ffffff;
+  --text: #111111;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --card-shadow: 0 20px 60px rgba(124, 58, 237, 0.06);
 }
 
 /* =========================
@@ -505,6 +511,15 @@ select {
 
 .dark {
   color-scheme: dark;
+
+  --background: #0F0F12;
+  --foreground: #F4F4F5;
+
+  --surface: #1A1A1F;
+  --text: #F4F4F5;
+  --muted: rgba(244, 244, 245, 0.70);
+  --border: rgba(255, 255, 255, 0.10);
+  --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.40);
 }
 
 .dark body {
@@ -534,7 +549,10 @@ select {
 
 .dark .bg-\[\#F7F7F5\],
 .dark .bg-\[\#F8F8F6\],
+.dark .bg-\[\#F8F7F4\],
 .dark .bg-\[\#FAFAF8\],
+.dark .bg-\[\#FCFCFD\],
+.dark .bg-\[\#FAFAFA\],
 .dark .bg-slate-50,
 .dark .bg-gray-50,
 .dark .bg-neutral-50 {
@@ -547,12 +565,21 @@ select {
 
 .dark .bg-white\/95,
 .dark .bg-white\/90,
+.dark .bg-white\/85,
 .dark .bg-white\/80,
 .dark .bg-white\/70 {
   background-color: rgba(26, 26, 31, 0.92);
 }
 
+.dark .bg-white\/60,
+.dark .bg-white\/50,
+.dark .bg-white\/40 {
+  background-color: rgba(26, 26, 31, 0.65);
+}
+
 .dark .bg-\[\#F3F4F6\],
+.dark .bg-\[\#F9FAFB\],
+.dark .bg-\[\#F8F8F8\],
 .dark .bg-slate-100,
 .dark .bg-gray-100,
 .dark .bg-neutral-100 {
@@ -565,6 +592,13 @@ select {
 .dark .bg-fuchsia-50,
 .dark .bg-purple-50 {
   background-color: rgba(124, 58, 237, 0.16);
+}
+
+.dark .bg-violet-50\/80,
+.dark .bg-violet-50\/70,
+.dark .bg-violet-50\/60,
+.dark .bg-violet-50\/50 {
+  background-color: rgba(124, 58, 237, 0.12);
 }
 
 .dark .bg-violet-100,
@@ -582,10 +616,72 @@ select {
   background-color: #7C3AED;
 }
 
+/* ---------- HOVER STATES (navbar dropdowns, pills, cards) ---------- */
+
+.dark .hover\:bg-violet-50:hover,
+.dark .hover\:bg-violet-50\/70:hover {
+  background-color: rgba(124, 58, 237, 0.20);
+}
+
+.dark .hover\:bg-violet-100:hover {
+  background-color: rgba(124, 58, 237, 0.30);
+}
+
+.dark .hover\:bg-\[\#F8F8F8\]:hover,
+.dark .hover\:bg-\[\#F9FAFB\]:hover {
+  background-color: #202027;
+}
+
+.dark .hover\:text-violet-700:hover,
+.dark .hover\:text-violet-600:hover {
+  color: #C4B5FD;
+}
+
+.dark .hover\:border-violet-100:hover,
+.dark .hover\:border-violet-200:hover,
+.dark .hover\:border-violet-300:hover {
+  border-color: rgba(196, 181, 253, 0.30);
+}
+
+/* ---------- LIGHT GRADIENT BACKGROUNDS ---------- */
+
+.dark .from-violet-50,
+.dark .from-violet-100,
+.dark .from-fuchsia-50 {
+  --tw-gradient-from: rgba(124, 58, 237, 0.14);
+}
+
+.dark .from-white {
+  --tw-gradient-from: #0F0F12;
+}
+
+.dark .via-white {
+  --tw-gradient-via: #0F0F12;
+}
+
+.dark .to-white {
+  --tw-gradient-to: #0F0F12;
+}
+
+.dark .to-violet-50,
+.dark .to-fuchsia-50 {
+  --tw-gradient-to: rgba(124, 58, 237, 0.12);
+}
+
+/* Hardcoded light glow gradients on hero sections
+   (the white corner shadows on service and about pages) */
+
+.dark [class*="bg-[radial-gradient"],
+.dark [class*="bg-[linear-gradient"] {
+  background-image: none !important;
+}
+
 /* ---------- TEXT ---------- */
 
 .dark .text-\[\#111111\],
+.dark .text-\[\#151515\],
 .dark .text-black,
+.dark .text-slate-950,
 .dark .text-slate-900,
 .dark .text-gray-900,
 .dark .text-neutral-900,
@@ -600,6 +696,7 @@ select {
 .dark .text-gray-700,
 .dark .text-gray-600,
 .dark .text-gray-500,
+.dark .text-gray-400,
 .dark .text-neutral-600,
 .dark .text-\[\#6B7280\],
 .dark .text-\[\#4B5563\],
@@ -622,6 +719,8 @@ select {
 
 .dark .border-black\/5,
 .dark .border-black\/10,
+.dark .border-white\/40,
+.dark .border-white\/30,
 .dark .border-slate-100,
 .dark .border-slate-200,
 .dark .border-slate-300,
@@ -635,7 +734,8 @@ select {
 }
 
 .dark .border-violet-100,
-.dark .border-violet-200 {
+.dark .border-violet-200,
+.dark .border-violet-300 {
   border-color: rgba(196, 181, 253, 0.28);
 }
 
@@ -652,6 +752,41 @@ select {
 .dark input::placeholder,
 .dark textarea::placeholder {
   color: rgba(244, 244, 245, 0.45);
+}
+
+/* ---------- INLINE STYLED SECTIONS ----------
+   The insights listing pages (blogs, articles, case studies)
+   use fixed inline colors, so they need forced overrides. */
+
+.dark [style*="#F7F7F5"],
+.dark [style*="#F8F8F6"],
+.dark [style*="#FCFCFD"],
+.dark [style*="#FAFAFA"],
+.dark [style*="#F9FAFB"] {
+  background-color: #0F0F12 !important;
+}
+
+.dark [style*="background:white"],
+.dark [style*="background: white"],
+.dark [style*="background:#fff"],
+.dark [style*="background: #fff"],
+.dark [style*="background:#FFFFFF"],
+.dark [style*="background: #FFFFFF"],
+.dark [style*="background:#ffffff"] {
+  background-color: #1A1A1F !important;
+}
+
+.dark [style*="#111111"] {
+  color: #F4F4F5 !important;
+}
+
+.dark [style*="#6B7280"],
+.dark [style*="#4B5563"] {
+  color: rgba(244, 244, 245, 0.70) !important;
+}
+
+.dark [style*="#E5E7EB"] {
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* ---------- PREMIUM UTILITIES ---------- */
