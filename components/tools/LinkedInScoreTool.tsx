@@ -26,6 +26,7 @@ export default function LinkedInScoreTool() {
           headline: inp.headline,
           about: inp.about,
           answers: inp.answers,
+          rawProfile: inp.rawProfile || "",
           result: {
             total: res.total,
             band: {
