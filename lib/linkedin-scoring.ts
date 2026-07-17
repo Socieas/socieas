@@ -25,6 +25,14 @@ import type {
 } from "@/types/linkedin-score";
 
 /* ------------------------------------------------------------ */
+/* Questions that require seeing images cannot be answered from  */
+/* pasted text, so they are excluded from scoring entirely and   */
+/* the total is rescaled to 100 from the remaining checks.       */
+/* ------------------------------------------------------------ */
+
+const skippedQuestionIds = ["q-banner", "q-photo"];
+
+/* ------------------------------------------------------------ */
 /* Helpers                                                       */
 /* ------------------------------------------------------------ */
 
@@ -122,8 +130,10 @@ function evaluateTextCheck(
 export function scoreAudit(input: AuditInput): ScoreResult {
   const signals: SignalResult[] = [];
 
-  /* 1. Question signals */
+  /* 1. Question signals (image based questions are skipped) */
   for (const q of questions) {
+    if (skippedQuestionIds.includes(q.id)) continue;
+
     const answerValue = input.answers[q.id];
     const selected = q.options.find((o) => o.value === answerValue);
     const worst = q.options[q.options.length - 1];
@@ -169,8 +179,10 @@ export function scoreAudit(input: AuditInput): ScoreResult {
     };
   });
 
-  /* 4. Total */
-  const total = signals.reduce((sum, s) => sum + s.points, 0);
+  /* 4. Total, rescaled to 100 */
+  const rawTotal = signals.reduce((sum, s) => sum + s.points, 0);
+  const maxTotal = signals.reduce((sum, s) => sum + s.maxPoints, 0);
+  const total = maxTotal > 0 ? Math.round((rawTotal / maxTotal) * 100) : 0;
 
   /* 5. Band */
   const sortedBands = [...scoreBands].sort((a, b) => b.min - a.min);
