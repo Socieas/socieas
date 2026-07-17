@@ -24,6 +24,7 @@ interface ScorePayload {
   headline: string;
   about: string;
   answers: Record<string, string>;
+  rawProfile?: string;
   result: {
     total: number;
     band: { label: string; headline: string; message: string };
@@ -171,6 +172,7 @@ export async function POST(request: Request) {
           why: f.why,
           how: f.how,
         })),
+        rawProfile: body.rawProfile || "",
       });
     } catch {
       ai = null;
