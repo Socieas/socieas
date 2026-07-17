@@ -35,7 +35,7 @@ export default function ScoreResults({
   return (
     <div className="mx-auto w-full max-w-3xl">
       {/* SCORE HEADER */}
-      <div className="rounded-[32px] border border-slate-200 bg-white p-8 text-center shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-12">
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center sm:p-12">
         <div className="relative mx-auto h-[200px] w-[200px]">
           <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
             <circle
@@ -79,8 +79,8 @@ export default function ScoreResults({
 
       {/* EXPERT VERDICT (AI) */}
       {aiLoading && (
-        <div className="mt-6 animate-pulse rounded-[32px] border border-violet-200 bg-violet-50 p-8 sm:p-10">
-          <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+        <div className="mt-6 animate-pulse rounded-3xl border border-violet-200 bg-violet-50 p-8 sm:p-10">
+          <span className="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
             Expert verdict
           </span>
           <h3 className="mt-4 text-xl font-bold text-[#111111]">
@@ -94,8 +94,8 @@ export default function ScoreResults({
       )}
 
       {!aiLoading && ai && (
-        <div className="mt-6 rounded-[32px] border border-violet-200 bg-violet-50 p-8 sm:p-10">
-          <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+        <div className="mt-6 rounded-3xl border border-violet-200 bg-violet-50 p-8 sm:p-10">
+          <span className="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
             Expert verdict
           </span>
 
@@ -106,7 +106,7 @@ export default function ScoreResults({
           {/* HEADLINE VERDICT */}
           <div className="mt-8">
             <h3 className="text-xl font-bold text-[#111111]">Your headline</h3>
-            <p className="mt-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[15px] font-medium text-slate-500">
+            <p className="mt-2 rounded-xl border border-slate-200 bg-white px-5 py-4 text-[15px] font-medium text-slate-500">
               "{input.headline}"
             </p>
             {ai.headlineVerdict && (
@@ -123,7 +123,7 @@ export default function ScoreResults({
                 {ai.headlineRewrites.map((h, i) => (
                   <div
                     key={h}
-                    className="rounded-2xl border border-violet-100 bg-white p-5"
+                    className="rounded-xl border border-violet-100 bg-white p-5"
                   >
                     <p className="text-xs font-bold uppercase tracking-wide text-violet-700">
                       Option {i + 1}
@@ -150,7 +150,7 @@ export default function ScoreResults({
                 </p>
               )}
               {ai.aboutRewrite && (
-                <div className="mt-4 rounded-2xl border border-violet-100 bg-white p-5">
+                <div className="mt-4 rounded-xl border border-violet-100 bg-white p-5">
                   <p className="text-xs font-bold uppercase tracking-wide text-violet-700">
                     Rewritten for you, ready to paste
                   </p>
@@ -168,7 +168,7 @@ export default function ScoreResults({
       )}
 
       {/* PILLAR BREAKDOWN */}
-      <div className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
+      <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10">
         <h3 className="text-xl font-bold text-[#111111]">
           Your 5 pillar breakdown
         </h3>
@@ -183,9 +183,9 @@ export default function ScoreResults({
                   {p.points} of {p.maxPoints}
                 </span>
               </div>
-              <div className="progress-wrap">
+              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                 <div
-                  className="progress-fill"
+                  className="h-full rounded-full bg-violet-600 transition-all duration-500"
                   style={{ width: p.percent + "%" }}
                 />
               </div>
@@ -196,14 +196,14 @@ export default function ScoreResults({
 
       {/* STRENGTHS */}
       {strengths.length > 0 && (
-        <div className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
+        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10">
           <h3 className="text-xl font-bold text-[#111111]">
             What you are already doing right
           </h3>
           <div className="mt-5 space-y-4">
             {strengths.map((s) => (
               <div key={s.id} className="flex gap-3">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-50 text-sm font-bold text-violet-700">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-600">
                   ✓
                 </span>
                 <p className="text-[15px] leading-relaxed text-slate-600">
@@ -216,7 +216,7 @@ export default function ScoreResults({
       )}
 
       {/* TOP 3 FIXES */}
-      <div className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
+      <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10">
         <h3 className="text-xl font-bold text-[#111111]">
           Your 3 highest impact fixes
         </h3>
@@ -227,10 +227,10 @@ export default function ScoreResults({
           {topThree.map((fix, i) => (
             <div
               key={fix.title}
-              className="rounded-3xl border border-violet-100 bg-violet-50/50 p-6"
+              className="rounded-2xl border border-slate-200 bg-slate-50 p-6"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-700 text-sm font-bold text-white">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
                   {i + 1}
                 </span>
                 <h4 className="text-base font-bold text-[#111111]">
@@ -254,8 +254,8 @@ export default function ScoreResults({
       </div>
 
       {/* PREMIUM TEASER */}
-      <div className="mt-6 rounded-[32px] border border-violet-200 bg-violet-50 p-8 sm:p-10">
-        <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+      <div className="mt-6 rounded-3xl border border-violet-200 bg-violet-50 p-8 sm:p-10">
+        <span className="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
           Premium
         </span>
         <h3 className="mt-4 text-2xl font-bold text-[#111111]">
@@ -287,9 +287,9 @@ export default function ScoreResults({
         <button
           onClick={onUnlock}
           disabled={!onUnlock}
-          className={`mt-8 w-full rounded-2xl px-8 py-4 text-base font-semibold text-white transition-all duration-300 sm:w-auto ${
+          className={`mt-8 w-full rounded-xl px-8 py-4 text-base font-semibold text-white transition-colors sm:w-auto ${
             onUnlock
-              ? "bg-violet-700 hover:-translate-y-0.5 hover:bg-violet-800"
+              ? "bg-violet-600 hover:bg-violet-700"
               : "cursor-not-allowed bg-slate-400"
           }`}
         >
