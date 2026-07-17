@@ -1,7 +1,6 @@
 // app/tools/linkedin-score/page.tsx
 
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -33,39 +32,76 @@ const steps = [
 
 const features = [
   {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="4.5" />
+        <circle cx="12" cy="12" r="0.5" />
+      </svg>
+    ),
     title: "A score you can trust",
     text: "20 checks across 5 pillars: first impression, positioning, content engine, social proof, and conversion. The same audit we run for paying clients.",
   },
   {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z" />
+      </svg>
+    ),
     title: "Honest verdicts, not compliments",
     text: "If your headline is weak, the tool says it is weak and explains exactly why, quoting your own words. No sugarcoating.",
   },
   {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M17 3l4 4L7 21H3v-4L17 3z" />
+      </svg>
+    ),
     title: "Rewrites, ready to paste",
     text: "Two stronger headline options and a complete rewritten about section, built from the real facts in your profile. Copy, paste, done.",
   },
   {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <path d="M9 6h12" />
+        <path d="M9 12h12" />
+        <path d="M9 18h12" />
+        <path d="M4 6h.5" />
+        <path d="M4 12h.5" />
+        <path d="M4 18h.5" />
+      </svg>
+    ),
     title: "Prioritized, not generic",
     text: "Every fix shows exactly how many points it is costing you, ranked from biggest to smallest, so you always know what to do first.",
   },
   {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <rect x="4" y="11" width="16" height="9" rx="2" />
+        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+      </svg>
+    ),
     title: "Private by design",
     text: "Your paste is analyzed to build your report and your report belongs to you. No spam, ever.",
   },
   {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+        <rect x="3" y="7" width="18" height="13" rx="2" />
+        <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      </svg>
+    ),
     title: "Built by an agency, not a toy",
     text: "The scoring model and rewrite formulas come from Socieas, the team that builds personal brands that actually convert.",
   },
 ];
 
-const reportItems = [
-  "Your Socieas Score out of 100 on a live score dial",
-  "A breakdown of all 5 pillars showing exactly where points leak",
-  "What you are already doing right",
-  "An honest AI verdict on your headline with 2 stronger options",
-  "An honest AI verdict on your about section with a full rewrite",
-  "Your 3 highest impact fixes, ranked by points recovered",
-  "The complete report delivered to your email",
+const samplePillars = [
+  { label: "First Impression", pts: "18 of 20", pct: 90 },
+  { label: "Positioning", pts: "21 of 25", pct: 84 },
+  { label: "Content Engine", pts: "18 of 25", pct: 72 },
+  { label: "Social Proof", pts: "12 of 15", pct: 80 },
+  { label: "Conversion", pts: "13 of 15", pct: 87 },
 ];
 
 const faqs = [
@@ -97,34 +133,37 @@ const faqs = [
 
 export default function LinkedInScorePage() {
   return (
-    <main className="overflow-x-hidden bg-[#F8F8F6] text-[#111111]">
+    <main className="overflow-x-hidden bg-white text-[#111111]">
       <Navbar />
 
       {/* HERO */}
       <section className="mx-auto max-w-3xl px-4 pt-32 text-center sm:px-6">
-        <span className="inline-block rounded-full border border-violet-200 bg-white px-4 py-1.5 text-sm font-semibold text-violet-700">
-          Free tool · 60 seconds · No sign up
-        </span>
-        <h1 className="mt-6 text-4xl font-extrabold leading-tight text-[#111111] sm:text-5xl">
-          Free LinkedIn Profile Audit:{" "}
-          <span className="text-violet-700">The Socieas Score</span>
+        <p className="text-sm text-slate-500">
+          Free Tools <span className="text-slate-300">/</span>{" "}
+          <span className="font-medium text-violet-600">The Socieas Score</span>
+        </p>
+        <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-[#111111] sm:text-5xl">
+          Free LinkedIn Profile Audit
+          <br />
+          <span className="text-violet-600">The Socieas Score</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
           Run a free AI audit of your LinkedIn profile. Get a score out of 100,
-          an honest verdict on your headline and about section, ready to paste
-          rewrites, and the exact fixes that raise your score. In 60 seconds.
+          honest verdicts on your headline and about section, and rewrites you
+          can paste today.
         </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
           {[
             "100 percent free",
             "No sign up",
-            "Instant score",
+            "Instant results",
             "Works in your browser",
           ].map((chip) => (
             <span
               key={chip}
-              className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-600"
+              className="flex items-center gap-1.5 text-sm text-slate-600"
             >
+              <span className="font-bold text-emerald-500">✓</span>
               {chip}
             </span>
           ))}
@@ -132,32 +171,26 @@ export default function LinkedInScorePage() {
       </section>
 
       {/* THE TOOL */}
-      <section id="tool" className="mx-auto mt-12 max-w-3xl px-4 sm:px-6">
+      <section id="tool" className="mx-auto mt-14 max-w-3xl px-4 sm:px-6">
         <LinkedInScoreTool />
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="mx-auto mt-24 max-w-5xl px-4 sm:px-6">
-        <p className="text-center text-sm font-bold uppercase tracking-widest text-violet-700">
+      <section className="mx-auto mt-28 max-w-5xl px-4 sm:px-6">
+        <p className="text-center font-mono text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
           How it works
         </p>
-        <h2 className="mt-3 text-center text-3xl font-extrabold text-[#111111] sm:text-4xl">
+        <h2 className="mx-auto mt-4 max-w-lg text-center text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
           From one paste to a full report in three steps
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-center text-[15px] leading-relaxed text-slate-600">
-          No account, no install, no questionnaire. Works the same on desktop,
-          tablet, and phone.
+          No account, no install. Works the same on desktop, tablet, and phone.
         </p>
-        <div className="mt-12 grid gap-6 sm:grid-cols-3">
+        <div className="mt-14 grid gap-10 sm:grid-cols-3">
           {steps.map((step) => (
-            <div
-              key={step.number}
-              className="rounded-[32px] border border-slate-200 bg-white p-8"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-700 text-base font-bold text-white">
-                {step.number}
-              </span>
-              <h3 className="mt-5 text-lg font-bold text-[#111111]">
+            <div key={step.number}>
+              <p className="text-sm font-bold text-violet-600">{step.number}</p>
+              <h3 className="mt-3 text-lg font-semibold text-[#111111]">
                 {step.title}
               </h3>
               <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
@@ -169,20 +202,23 @@ export default function LinkedInScorePage() {
       </section>
 
       {/* WHY THIS TOOL */}
-      <section className="mx-auto mt-24 max-w-5xl px-4 sm:px-6">
-        <p className="text-center text-sm font-bold uppercase tracking-widest text-violet-700">
+      <section className="mx-auto mt-28 max-w-4xl px-4 sm:px-6">
+        <p className="text-center font-mono text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
           Why this tool
         </p>
-        <h2 className="mt-3 text-center text-3xl font-extrabold text-[#111111] sm:text-4xl">
+        <h2 className="mx-auto mt-4 max-w-md text-center text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
           A real audit, not a surface level checklist
         </h2>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-4 sm:grid-cols-2">
           {features.map((f) => (
             <div
               key={f.title}
-              className="rounded-[32px] border border-slate-200 bg-white p-8"
+              className="rounded-2xl border border-slate-200 bg-white p-7"
             >
-              <h3 className="text-lg font-bold text-[#111111]">{f.title}</h3>
+              <span className="text-violet-600">{f.icon}</span>
+              <h3 className="mt-4 text-base font-semibold text-[#111111]">
+                {f.title}
+              </h3>
               <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
                 {f.text}
               </p>
@@ -191,81 +227,182 @@ export default function LinkedInScorePage() {
         </div>
       </section>
 
-      {/* WHAT YOU GET */}
-      <section className="mx-auto mt-24 max-w-5xl px-4 sm:px-6">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-violet-700">
-              Your report
-            </p>
-            <h2 className="mt-3 text-3xl font-extrabold text-[#111111] sm:text-4xl">
-              Everything you get, free
-            </h2>
-            <ul className="mt-8 space-y-3">
-              {reportItems.map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-50 text-sm font-bold text-violet-700">
-                    ✓
-                  </span>
-                  <span className="text-[15px] leading-relaxed text-slate-600">
-                    {item}
-                  </span>
-                </li>
+      {/* WHAT YOUR REPORT LOOKS LIKE */}
+      <section className="mx-auto mt-28 max-w-4xl px-4 sm:px-6">
+        <p className="text-center font-mono text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
+          Your report
+        </p>
+        <h2 className="mx-auto mt-4 max-w-md text-center text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
+          See what comes back
+        </h2>
+        <div className="mt-14 grid gap-4 lg:grid-cols-2">
+          {/* SAMPLE SCORE CARD */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Sample report
+              </p>
+              <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
+                Strong foundation
+              </span>
+            </div>
+            <div className="mt-5 flex items-end gap-2">
+              <span className="text-5xl font-extrabold text-[#111111]">82</span>
+              <span className="pb-1.5 text-sm text-slate-500">of 100</span>
+            </div>
+            <div className="mt-6 space-y-4">
+              {samplePillars.map((row) => (
+                <div key={row.label}>
+                  <div className="mb-1.5 flex items-center justify-between text-xs">
+                    <span className="font-medium text-[#111111]">
+                      {row.label}
+                    </span>
+                    <span className="text-slate-500">{row.pts}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-violet-600"
+                      style={{ width: row.pct + "%" }}
+                    />
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
-          <div className="overflow-hidden rounded-[32px] border border-slate-200">
-            <Image
-              src="/images/tools/linkedin-score.webp"
-              alt="The Socieas Score, the free LinkedIn profile audit by Socieas"
-              width={1600}
-              height={1000}
-              className="h-auto w-full"
-            />
+
+          {/* SAMPLE VERDICT CARD */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Sample verdict
+              </p>
+              <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
+                Headline · Weak
+              </span>
+            </div>
+            <p className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
+              "Marketing Enthusiast | Dreamer | Hustler"
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">
+              <strong className="text-violet-700">The verdict:</strong> This
+              headline could belong to a million people. It names no audience,
+              no outcome, and no proof, so visitors have no reason to stay.
+            </p>
+            <div className="mt-5 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
+                Rewrite · Ready to paste
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-relaxed text-[#111111]">
+                I help D2C brands turn content into revenue with proven
+                marketing systems | 40 plus campaigns shipped
+              </p>
+            </div>
+            <p className="mt-4 text-xs text-slate-500">
+              Plus a complete about section rewrite in every report.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* MORE FREE VALUE */}
-      <section className="mx-auto mt-24 max-w-5xl px-4 sm:px-6">
-        <div className="rounded-[40px] border border-violet-200 bg-violet-50 p-10 text-center sm:p-14">
-          <p className="text-sm font-bold uppercase tracking-widest text-violet-700">
-            Not just one tool
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-[#111111] sm:text-4xl">
-            One free tool. A whole library behind it.
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-slate-600">
-            The Socieas Score is one piece of our free library: 10 resources
-            covering LinkedIn checklists, 100 proven hooks, content calendars,
-            AI prompt packs, and more. Same deal every time: full access, no
-            catch.
-          </p>
+      {/* NOT JUST ONE TOOL */}
+      <section className="mx-auto mt-28 max-w-4xl px-4 sm:px-6">
+        <p className="text-center font-mono text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
+          Not just a free tool
+        </p>
+        <h2 className="mx-auto mt-4 max-w-md text-center text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
+          One free tool. A whole library behind it.
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-center text-[15px] leading-relaxed text-slate-600">
+          Checklists, 100 proven hooks, content calendars, AI prompt packs, and
+          more. Same deal every time: full access, no catch.
+        </p>
+        <div className="mt-14 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="space-y-2.5">
+              {["Profile photo and banner", "Headline formula applied", "Featured section filled"].map((item) => (
+                <div key={item} className="flex items-center gap-2">
+                  <span className="flex h-4 w-4 items-center justify-center rounded bg-emerald-500 text-[10px] font-bold text-white">
+                    ✓
+                  </span>
+                  <span className="text-xs text-slate-600">{item}</span>
+                </div>
+              ))}
+            </div>
+            <h3 className="mt-5 text-base font-semibold text-[#111111]">
+              LinkedIn Checklist
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Every box your profile needs ticked, in order.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="space-y-2.5">
+              <div className="h-2 w-11/12 rounded bg-slate-100" />
+              <div className="h-2 w-3/4 rounded bg-violet-200" />
+              <div className="h-2 w-10/12 rounded bg-slate-100" />
+              <div className="h-2 w-2/3 rounded bg-slate-100" />
+            </div>
+            <h3 className="mt-5 text-base font-semibold text-[#111111]">
+              100 Proven Hooks
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Opening lines that stop the scroll, ready to use.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="grid grid-cols-7 gap-1.5">
+              {Array.from({ length: 21 }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-4 rounded ${
+                    i % 3 === 0 ? "bg-violet-500" : "bg-slate-100"
+                  }`}
+                />
+              ))}
+            </div>
+            <h3 className="mt-5 text-base font-semibold text-[#111111]">
+              30 Day Calendar
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">
+              A full month of posts planned for you.
+            </p>
+          </div>
+        </div>
+        <div className="mt-10 text-center">
           <Link
             href="/resources"
-            className="mt-8 inline-block rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
+            className="inline-block rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-sm font-semibold text-[#111111] transition-colors hover:border-violet-400"
           >
-            Explore the free resources
+            View all free resources
           </Link>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="mx-auto mt-24 max-w-3xl px-4 sm:px-6">
-        <p className="text-center text-sm font-bold uppercase tracking-widest text-violet-700">
+      <section className="mx-auto mt-28 max-w-3xl px-4 sm:px-6">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
           FAQ
         </p>
-        <h2 className="mt-3 text-center text-3xl font-extrabold text-[#111111] sm:text-4xl">
-          Everything people ask before they paste
+        <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
+          How the scoring actually works
         </h2>
-        <div className="mt-10 space-y-4">
+        <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
+          What we check, what we store, and how the verdicts are built.
+        </p>
+        <div className="mt-8 border-t border-slate-200">
           {faqs.map((faq) => (
             <details
               key={faq.q}
-              className="group rounded-3xl border border-slate-200 bg-white p-6"
+              className="group border-b border-slate-200 py-5"
             >
-              <summary className="cursor-pointer list-none text-base font-bold text-[#111111]">
+              <summary className="flex cursor-pointer list-none items-center justify-between text-base font-semibold text-[#111111]">
                 {faq.q}
+                <span className="ml-4 text-xl font-light text-slate-400 group-open:hidden">
+                  +
+                </span>
+                <span className="ml-4 hidden text-xl font-light text-slate-400 group-open:inline">
+                  ×
+                </span>
               </summary>
               <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
                 {faq.a}
@@ -276,9 +413,9 @@ export default function LinkedInScorePage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="mx-auto mt-24 max-w-3xl px-4 pb-24 text-center sm:px-6">
-        <h2 className="text-3xl font-extrabold text-[#111111] sm:text-4xl">
-          Ready to see your real score?
+      <section className="mx-auto mt-28 max-w-3xl px-4 pb-28 text-center sm:px-6">
+        <h2 className="text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
+          Start with your real score today
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-slate-600">
           60 seconds from now you will know exactly what your profile projects
@@ -286,14 +423,13 @@ export default function LinkedInScorePage() {
         </p>
         <a
           href="#tool"
-          className="mt-8 inline-block rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
+          className="mt-8 inline-block rounded-xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-violet-700"
         >
           Get my Socieas Score
         </a>
         <p className="mt-10 text-sm leading-relaxed text-slate-500">
-          No spam, ever. Your report is yours to keep. The Socieas Score is
-          built by Socieas, the team behind personal brands that actually
-          convert.
+          No spam, ever. Your report is yours to keep. The Socieas Score is not
+          affiliated with, endorsed by, or connected to LinkedIn.
         </p>
       </section>
 
