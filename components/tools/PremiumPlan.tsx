@@ -27,8 +27,8 @@ export default function PremiumPlan({
   return (
     <div className="mx-auto w-full max-w-3xl">
       {/* HEADER */}
-      <div className="rounded-[32px] border border-violet-200 bg-gradient-to-br from-violet-50 to-fuchsia-50 p-8 sm:p-10">
-        <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+      <div className="rounded-3xl border border-violet-200 bg-violet-50 p-8 sm:p-10">
+        <span className="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
           Your Premium Plan
         </span>
         <h2 className="mt-4 text-2xl font-bold text-[#111111] sm:text-3xl">
@@ -52,17 +52,17 @@ export default function PremiumPlan({
         return (
           <div
             key={week.label}
-            className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10"
+            className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10"
           >
             <h3 className="text-xl font-bold text-[#111111]">{week.label}</h3>
             <div className="mt-6 space-y-4">
               {weekDays.map((d) => (
                 <div
                   key={d.day}
-                  className="rounded-3xl border border-slate-200 bg-white p-5"
+                  className="rounded-2xl border border-slate-200 bg-white p-5"
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-700 text-sm font-bold text-white">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
                       {d.day}
                     </span>
                     <span className="text-[15px] font-bold text-[#111111]">
@@ -88,7 +88,7 @@ export default function PremiumPlan({
       })}
 
       {/* HEADLINE FORMULAS */}
-      <div className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
+      <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10">
         <h3 className="text-xl font-bold text-[#111111]">
           Headline rewrite formulas
         </h3>
@@ -99,7 +99,7 @@ export default function PremiumPlan({
           {headlineFormulas.map((f) => (
             <div
               key={f.name}
-              className="rounded-3xl border border-violet-100 bg-violet-50/50 p-6"
+              className="rounded-2xl border border-violet-100 bg-violet-50/50 p-6"
             >
               <h4 className="text-base font-bold text-[#111111]">{f.name}</h4>
               <p className="mt-2 rounded-xl bg-white px-4 py-3 font-mono text-sm text-violet-700">
@@ -119,7 +119,7 @@ export default function PremiumPlan({
       </div>
 
       {/* ABOUT BLUEPRINT */}
-      <div className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
+      <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10">
         <h3 className="text-xl font-bold text-[#111111]">
           Your about section blueprint
         </h3>
@@ -141,7 +141,7 @@ export default function PremiumPlan({
       </div>
 
       {/* STRATEGY CALL */}
-      <div className="mt-6 rounded-[32px] border border-violet-200 bg-gradient-to-br from-violet-50 to-fuchsia-50 p-8 text-center sm:p-10">
+      <div className="mt-6 rounded-3xl border border-violet-200 bg-violet-50 p-8 text-center sm:p-10">
         <h3 className="text-2xl font-bold text-[#111111]">
           Your priority strategy call
         </h3>
@@ -152,7 +152,7 @@ export default function PremiumPlan({
         </p>
         <a
           href="/contact"
-          className="mt-6 inline-block rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
+          className="mt-6 inline-block rounded-xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-violet-700"
         >
           Book your priority call
         </a>
