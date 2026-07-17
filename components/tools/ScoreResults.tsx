@@ -87,8 +87,8 @@ export default function ScoreResults({
             Our AI strategist is reading your full profile right now
           </h3>
           <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-            Your honest verdict on your headline and about section, plus ready
-            to paste rewrites, will appear here in a few seconds.
+            Your personalized verdicts, rewrites, and section by section
+            upgrade plan will appear here in a few seconds.
           </p>
         </div>
       )}
@@ -162,6 +162,74 @@ export default function ScoreResults({
                   </p>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* SECTION BY SECTION PLAN */}
+          {ai.sectionPlan.length > 0 && (
+            <div className="mt-8">
+              <h3 className="text-xl font-bold text-[#111111]">
+                Your section by section upgrade plan
+              </h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Work through these in order. Every step is built from your
+                profile, your goal, and your audience.
+              </p>
+              <div className="mt-4 space-y-4">
+                {ai.sectionPlan.map((sec) => (
+                  <div
+                    key={sec.section}
+                    className="rounded-xl border border-violet-100 bg-white p-5"
+                  >
+                    <h4 className="text-base font-bold text-[#111111]">
+                      {sec.section}
+                    </h4>
+                    <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+                      {sec.verdict}
+                    </p>
+                    <ol className="mt-3 space-y-2">
+                      {sec.steps.map((s, i) => (
+                        <li key={s} className="flex gap-3">
+                          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-50 text-xs font-bold text-violet-700">
+                            {i + 1}
+                          </span>
+                          <span className="text-[15px] leading-relaxed text-slate-700">
+                            {s}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* POST IDEAS */}
+          {ai.postIdeas.length > 0 && (
+            <div className="mt-8">
+              <h3 className="text-xl font-bold text-[#111111]">
+                3 post ideas made for you
+              </h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Based on what you like to talk about and what your audience
+                needs to hear.
+              </p>
+              <div className="mt-4 space-y-3">
+                {ai.postIdeas.map((idea, i) => (
+                  <div
+                    key={idea}
+                    className="rounded-xl border border-violet-100 bg-white p-5"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-wide text-violet-700">
+                      Idea {i + 1}
+                    </p>
+                    <p className="mt-2 text-[15px] leading-relaxed text-[#111111]">
+                      {idea}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
