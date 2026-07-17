@@ -3,17 +3,22 @@
 "use client";
 
 import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
+import type { AiFeedback } from "@/lib/ai-feedback";
 
 export default function ScoreResults({
   result,
   input,
   onRestart,
   onUnlock,
+  ai,
+  aiLoading,
 }: {
   result: ScoreResult;
   input: AuditInput;
   onRestart: () => void;
   onUnlock?: () => void;
+  ai?: AiFeedback | null;
+  aiLoading?: boolean;
 }) {
   const topThree = result.topFixes.slice(0, 3);
   const lockedCount = Math.max(0, result.topFixes.length - 3);
@@ -71,6 +76,96 @@ export default function ScoreResults({
           {result.band.message}
         </p>
       </div>
+
+      {/* EXPERT VERDICT (AI) */}
+      {aiLoading && (
+        <div className="mt-6 animate-pulse rounded-[32px] border border-violet-200 bg-violet-50 p-8 sm:p-10">
+          <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+            Expert verdict
+          </span>
+          <h3 className="mt-4 text-xl font-bold text-[#111111]">
+            Our AI strategist is reading your full profile right now
+          </h3>
+          <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+            Your honest verdict on your headline and about section, plus ready
+            to paste rewrites, will appear here in a few seconds.
+          </p>
+        </div>
+      )}
+
+      {!aiLoading && ai && (
+        <div className="mt-6 rounded-[32px] border border-violet-200 bg-violet-50 p-8 sm:p-10">
+          <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+            Expert verdict
+          </span>
+
+          <p className="mt-5 text-[15px] leading-relaxed text-slate-700">
+            {ai.summary}
+          </p>
+
+          {/* HEADLINE VERDICT */}
+          <div className="mt-8">
+            <h3 className="text-xl font-bold text-[#111111]">Your headline</h3>
+            <p className="mt-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[15px] font-medium text-slate-500">
+              "{input.headline}"
+            </p>
+            {ai.headlineVerdict && (
+              <p className="mt-3 text-[15px] leading-relaxed text-slate-700">
+                <strong className="text-violet-700">The verdict: </strong>
+                {ai.headlineVerdict}
+              </p>
+            )}
+            {ai.headlineRewrites.length > 0 && (
+              <div className="mt-4 space-y-3">
+                <p className="text-sm font-semibold text-[#111111]">
+                  Stronger options built for a higher score:
+                </p>
+                {ai.headlineRewrites.map((h, i) => (
+                  <div
+                    key={h}
+                    className="rounded-2xl border border-violet-100 bg-white p-5"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-wide text-violet-700">
+                      Option {i + 1}
+                    </p>
+                    <p className="mt-2 text-[15px] font-semibold leading-relaxed text-[#111111]">
+                      {h}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ABOUT VERDICT */}
+          {(ai.aboutVerdict || ai.aboutRewrite) && (
+            <div className="mt-8">
+              <h3 className="text-xl font-bold text-[#111111]">
+                Your about section
+              </h3>
+              {ai.aboutVerdict && (
+                <p className="mt-3 text-[15px] leading-relaxed text-slate-700">
+                  <strong className="text-violet-700">The verdict: </strong>
+                  {ai.aboutVerdict}
+                </p>
+              )}
+              {ai.aboutRewrite && (
+                <div className="mt-4 rounded-2xl border border-violet-100 bg-white p-5">
+                  <p className="text-xs font-bold uppercase tracking-wide text-violet-700">
+                    Rewritten for you, ready to paste
+                  </p>
+                  <p
+                    className="mt-3 text-[15px] leading-relaxed text-[#111111]"
+                    style={{ whiteSpace: "pre-line" }}
+                  >
+                    {ai.aboutRewrite}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* PILLAR BREAKDOWN */}
       <div className="mt-6 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
@@ -159,7 +254,7 @@ export default function ScoreResults({
       </div>
 
       {/* PREMIUM TEASER */}
-      <div className="mt-6 rounded-[32px] border border-violet-200 bg-gradient-to-br from-violet-50 to-fuchsia-50 p-8 sm:p-10">
+      <div className="mt-6 rounded-[32px] border border-violet-200 bg-violet-50 p-8 sm:p-10">
         <span className="inline-block rounded-full bg-violet-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
           Premium
         </span>
