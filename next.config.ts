@@ -1,7 +1,12 @@
+// next.config.ts
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["nodemailer"],
+  experimental: {
+    cpus: 2,
+  },
   images: {
     remotePatterns: [
       {
