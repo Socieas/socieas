@@ -3,7 +3,6 @@
 "use client";
 
 import { useState } from "react";
-import { questions } from "@/data/linkedin-audit";
 import { scoreAudit } from "@/lib/linkedin-scoring";
 import { parseProfileText } from "@/lib/profile-parser";
 import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
@@ -27,8 +26,6 @@ export default function ScoreWizard({
   const [about, setAbout] = useState("");
   const [headlineTouched, setHeadlineTouched] = useState(false);
   const [aboutTouched, setAboutTouched] = useState(false);
-  const [bannerAnswer, setBannerAnswer] = useState("");
-  const [photoAnswer, setPhotoAnswer] = useState("");
   const [detected, setDetected] = useState<string[]>([]);
   const [autoAnswers, setAutoAnswers] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
@@ -38,9 +35,6 @@ export default function ScoreWizard({
 
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
   const validUrl = linkedinUrl.trim().toLowerCase().includes("linkedin.com");
-
-  const bannerQuestion = questions.find((q) => q.id === "q-banner");
-  const photoQuestion = questions.find((q) => q.id === "q-photo");
 
   const goToPaste = () => {
     if (name.trim().length < 2) {
@@ -86,10 +80,6 @@ export default function ScoreWizard({
       );
       return;
     }
-    if (!bannerAnswer || !photoAnswer) {
-      setError("Please answer the two quick visual questions. Images cannot be read from pasted text.");
-      return;
-    }
     setError("");
     const input: AuditInput = {
       name: name.trim(),
@@ -97,11 +87,7 @@ export default function ScoreWizard({
       linkedinUrl: linkedinUrl.trim(),
       headline: headline.trim(),
       about: about.trim(),
-      answers: {
-        ...autoAnswers,
-        "q-banner": bannerAnswer,
-        "q-photo": photoAnswer,
-      },
+      answers: { ...autoAnswers },
       rawProfile: pasted.trim(),
     };
     const result = scoreAudit(input);
@@ -202,7 +188,7 @@ export default function ScoreWizard({
               Open your LinkedIn profile in another tab. Click anywhere on the
               page, press Ctrl+A to select everything, then Ctrl+C to copy.
               On a phone: tap and hold, choose Select All, then Copy. Paste it
-              all below and we analyze the rest automatically.
+              all below and we analyze everything automatically.
             </p>
 
             <div className="mt-6">
@@ -267,59 +253,6 @@ export default function ScoreWizard({
                 </div>
               </div>
             )}
-
-            {/* THE ONLY 2 QUESTIONS: IMAGES */}
-            <div className="mt-8">
-              <p className="text-[15px] font-semibold text-[#111111]">
-                Two things a paste cannot show: your images.
-              </p>
-
-              {bannerQuestion && (
-                <div className="mt-4">
-                  <p className="text-sm font-semibold text-[#111111]">
-                    {bannerQuestion.question}
-                  </p>
-                  <div className="mt-2 space-y-2">
-                    {bannerQuestion.options.map((o) => (
-                      <button
-                        key={o.value}
-                        onClick={() => setBannerAnswer(o.value)}
-                        className={`block w-full rounded-2xl border px-5 py-3.5 text-left text-sm font-medium transition-all duration-300 ${
-                          bannerAnswer === o.value
-                            ? "border-violet-600 bg-violet-50 text-violet-700"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-violet-200"
-                        }`}
-                      >
-                        {o.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {photoQuestion && (
-                <div className="mt-5">
-                  <p className="text-sm font-semibold text-[#111111]">
-                    {photoQuestion.question}
-                  </p>
-                  <div className="mt-2 space-y-2">
-                    {photoQuestion.options.map((o) => (
-                      <button
-                        key={o.value}
-                        onClick={() => setPhotoAnswer(o.value)}
-                        className={`block w-full rounded-2xl border px-5 py-3.5 text-left text-sm font-medium transition-all duration-300 ${
-                          photoAnswer === o.value
-                            ? "border-violet-600 bg-violet-50 text-violet-700"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-violet-200"
-                        }`}
-                      >
-                        {o.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
 
             {error && (
               <p className="mt-6 text-sm font-medium text-red-500">{error}</p>
