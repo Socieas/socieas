@@ -2,6 +2,8 @@
 
 "use client";
 
+import { useState } from "react";
+import PremiumPlan from "@/components/tools/PremiumPlan";
 import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
 import type { AiFeedback } from "@/lib/ai-feedback";
 
@@ -20,6 +22,11 @@ export default function ScoreResults({
   ai?: AiFeedback | null;
   aiLoading?: boolean;
 }) {
+  const [code, setCode] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
+  const [codeError, setCodeError] = useState("");
+  const [checking, setChecking] = useState(false);
+
   const topThree = result.topFixes.slice(0, 3);
   const lockedCount = Math.max(0, result.topFixes.length - 3);
   const strengths = result.signals
@@ -31,6 +38,34 @@ export default function ScoreResults({
   const radius = 84;
   const circumference = 2 * Math.PI * radius;
   const dash = (result.total / 100) * circumference;
+
+  const tryUnlock = () => {
+    if (code.trim().length === 0) {
+      setCodeError("Please enter a code first.");
+      return;
+    }
+    setChecking(true);
+    setCodeError("");
+    fetch("/api/tools/premium-unlock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code.trim() }),
+    })
+      .then((r) => r.json())
+      .then((data: { ok?: boolean }) => {
+        if (data && data.ok) {
+          setUnlocked(true);
+        } else {
+          setCodeError("That code is not valid. Check it and try again.");
+        }
+      })
+      .catch(() => {
+        setCodeError("Could not check the code. Please try again.");
+      })
+      .finally(() => {
+        setChecking(false);
+      });
+  };
 
   return (
     <div className="mx-auto w-full max-w-3xl">
@@ -321,49 +356,86 @@ export default function ScoreResults({
         </div>
       </div>
 
-      {/* PREMIUM TEASER */}
-      <div className="mt-6 rounded-3xl border border-violet-200 bg-violet-50 p-8 sm:p-10">
-        <span className="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-          Premium
-        </span>
-        <h3 className="mt-4 text-2xl font-bold text-[#111111]">
-          Turn your score into a 30 day transformation
-        </h3>
-        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-slate-600">
-          Your free report shows what is broken. The premium plan hands you the
-          exact daily actions to fix it, built from your weakest pillars.
-        </p>
-        <ul className="mt-6 space-y-3">
-          {[
-            "A personalized 30 day branding calendar built from your exact weak pillars",
-            "Headline and about section rewrite formulas with before and after examples",
-            lockedCount > 0
-              ? "All " + result.topFixes.length + " of your fixes, not just the top 3"
-              : "Your complete fix list with priorities",
-            "A priority strategy call slot with the Socieas team",
-          ].map((item) => (
-            <li key={item} className="flex gap-3">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-violet-700">
-                ✓
-              </span>
-              <span className="text-[15px] leading-relaxed text-slate-700">
-                {item}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <button
-          onClick={onUnlock}
-          disabled={!onUnlock}
-          className={`mt-8 w-full rounded-xl px-8 py-4 text-base font-semibold text-white transition-colors sm:w-auto ${
-            onUnlock
-              ? "bg-violet-600 hover:bg-violet-700"
-              : "cursor-not-allowed bg-slate-400"
-          }`}
-        >
-          {onUnlock ? "Unlock my full plan" : "Premium unlock opening soon"}
-        </button>
-      </div>
+      {/* PREMIUM: UNLOCKED PLAN OR TEASER */}
+      {unlocked ? (
+        <div className="mt-6">
+          <PremiumPlan pillars={result.pillars} name={input.name} />
+        </div>
+      ) : (
+        <div className="mt-6 rounded-3xl border border-violet-200 bg-violet-50 p-8 sm:p-10">
+          <span className="inline-block rounded-full bg-violet-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+            Premium
+          </span>
+          <h3 className="mt-4 text-2xl font-bold text-[#111111]">
+            Turn your score into a 30 day transformation
+          </h3>
+          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-slate-600">
+            Your free report shows what is broken. The premium plan hands you
+            the exact daily actions to fix it, built from your weakest pillars.
+          </p>
+          <ul className="mt-6 space-y-3">
+            {[
+              "A personalized 30 day branding calendar built from your exact weak pillars",
+              "Headline and about section rewrite formulas with before and after examples",
+              lockedCount > 0
+                ? "All " + result.topFixes.length + " of your fixes, not just the top 3"
+                : "Your complete fix list with priorities",
+              "A priority strategy call slot with the Socieas team",
+            ].map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-violet-700">
+                  ✓
+                </span>
+                <span className="text-[15px] leading-relaxed text-slate-700">
+                  {item}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={onUnlock}
+            disabled={!onUnlock}
+            className={`mt-8 w-full rounded-xl px-8 py-4 text-base font-semibold text-white transition-colors sm:w-auto ${
+              onUnlock
+                ? "bg-violet-600 hover:bg-violet-700"
+                : "cursor-not-allowed bg-slate-400"
+            }`}
+          >
+            {onUnlock ? "Unlock my full plan" : "Premium unlock opening soon"}
+          </button>
+
+          {/* UNLOCK CODE */}
+          <div className="mt-8 border-t border-violet-200 pt-6">
+            <p className="text-sm font-semibold text-[#111111]">
+              Have an unlock code?
+            </p>
+            <p className="mt-1 text-sm text-slate-600">
+              Codes are given by the Socieas team to clients and partners.
+            </p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+              <input
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Enter your code"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-[15px] text-[#111111] outline-none transition-colors focus:border-violet-500 sm:max-w-xs"
+              />
+              <button
+                onClick={tryUnlock}
+                disabled={checking}
+                className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {checking ? "Checking..." : "Apply code"}
+              </button>
+            </div>
+            {codeError && (
+              <p className="mt-3 text-sm font-medium text-red-500">
+                {codeError}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* RESTART */}
       <div className="mt-8 text-center">
