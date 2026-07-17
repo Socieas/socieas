@@ -53,6 +53,14 @@ export interface ScoreBandMeta {
   message: string;
 }
 
+export interface Persona {
+  role: string;
+  audience: string;
+  goal: string;
+  topics: string;
+  postingFrequency: string;
+}
+
 export interface AuditInput {
   name: string;
   email: string;
@@ -61,6 +69,7 @@ export interface AuditInput {
   about: string;
   answers: Record<string, string>;
   rawProfile?: string;
+  persona?: Persona;
 }
 
 export interface SignalResult {
