@@ -6,15 +6,26 @@ import { client } from "@/sanity/lib/client";
 import { allPostsQuery } from "@/sanity/lib/queries";
 import { resources } from "@/data/resources";
 
+async function fetchPostsWithTimeLimit(): Promise<any[]> {
+  const timeLimit = new Promise<any[]>((resolve) => {
+    setTimeout(() => resolve([]), 8000);
+  });
+
+  try {
+    const result = await Promise.race([
+      client.fetch(allPostsQuery),
+      timeLimit,
+    ]);
+    return Array.isArray(result) ? result : [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://socieas.com";
 
-  let posts: any[] = [];
-  try {
-    posts = await client.fetch(allPostsQuery);
-  } catch {
-    posts = [];
-  }
+  const posts = await fetchPostsWithTimeLimit();
 
   const insightRoutes = posts.map((post: any) => {
     const basePath =
