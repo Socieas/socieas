@@ -1,0 +1,26 @@
+# .github/workflows/build-check.yml
+
+name: Build check
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund
+
+      - name: Build the site
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: v13un2f2
+          NEXT_PUBLIC_SANITY_DATASET: production
