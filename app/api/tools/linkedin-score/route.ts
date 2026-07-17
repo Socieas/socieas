@@ -55,9 +55,15 @@ function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
       </div>`
     : "";
 
+  const headlineVerdictLine =
+    ai && ai.headlineVerdict
+      ? `<p style="margin:10px 0 0;font-size:14px;line-height:1.7;color:#4b5563;"><strong style="color:#7c3aed;">The verdict:</strong> ${esc(ai.headlineVerdict)}</p>`
+      : "";
+
   const headlineBlock = ai
     ? `<h2 style="margin:30px 0 6px;font-size:18px;color:#111111;">Your headline, rewritten by our strategist</h2>
       <p style="margin:6px 0 0;font-size:14px;line-height:1.7;color:#6b7280;">Your headline today: "${esc(p.headline)}"</p>
+      ${headlineVerdictLine}
       ${ai.headlineRewrites
         .map(
           (h, i) =>
@@ -68,6 +74,16 @@ function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
         )
         .join("")}`
     : "";
+
+  const aboutBlock =
+    ai && ai.aboutRewrite
+      ? `<h2 style="margin:30px 0 6px;font-size:18px;color:#111111;">Your about section, rewritten for you</h2>
+        ${ai.aboutVerdict ? `<p style="margin:6px 0 0;font-size:14px;line-height:1.7;color:#4b5563;"><strong style="color:#7c3aed;">The verdict:</strong> ${esc(ai.aboutVerdict)}</p>` : ""}
+        <div style="background:#faf7ff;border:1px solid #ede9fe;border-radius:16px;padding:18px;margin-top:12px;">
+          <p style="margin:0;font-size:13px;font-weight:700;color:#7c3aed;">Ready to paste</p>
+          <p style="margin:8px 0 0;font-size:15px;line-height:1.8;color:#111111;white-space:pre-line;">${esc(ai.aboutRewrite)}</p>
+        </div>`
+      : "";
 
   const fixBlocks = p.result.topFixes
     .slice(0, 3)
@@ -99,6 +115,8 @@ function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
       <table style="width:100%;border-collapse:collapse;">${pillarRows}</table>
 
       ${headlineBlock}
+
+      ${aboutBlock}
 
       <h2 style="margin:30px 0 0;font-size:18px;color:#111111;">Your 3 highest impact fixes</h2>
       ${fixBlocks}
@@ -197,7 +215,7 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, ai });
   } catch {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
