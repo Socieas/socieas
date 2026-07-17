@@ -102,6 +102,7 @@ export default function ScoreWizard({
         "q-banner": bannerAnswer,
         "q-photo": photoAnswer,
       },
+      rawProfile: pasted.trim(),
     };
     const result = scoreAudit(input);
     onComplete(result, input);
