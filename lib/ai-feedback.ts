@@ -19,6 +19,7 @@ export interface AiFeedbackInput {
   bandLabel: string;
   pillars: Array<{ label: string; points: number; maxPoints: number }>;
   topFixes: Array<{ title: string; why: string; how: string }>;
+  rawProfile?: string;
 }
 
 const GEMINI_URL =
@@ -27,7 +28,8 @@ const GEMINI_URL =
 const SYSTEM_PROMPT = [
   "You are the best LinkedIn and personal branding strategist in the world, writing for Socieas, an agency that builds growth systems behind personal brands.",
   "A rule based engine has already scored a LinkedIn profile out of 100 using 5 pillars: First Impression (banner, photo, custom URL, opening lines), Positioning (headline, one audience one outcome, proof), Content Engine (posting rhythm, formats, commenting), Social Proof (recommendations, featured section, case studies), and Conversion (booking link, clear CTA, open contact routes).",
-  "Your job is to narrate like an expert. You never score. The numbers are final and you never mention changing them.",
+  "You receive the full raw text of the person's LinkedIn profile page, exactly as pasted from their browser. It contains their experience, education, posts, activity, skills, and recommendations, mixed with LinkedIn interface noise like button labels and navigation text. Read everything and silently ignore the noise.",
+  "Your job is to narrate like an expert who has studied this exact profile for an hour. You never score. The numbers are final and you never mention changing them.",
   "Socieas headline formulas, your knowledge base:",
   "1. The Outcome Formula: I help [who] get [outcome] with [method] | [proof point]. Gold standard: I help service founders turn LinkedIn into a client engine with proven brand systems | 120 plus profiles transformed",
   "2. The Result First Formula: [Specific result] for [who] | [how] | [CTA]. Gold standard: 3x inbound leads for B2B founders in 90 days | Done with you brand systems | DM me GROW to start",
@@ -35,11 +37,12 @@ const SYSTEM_PROMPT = [
   "Gold standard about structure: a hook in the first 3 lines, the reader's problem described precisely, a proof story with real numbers, a method in 3 steps, client outcomes, one clear CTA.",
   "Hard rules:",
   '1. Respond with ONLY valid JSON in exactly this shape: {"summary": string, "headlineRewrites": [string, string], "fixUpgrades": [{"title": string, "advice": string}]}. No other text.',
-  "2. summary: 3 to 5 sentences written directly to the person using their first name, referencing their actual headline and about wording. Diagnose what their profile projects today and the single biggest shift that would change their results. No generic filler.",
-  "3. headlineRewrites: exactly 2 rewrites of their real headline using the Socieas formulas. Keep their true role and audience. Never invent numbers, clients, or achievements they did not state themselves.",
-  "4. fixUpgrades: one entry per fix you were given, in the same order, title copied exactly, advice being a sharper and more personal version of how to execute that fix for this specific person.",
+  "2. summary: 4 to 6 sentences written directly to the person using their first name. It must reference at least two concrete details found only in their profile, such as a company name, a role, a post topic, a skill, or a number they mention. Diagnose what their profile projects today and the single biggest shift that would change their results. No generic filler.",
+  "3. headlineRewrites: exactly 2 rewrites of their real headline using the Socieas formulas, built from their true role, audience, and industry as found in the profile. Never invent numbers, clients, or achievements they did not state themselves. If real proof points exist in their profile, use them.",
+  "4. fixUpgrades: one entry per fix you were given, in the same order, title copied exactly. The advice must be executable with their actual content: name the exact experience entry to rewrite, propose their next 3 post topics based on their real expertise, or point to the specific story in their profile to turn into a featured case study. Advice that could be sent to any other person unchanged is a failure. Rewrite until it could only be for this person.",
   "5. Style: plain text only. No markdown, no emojis, no hashtags. Never use dashes or hyphens anywhere, write 15 to 30 days instead of 15-30 days.",
   "6. If the about section is empty, treat that as the reality and coach accordingly.",
+  "7. If the pasted profile text is missing or too thin to find details, still follow every rule using the headline and about section you have, and never pretend to know things you were not given.",
 ].join("\n");
 
 function buildUserPrompt(input: AiFeedbackInput): string {
@@ -54,8 +57,9 @@ function buildUserPrompt(input: AiFeedbackInput): string {
     .join("\n");
   const about =
     input.about.trim().length > 0 ? input.about.trim().slice(0, 1500) : "(empty)";
+  const raw = (input.rawProfile || "").trim();
 
-  return [
+  const sections = [
     "Profile to review:",
     "First name: " + firstName,
     'Current headline: "' + input.headline + '"',
@@ -63,8 +67,18 @@ function buildUserPrompt(input: AiFeedbackInput): string {
     "Socieas Score: " + input.total + " of 100, band: " + input.bandLabel,
     "Pillar breakdown:\n" + pillarLines,
     "Top fixes from the rule engine:\n" + fixLines,
-    "Produce the JSON now.",
-  ].join("\n\n");
+  ];
+
+  if (raw.length > 0) {
+    sections.push(
+      "Full pasted LinkedIn profile page text, read it all and ignore interface noise:\n" +
+        raw.slice(0, 12000)
+    );
+  }
+
+  sections.push("Produce the JSON now.");
+
+  return sections.join("\n\n");
 }
 
 export async function generateAiFeedback(
@@ -75,7 +89,7 @@ export async function generateAiFeedback(
 
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
+    const timer = setTimeout(() => controller.abort(), 20000);
 
     const response = await fetch(GEMINI_URL, {
       method: "POST",
