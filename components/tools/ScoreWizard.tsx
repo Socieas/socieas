@@ -7,9 +7,23 @@ import { scoreAudit } from "@/lib/linkedin-scoring";
 import { parseProfileText } from "@/lib/profile-parser";
 import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
 
-type StepId = "details" | "paste";
+type StepId = "details" | "about" | "paste";
 
-const stepLabels = ["Details", "Paste", "Results"];
+const stepLabels = ["Details", "About you", "Paste", "Results"];
+
+const goalOptions = [
+  "Get clients",
+  "Get hired",
+  "Build authority",
+  "Grow my network",
+];
+
+const frequencyOptions = [
+  "Daily",
+  "A few times a week",
+  "A few times a month",
+  "Rarely or never",
+];
 
 export default function ScoreWizard({
   onComplete,
@@ -21,6 +35,13 @@ export default function ScoreWizard({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
+
+  const [role, setRole] = useState("");
+  const [audience, setAudience] = useState("");
+  const [goal, setGoal] = useState("");
+  const [topics, setTopics] = useState("");
+  const [frequency, setFrequency] = useState("");
+
   const [pasted, setPasted] = useState("");
   const [headline, setHeadline] = useState("");
   const [about, setAbout] = useState("");
@@ -30,12 +51,12 @@ export default function ScoreWizard({
   const [autoAnswers, setAutoAnswers] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
 
-  const currentIndex = step === "details" ? 0 : 1;
+  const currentIndex = step === "details" ? 0 : step === "about" ? 1 : 2;
 
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
   const validUrl = linkedinUrl.trim().toLowerCase().includes("linkedin.com");
 
-  const goToPaste = () => {
+  const goToAbout = () => {
     if (name.trim().length < 2) {
       setError("Please enter your name.");
       return;
@@ -46,6 +67,27 @@ export default function ScoreWizard({
     }
     if (!validUrl) {
       setError("Please paste your LinkedIn profile link. It should contain linkedin.com.");
+      return;
+    }
+    setError("");
+    setStep("about");
+  };
+
+  const goToPaste = () => {
+    if (role.trim().length < 2) {
+      setError("Please tell us your designation or role.");
+      return;
+    }
+    if (audience.trim().length < 2) {
+      setError("Please tell us who you want to reach on LinkedIn.");
+      return;
+    }
+    if (!goal) {
+      setError("Please pick your main goal.");
+      return;
+    }
+    if (!frequency) {
+      setError("Please pick how often you post.");
       return;
     }
     setError("");
@@ -88,6 +130,13 @@ export default function ScoreWizard({
       about: about.trim(),
       answers: { ...autoAnswers },
       rawProfile: pasted.trim(),
+      persona: {
+        role: role.trim(),
+        audience: audience.trim(),
+        goal,
+        topics: topics.trim(),
+        postingFrequency: frequency,
+      },
     };
     const result = scoreAudit(input);
     onComplete(result, input);
@@ -95,6 +144,13 @@ export default function ScoreWizard({
 
   const inputClass =
     "w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-[15px] text-[#111111] outline-none transition-colors focus:border-violet-500";
+
+  const chipClass = (selected: boolean) =>
+    `rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+      selected
+        ? "border-violet-600 bg-violet-50 text-violet-700"
+        : "border-slate-200 bg-white text-slate-600 hover:border-violet-300"
+    }`;
 
   return (
     <div className="mx-auto w-full max-w-2xl">
@@ -106,7 +162,7 @@ export default function ScoreWizard({
           return (
             <div key={label} className="flex items-center">
               {i > 0 && (
-                <span className="mx-2 h-px w-6 bg-slate-200 sm:mx-3 sm:w-10" />
+                <span className="mx-2 h-px w-4 bg-slate-200 sm:mx-3 sm:w-8" />
               )}
               <span
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
@@ -124,8 +180,8 @@ export default function ScoreWizard({
                   active
                     ? "font-semibold text-violet-700"
                     : done
-                      ? "font-medium text-emerald-600"
-                      : "text-slate-500"
+                      ? "hidden font-medium text-emerald-600 sm:inline"
+                      : "hidden text-slate-500 sm:inline"
                 }`}
               >
                 {label}
@@ -192,7 +248,7 @@ export default function ScoreWizard({
             )}
 
             <button
-              onClick={goToPaste}
+              onClick={goToAbout}
               className="mt-8 w-full rounded-xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-violet-700"
             >
               Continue
@@ -200,7 +256,116 @@ export default function ScoreWizard({
           </div>
         )}
 
-        {/* STEP 2: PASTE AND GO */}
+        {/* STEP 2: ABOUT YOU */}
+        {step === "about" && (
+          <div>
+            <h2 className="text-2xl font-bold text-[#111111]">
+              Tell us about you
+            </h2>
+            <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+              These answers make your report personal. Every verdict, rewrite,
+              and step will be built around your goal and your audience.
+            </p>
+
+            <div className="mt-8 space-y-6">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                  What is your designation or role?
+                </label>
+                <input
+                  type="text"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  placeholder="Founder at a design studio"
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                  Who do you want to reach on LinkedIn?
+                </label>
+                <input
+                  type="text"
+                  value={audience}
+                  onChange={(e) => setAudience(e.target.value)}
+                  placeholder="Startup founders who need branding"
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                  What is your main goal here?
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {goalOptions.map((g) => (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setGoal(g)}
+                      className={chipClass(goal === g)}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                  What do you like to talk about? Optional
+                </label>
+                <input
+                  type="text"
+                  value={topics}
+                  onChange={(e) => setTopics(e.target.value)}
+                  placeholder="Design, branding, client stories"
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#111111]">
+                  How often do you post?
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {frequencyOptions.map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setFrequency(f)}
+                      className={chipClass(frequency === f)}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <p className="mt-6 text-sm font-medium text-red-500">{error}</p>
+            )}
+
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={() => setStep("details")}
+                className="rounded-xl border border-slate-300 bg-white px-6 py-4 text-base font-semibold text-slate-700 transition-colors hover:border-violet-300"
+              >
+                Back
+              </button>
+              <button
+                onClick={goToPaste}
+                className="flex-1 rounded-xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-violet-700"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: PASTE AND GO */}
         {step === "paste" && (
           <div>
             <h2 className="text-2xl font-bold text-[#111111]">
@@ -282,7 +447,7 @@ export default function ScoreWizard({
 
             <div className="mt-8 flex gap-3">
               <button
-                onClick={() => setStep("details")}
+                onClick={() => setStep("about")}
                 className="rounded-xl border border-slate-300 bg-white px-6 py-4 text-base font-semibold text-slate-700 transition-colors hover:border-violet-300"
               >
                 Back
