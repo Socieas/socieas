@@ -60,6 +60,7 @@ export interface AuditInput {
   headline: string;
   about: string;
   answers: Record<string, string>;
+  rawProfile?: string;
 }
 
 export interface SignalResult {
