@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { generateAiFeedback, type AiFeedback } from "@/lib/ai-feedback";
+import { scheduleNurtureEmails } from "@/lib/nurture-emails";
 
 interface PillarPayload {
   label: string;
@@ -275,6 +276,19 @@ export async function POST(request: Request) {
           subject: `Your Socieas Score: ${body.result.total} of 100`,
           html: renderEmailHtml(body, ai),
         }),
+      });
+
+      let weakest = body.result.pillars[0];
+      for (const pl of body.result.pillars) {
+        if (weakest && pl.percent < weakest.percent) {
+          weakest = pl;
+        }
+      }
+      await scheduleNurtureEmails({
+        name: body.name,
+        email: body.email,
+        weakestPillar: weakest ? weakest.label : "Positioning",
+        goal: body.persona ? body.persona.goal : "",
       });
     }
 
