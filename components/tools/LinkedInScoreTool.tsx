@@ -1,59 +1,67 @@
-// app/tools/linkedin-score/page.tsx
+// components/tools/LinkedInScoreTool.tsx
 
-import type { Metadata } from "next";
-import Image from "next/image";
-import LinkedInScoreTool from "@/components/tools/LinkedInScoreTool";
+"use client";
 
-export const metadata: Metadata = {
-  title: "The Socieas Score | Free LinkedIn Profile Audit",
-  description:
-    "Get your Socieas Score: your LinkedIn profile rated out of 100 in 60 seconds. Paste your profile once and get a 22 point audit across first impression, positioning, content, social proof, and conversion, with your 3 highest impact fixes free.",
-};
+import { useState } from "react";
+import ScoreWizard from "@/components/tools/ScoreWizard";
+import ScoreResults from "@/components/tools/ScoreResults";
+import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
 
-export default function LinkedInScorePage() {
-  return (
-    <main className="min-h-screen bg-[#F8F8F6] px-4 pb-24 pt-32 sm:px-6">
-      {/* HERO */}
-      <section className="mx-auto max-w-3xl text-center">
-        <span className="inline-block rounded-full border border-violet-200 bg-white px-4 py-1.5 text-sm font-semibold text-violet-700">
-          Free tool · 60 seconds
-        </span>
-        <h1 className="mt-6 text-4xl font-extrabold leading-tight text-[#111111] sm:text-5xl">
-          What is your <span className="gradient-text">Socieas Score?</span>
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
-          The Socieas Score is the same 22 point LinkedIn audit we run for
-          paying clients, automated. Paste your profile once and the tool
-          detects and analyzes everything by itself: your headline, about
-          section, proof, activity, and conversion setup. Your score out of
-          100 with your 3 highest impact fixes. Free.
-        </p>
+export default function LinkedInScoreTool() {
+  const [result, setResult] = useState<ScoreResult | null>(null);
+  const [input, setInput] = useState<AuditInput | null>(null);
 
-        <div className="mx-auto mt-10 max-w-2xl overflow-hidden rounded-[32px] border border-slate-200">
-          <Image
-            src="/images/tools/linkedin-score.webp"
-            alt="The Socieas Score, the free LinkedIn profile audit by Socieas"
-            width={1600}
-            height={1000}
-            className="h-auto w-full"
-            priority
-          />
-        </div>
-      </section>
+  const handleComplete = (res: ScoreResult, inp: AuditInput) => {
+    setResult(res);
+    setInput(inp);
 
-      {/* THE TOOL */}
-      <section className="mx-auto mt-16 max-w-3xl">
-        <LinkedInScoreTool />
-      </section>
+    try {
+      fetch("/api/tools/linkedin-score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: inp.name,
+          email: inp.email,
+          linkedinUrl: inp.linkedinUrl,
+          headline: inp.headline,
+          about: inp.about,
+          answers: inp.answers,
+          result: {
+            total: res.total,
+            band: {
+              label: res.band.label,
+              headline: res.band.headline,
+              message: res.band.message,
+            },
+            pillars: res.pillars,
+            topFixes: res.topFixes,
+          },
+        }),
+      }).catch(() => {
+        /* The on screen report always works even if the email fails */
+      });
+    } catch {
+      /* Never block the user */
+    }
 
-      {/* TRUST STRIP */}
-      <section className="mx-auto mt-16 max-w-2xl text-center">
-        <p className="text-sm leading-relaxed text-slate-500">
-          No spam, ever. Your answers are analyzed instantly in your browser
-          and your report is yours to keep. The Socieas Score is built by
-          Socieas, the team behind personal brands that actually convert.
-        </p>
-      </section>
-    </main>
-  );
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleRestart = () => {
+    setResult(null);
+    setInput(null);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  if (result && input) {
+    return (
+      <ScoreResults result={result} input={input} onRestart={handleRestart} />
+    );
+  }
+
+  return <ScoreWizard onComplete={handleComplete} />;
 }
