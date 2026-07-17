@@ -9,7 +9,7 @@ import type { AuditInput, ScoreResult } from "@/types/linkedin-score";
 
 type StepId = "details" | "paste";
 
-const steps: StepId[] = ["details", "paste"];
+const stepLabels = ["Details", "Paste", "Results"];
 
 export default function ScoreWizard({
   onComplete,
@@ -30,8 +30,7 @@ export default function ScoreWizard({
   const [autoAnswers, setAutoAnswers] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
 
-  const stepIndex = steps.indexOf(step);
-  const progress = Math.round(((stepIndex + 1) / steps.length) * 100);
+  const currentIndex = step === "details" ? 0 : 1;
 
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
   const validUrl = linkedinUrl.trim().toLowerCase().includes("linkedin.com");
@@ -95,25 +94,48 @@ export default function ScoreWizard({
   };
 
   const inputClass =
-    "w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[15px] text-[#111111] outline-none transition-all duration-300 focus:border-violet-400";
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-[15px] text-[#111111] outline-none transition-colors focus:border-violet-500";
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      {/* PROGRESS */}
-      <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between text-sm font-medium text-slate-500">
-          <span>Step {stepIndex + 1} of {steps.length}</span>
-          <span>{progress}%</span>
-        </div>
-        <div className="h-2 overflow-hidden rounded-full bg-violet-50">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 transition-all duration-500"
-            style={{ width: progress + "%" }}
-          />
-        </div>
+      {/* STEPPER */}
+      <div className="mb-10 flex items-center justify-center">
+        {stepLabels.map((label, i) => {
+          const done = i < currentIndex;
+          const active = i === currentIndex;
+          return (
+            <div key={label} className="flex items-center">
+              {i > 0 && (
+                <span className="mx-2 h-px w-6 bg-slate-200 sm:mx-3 sm:w-10" />
+              )}
+              <span
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                  done
+                    ? "bg-emerald-500 text-white"
+                    : active
+                      ? "bg-violet-600 text-white"
+                      : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {done ? "✓" : i + 1}
+              </span>
+              <span
+                className={`ml-2 text-sm ${
+                  active
+                    ? "font-semibold text-violet-700"
+                    : done
+                      ? "font-medium text-emerald-600"
+                      : "text-slate-500"
+                }`}
+              >
+                {label}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(124,58,237,0.06)] sm:p-10">
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 sm:p-10">
         {/* STEP 1: DETAILS */}
         {step === "details" && (
           <div>
@@ -171,7 +193,7 @@ export default function ScoreWizard({
 
             <button
               onClick={goToPaste}
-              className="mt-8 w-full rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
+              className="mt-8 w-full rounded-xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-violet-700"
             >
               Continue
             </button>
@@ -203,14 +225,14 @@ export default function ScoreWizard({
 
             {/* DETECTIONS */}
             {detected.length > 0 && (
-              <div className="mt-5 rounded-2xl border border-violet-100 bg-violet-50/60 p-5">
-                <p className="text-sm font-semibold text-violet-700">
+              <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-5">
+                <p className="text-sm font-semibold text-[#111111]">
                   Detected automatically:
                 </p>
                 <ul className="mt-2 space-y-1">
                   {detected.map((d) => (
                     <li key={d} className="text-sm text-slate-600">
-                      ✓ {d}
+                      <span className="text-emerald-500">✓</span> {d}
                     </li>
                   ))}
                 </ul>
@@ -261,13 +283,13 @@ export default function ScoreWizard({
             <div className="mt-8 flex gap-3">
               <button
                 onClick={() => setStep("details")}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-4 text-base font-semibold text-slate-700 transition-all duration-300 hover:border-violet-300"
+                className="rounded-xl border border-slate-300 bg-white px-6 py-4 text-base font-semibold text-slate-700 transition-colors hover:border-violet-300"
               >
                 Back
               </button>
               <button
                 onClick={finish}
-                className="flex-1 rounded-2xl bg-violet-700 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-violet-800"
+                className="flex-1 rounded-xl bg-violet-600 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-violet-700"
               >
                 Get my Socieas Score
               </button>
