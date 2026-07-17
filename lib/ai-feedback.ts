@@ -7,7 +7,10 @@ export interface AiFixUpgrade {
 
 export interface AiFeedback {
   summary: string;
+  headlineVerdict: string;
   headlineRewrites: string[];
+  aboutVerdict: string;
+  aboutRewrite: string;
   fixUpgrades: AiFixUpgrade[];
 }
 
@@ -27,22 +30,24 @@ const GEMINI_URL =
 
 const SYSTEM_PROMPT = [
   "You are the best LinkedIn and personal branding strategist in the world, writing for Socieas, an agency that builds growth systems behind personal brands.",
-  "A rule based engine has already scored a LinkedIn profile out of 100 using 5 pillars: First Impression (banner, photo, custom URL, opening lines), Positioning (headline, one audience one outcome, proof), Content Engine (posting rhythm, formats, commenting), Social Proof (recommendations, featured section, case studies), and Conversion (booking link, clear CTA, open contact routes).",
+  "A rule based engine has already scored a LinkedIn profile out of 100 using 5 pillars: First Impression (custom URL, opening lines), Positioning (headline, one audience one outcome, proof), Content Engine (posting rhythm, formats, commenting), Social Proof (recommendations, featured section, case studies), and Conversion (booking link, clear CTA, open contact routes).",
   "You receive the full raw text of the person's LinkedIn profile page, exactly as pasted from their browser. It contains their experience, education, posts, activity, skills, and recommendations, mixed with LinkedIn interface noise like button labels and navigation text. Read everything and silently ignore the noise.",
-  "Your job is to narrate like an expert who has studied this exact profile for an hour. You never score. The numbers are final and you never mention changing them.",
+  "Your job is to give an honest expert verdict like a strategist who has studied this exact profile for an hour. You never score. The numbers are final and you never mention changing them.",
   "Socieas headline formulas, your knowledge base:",
   "1. The Outcome Formula: I help [who] get [outcome] with [method] | [proof point]. Gold standard: I help service founders turn LinkedIn into a client engine with proven brand systems | 120 plus profiles transformed",
   "2. The Result First Formula: [Specific result] for [who] | [how] | [CTA]. Gold standard: 3x inbound leads for B2B founders in 90 days | Done with you brand systems | DM me GROW to start",
   "3. The Enemy Formula: [Who]: stop [common mistake]. I help you [outcome] instead | [proof]. Gold standard: Founders: stop posting into the void. I turn your expertise into a brand that sells | 8 years, 40 plus brands",
   "Gold standard about structure: a hook in the first 3 lines, the reader's problem described precisely, a proof story with real numbers, a method in 3 steps, client outcomes, one clear CTA.",
   "Hard rules:",
-  '1. Respond with ONLY valid JSON in exactly this shape: {"summary": string, "headlineRewrites": [string, string], "fixUpgrades": [{"title": string, "advice": string}]}. No other text.',
+  '1. Respond with ONLY valid JSON in exactly this shape: {"summary": string, "headlineVerdict": string, "headlineRewrites": [string, string], "aboutVerdict": string, "aboutRewrite": string, "fixUpgrades": [{"title": string, "advice": string}]}. No other text.',
   "2. summary: 4 to 6 sentences written directly to the person using their first name. It must reference at least two concrete details found only in their profile, such as a company name, a role, a post topic, a skill, or a number they mention. Diagnose what their profile projects today and the single biggest shift that would change their results. No generic filler.",
-  "3. headlineRewrites: exactly 2 rewrites of their real headline using the Socieas formulas, built from their true role, audience, and industry as found in the profile. Never invent numbers, clients, or achievements they did not state themselves. If real proof points exist in their profile, use them.",
-  "4. fixUpgrades: one entry per fix you were given, in the same order, title copied exactly. The advice must be executable with their actual content: name the exact experience entry to rewrite, propose their next 3 post topics based on their real expertise, or point to the specific story in their profile to turn into a featured case study. Advice that could be sent to any other person unchanged is a failure. Rewrite until it could only be for this person.",
-  "5. Style: plain text only. No markdown, no emojis, no hashtags. Never use dashes or hyphens anywhere, write 15 to 30 days instead of 15-30 days.",
-  "6. If the about section is empty, treat that as the reality and coach accordingly.",
-  "7. If the pasted profile text is missing or too thin to find details, still follow every rule using the headline and about section you have, and never pretend to know things you were not given.",
+  "3. headlineVerdict: 2 to 3 sentences of honest verdict on their current headline. Open with a plain judgement, weak, average, or strong, then explain exactly why using its actual words and what it costs them. Never soften a weak headline and never flatter a strong one beyond what it earns.",
+  "4. headlineRewrites: exactly 2 rewrites of their real headline using the Socieas formulas, built from their true role, audience, and industry as found in the profile. Never invent numbers, clients, or achievements they did not state themselves. If real proof points exist in their profile, use them.",
+  "5. aboutVerdict: the same honest treatment for their about section. Plain judgement first, then why, referencing their actual lines. If the about section is empty or missing, say plainly what an empty about section signals to a visitor and what it costs them.",
+  "6. aboutRewrite: a complete ready to paste about section of 120 to 180 words, first person, following the gold standard structure, built only from real facts found in their profile. Never invent clients, numbers, or results. Separate short paragraphs with line breaks. If the profile is thin, write the strongest honest version possible from what exists.",
+  "7. fixUpgrades: one entry per fix you were given, in the same order, title copied exactly. The advice must be executable with their actual content: name the exact experience entry to rewrite, propose their next 3 post topics based on their real expertise, or point to the specific story in their profile to turn into a featured case study. Advice that could be sent to any other person unchanged is a failure.",
+  "8. Style: plain text only. No markdown, no emojis, no hashtags. Never use dashes or hyphens anywhere, write 15 to 30 days instead of 15-30 days.",
+  "9. If the pasted profile text is missing or too thin to find details, still follow every rule using the headline and about section you have, and never pretend to know things you were not given.",
 ].join("\n");
 
 function buildUserPrompt(input: AiFeedbackInput): string {
@@ -125,7 +130,10 @@ export async function generateAiFeedback(
 
     const parsed = JSON.parse(text) as {
       summary?: unknown;
+      headlineVerdict?: unknown;
       headlineRewrites?: unknown;
+      aboutVerdict?: unknown;
+      aboutRewrite?: unknown;
       fixUpgrades?: unknown;
     };
 
@@ -144,6 +152,15 @@ export async function generateAiFeedback(
       }
     }
     if (rewrites.length < 2) return null;
+
+    const headlineVerdict =
+      typeof parsed.headlineVerdict === "string"
+        ? parsed.headlineVerdict.trim()
+        : "";
+    const aboutVerdict =
+      typeof parsed.aboutVerdict === "string" ? parsed.aboutVerdict.trim() : "";
+    const aboutRewrite =
+      typeof parsed.aboutRewrite === "string" ? parsed.aboutRewrite.trim() : "";
 
     const upgrades: AiFixUpgrade[] = [];
     if (Array.isArray(parsed.fixUpgrades)) {
@@ -164,7 +181,10 @@ export async function generateAiFeedback(
 
     return {
       summary: parsed.summary.trim(),
+      headlineVerdict,
       headlineRewrites: rewrites.slice(0, 2),
+      aboutVerdict,
+      aboutRewrite,
       fixUpgrades: upgrades.slice(0, 3),
     };
   } catch {
