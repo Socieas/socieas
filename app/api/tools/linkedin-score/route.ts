@@ -17,6 +17,14 @@ interface FixPayload {
   lostPoints: number;
 }
 
+interface PersonaPayload {
+  role: string;
+  audience: string;
+  goal: string;
+  topics: string;
+  postingFrequency: string;
+}
+
 interface ScorePayload {
   name: string;
   email: string;
@@ -25,6 +33,7 @@ interface ScorePayload {
   about: string;
   answers: Record<string, string>;
   rawProfile?: string;
+  persona?: PersonaPayload;
   result: {
     total: number;
     band: { label: string; headline: string; message: string };
@@ -49,7 +58,7 @@ function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
     .join("");
 
   const aiSummaryBlock = ai
-    ? `<div style="background:linear-gradient(135deg,#f5f3ff,#fdf4ff);border:1px solid #ede9fe;border-radius:16px;padding:24px;margin-top:28px;">
+    ? `<div style="background:#f5f3ff;border:1px solid #ede9fe;border-radius:16px;padding:24px;margin-top:28px;">
         <p style="margin:0;font-size:13px;font-weight:700;letter-spacing:1px;color:#7c3aed;text-transform:uppercase;">Your expert read</p>
         <p style="margin:12px 0 0;font-size:15px;line-height:1.8;color:#374151;">${esc(ai.summary)}</p>
       </div>`
@@ -83,6 +92,44 @@ function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
           <p style="margin:0;font-size:13px;font-weight:700;color:#7c3aed;">Ready to paste</p>
           <p style="margin:8px 0 0;font-size:15px;line-height:1.8;color:#111111;white-space:pre-line;">${esc(ai.aboutRewrite)}</p>
         </div>`
+      : "";
+
+  const sectionPlanBlock =
+    ai && ai.sectionPlan.length > 0
+      ? `<h2 style="margin:34px 0 6px;font-size:18px;color:#111111;">Your section by section upgrade plan</h2>
+        <p style="margin:6px 0 0;font-size:14px;line-height:1.7;color:#6b7280;">Work through these in order. Every step is built from your profile, your goal, and your audience.</p>
+        ${ai.sectionPlan
+          .map(
+            (sec) =>
+              `<div style="background:#faf7ff;border:1px solid #ede9fe;border-radius:16px;padding:20px;margin-top:14px;">
+                <p style="margin:0;font-size:16px;font-weight:700;color:#111111;">${esc(sec.section)}</p>
+                <p style="margin:8px 0 0;font-size:14px;line-height:1.7;color:#4b5563;">${esc(sec.verdict)}</p>
+                <ol style="margin:10px 0 0;padding-left:20px;">
+                  ${sec.steps
+                    .map(
+                      (s) =>
+                        `<li style="margin-top:6px;font-size:14px;line-height:1.7;color:#374151;">${esc(s)}</li>`
+                    )
+                    .join("")}
+                </ol>
+              </div>`
+          )
+          .join("")}`
+      : "";
+
+  const postIdeasBlock =
+    ai && ai.postIdeas.length > 0
+      ? `<h2 style="margin:34px 0 6px;font-size:18px;color:#111111;">3 post ideas made for you</h2>
+        <p style="margin:6px 0 0;font-size:14px;line-height:1.7;color:#6b7280;">Based on what you like to talk about and what your audience needs to hear.</p>
+        ${ai.postIdeas
+          .map(
+            (idea, i) =>
+              `<div style="background:#faf7ff;border:1px solid #ede9fe;border-radius:16px;padding:18px;margin-top:12px;">
+                <p style="margin:0;font-size:13px;font-weight:700;color:#7c3aed;">Idea ${i + 1}</p>
+                <p style="margin:8px 0 0;font-size:14px;line-height:1.7;color:#111111;">${esc(idea)}</p>
+              </div>`
+          )
+          .join("")}`
       : "";
 
   const fixBlocks = p.result.topFixes
@@ -121,7 +168,11 @@ function renderEmailHtml(p: ScorePayload, ai: AiFeedback | null): string {
       <h2 style="margin:30px 0 0;font-size:18px;color:#111111;">Your 3 highest impact fixes</h2>
       ${fixBlocks}
 
-      <div style="background:linear-gradient(135deg,#f5f3ff,#fdf4ff);border-radius:16px;padding:24px;margin-top:28px;">
+      ${sectionPlanBlock}
+
+      ${postIdeasBlock}
+
+      <div style="background:#f5f3ff;border-radius:16px;padding:24px;margin-top:28px;">
         <p style="margin:0;font-size:16px;font-weight:700;color:#111111;">Want the full transformation?</p>
         <p style="margin:8px 0 0;font-size:14px;line-height:1.7;color:#4b5563;">The premium plan gives you a personalized 30 day branding calendar built from your weakest pillars, headline and about rewrite formulas, and a priority strategy call.</p>
         <a href="https://socieas.com/tools/linkedin-score" style="display:inline-block;margin-top:14px;background:#6d28d9;color:#ffffff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;">Visit The Socieas Score</a>
@@ -164,7 +215,18 @@ export async function POST(request: Request) {
           linkedin_url: body.linkedinUrl,
           headline: body.headline,
           about_section: body.about,
-          answers: body.answers,
+          answers: {
+            ...body.answers,
+            ...(body.persona
+              ? {
+                  persona_role: body.persona.role,
+                  persona_audience: body.persona.audience,
+                  persona_goal: body.persona.goal,
+                  persona_topics: body.persona.topics,
+                  persona_posting: body.persona.postingFrequency,
+                }
+              : {}),
+          },
           total_score: body.result.total,
           pillars: body.result.pillars,
           top_fixes: body.result.topFixes,
@@ -191,6 +253,7 @@ export async function POST(request: Request) {
           how: f.how,
         })),
         rawProfile: body.rawProfile || "",
+        persona: body.persona,
       });
     } catch {
       ai = null;
