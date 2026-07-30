@@ -1,0 +1,90 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  Plug,
+  Telescope,
+  Gauge,
+  Settings,
+} from "lucide-react";
+import { LENS_BASE } from "@/lib/lens/routes";
+import { cn } from "@/lib/lens/utils";
+
+const lensNav = [
+  { href: `${LENS_BASE}/dashboard`, label: "Dashboard", icon: LayoutDashboard },
+  { href: `${LENS_BASE}/clients`, label: "Clients", icon: Users },
+  { href: `${LENS_BASE}/integrations`, label: "Integrations", icon: Plug },
+];
+
+export function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
+      <Link href={`${LENS_BASE}/dashboard`} className="px-3">
+        <span className="text-2xl font-black tracking-tight">
+          Socieas<span className="text-brand">.</span>
+        </span>
+      </Link>
+
+      <div className="mt-6 grid grid-cols-2 gap-1 rounded-full bg-raised p-1">
+        <Link
+          href={`${LENS_BASE}/dashboard`}
+          className={cn(
+            "flex items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition",
+            pathname.startsWith(`${LENS_BASE}/`) || pathname === LENS_BASE
+              ? "bg-surface text-ink shadow-card"
+              : "text-muted hover:text-ink",
+          )}
+        >
+          <Telescope className="h-4 w-4 text-brand" /> Lens
+        </Link>
+        <Link
+          href="/tools/linkedin-score"
+          className={cn(
+            "flex items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition",
+            pathname.startsWith("/tools/linkedin-score")
+              ? "bg-surface text-ink shadow-card"
+              : "text-muted hover:text-ink",
+          )}
+        >
+          <Gauge className="h-4 w-4 text-brand" /> Score
+        </Link>
+      </div>
+
+      <nav className="mt-8 flex flex-1 flex-col gap-1">
+        {lensNav.map(({ href, label, icon: Icon }) => {
+          const active =
+            pathname === href ||
+            (href !== `${LENS_BASE}/dashboard` && pathname.startsWith(href));
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition",
+                active
+                  ? "bg-brand-soft font-semibold text-brand-dark dark:text-brand-light"
+                  : "text-muted hover:bg-raised hover:text-ink",
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <Link
+        href={`${LENS_BASE}/dashboard`}
+        className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition hover:bg-raised hover:text-ink"
+      >
+        <Settings className="h-4 w-4" />
+        Workspace settings
+      </Link>
+    </aside>
+  );
+}
