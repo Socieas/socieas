@@ -13,6 +13,7 @@ export default function Navbar() {
 
   const [servicesOpen, setServicesOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -75,6 +76,19 @@ export default function Navbar() {
       title: "Case Studies",
       desc: "Real execution and transformation breakdowns.",
       href: "/insights/case-studies",
+    },
+  ];
+
+  const products = [
+    {
+      title: "Socieas Score",
+      desc: "Free LinkedIn profile audit out of 100.",
+      href: "/tools/linkedin-score",
+    },
+    {
+      title: "Socieas Lens",
+      desc: "Every metric in one growth dashboard.",
+      href: "/products/lens",
     },
   ];
 
@@ -332,18 +346,87 @@ export default function Navbar() {
                   Free Resources
                 </Link>
 
-                {/* SOCIEAS SCORE */}
+                {/* PRODUCTS */}
 
-                <Link
-                  href="/tools/linkedin-score"
-                  className={`rounded-full px-4 py-2 text-[14px] font-medium transition-all duration-300 hover:bg-violet-50 hover:text-violet-700 ${
-                    pathname.startsWith("/tools")
-                      ? "bg-violet-50 text-violet-700"
-                      : "text-[#6B7280]"
-                  }`}
+                <div
+                  className="relative"
+                  onMouseEnter={() => setProductsOpen(true)}
+                  onMouseLeave={() => setProductsOpen(false)}
                 >
-                  Socieas Score
-                </Link>
+                  <div
+                    className={`flex items-center rounded-full transition-all duration-300 hover:bg-violet-50 ${
+                      pathname.startsWith("/tools") ||
+                      pathname.startsWith("/products")
+                        ? "bg-violet-50"
+                        : ""
+                    }`}
+                  >
+                    <span
+                      className={`px-4 py-2 text-[14px] font-medium transition-all duration-300 ${
+                        pathname.startsWith("/tools") ||
+                        pathname.startsWith("/products")
+                          ? "text-violet-700"
+                          : "text-[#6B7280]"
+                      }`}
+                    >
+                      Products
+                    </span>
+
+                    <button
+                      type="button"
+                      aria-label="Toggle Products Menu"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setProductsOpen(!productsOpen);
+                      }}
+                      className="pr-4"
+                    >
+                      <ChevronDown
+                        size={14}
+                        className={`transition-all duration-300 ${
+                          productsOpen
+                            ? "rotate-180 text-violet-700"
+                            : "text-[#6B7280]"
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <div
+                    className={`absolute left-1/2 top-[calc(100%+18px)] z-50 w-[340px] max-w-[92vw] -translate-x-1/2 transition-all duration-300 ${
+                      productsOpen
+                        ? "visible translate-y-0 opacity-100"
+                        : "invisible translate-y-4 opacity-0"
+                    }`}
+                  >
+                    <div className="rounded-[28px] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+                      <div className="grid gap-2">
+                        {products.map((item, index) => (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className="group rounded-[20px] border border-transparent p-4 transition-all duration-300 hover:border-violet-100 hover:bg-violet-50/70"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="text-[14px] font-semibold text-black">
+                                {item.title}
+                              </div>
+
+                              <ArrowUpRight
+                                size={15}
+                                className="translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:translate-y-0 group-hover:opacity-100"
+                              />
+                            </div>
+
+                            <div className="mt-2 text-xs leading-relaxed text-[#6B7280]">
+                              {item.desc}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* ABOUT */}
 
@@ -433,22 +516,56 @@ export default function Navbar() {
                     </span>
                   </Link>
 
-                  {/* SOCIEAS SCORE */}
+                  {/* PRODUCTS */}
 
-                  <Link
-                    href="/tools/linkedin-score"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between rounded-2xl px-5 py-4 text-[15px] font-semibold transition-all duration-300 ${
-                      pathname.startsWith("/tools")
-                        ? "bg-violet-50 text-violet-700"
-                        : "text-black hover:bg-[#F8F8F8]"
-                    }`}
-                  >
-                    Socieas Score
-                    <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-violet-700">
-                      Free
-                    </span>
-                  </Link>
+                  <div className="rounded-[24px] border border-black/5 bg-[#FAFAFA] p-2">
+                    <div className="flex items-center justify-between px-3 py-2">
+                      <span className="text-[15px] font-semibold text-black">
+                        Products
+                      </span>
+
+                      <button
+                        onClick={() => setProductsOpen(!productsOpen)}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-white"
+                      >
+                        <ChevronDown
+                          size={18}
+                          className={`transition-transform duration-300 ${
+                            productsOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    <div
+                      className={`grid transition-all duration-300 ${
+                        productsOpen
+                          ? "mt-2 grid-rows-[1fr] opacity-100"
+                          : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="space-y-2 px-2 pb-2">
+                          {products.map((item, index) => (
+                            <Link
+                              key={index}
+                              href={item.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block rounded-2xl bg-white px-4 py-4 transition-all duration-300 hover:bg-violet-50"
+                            >
+                              <div className="text-sm font-semibold text-black">
+                                {item.title}
+                              </div>
+
+                              <div className="mt-1 text-xs leading-relaxed text-[#6B7280]">
+                                {item.desc}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* SERVICES */}
 
