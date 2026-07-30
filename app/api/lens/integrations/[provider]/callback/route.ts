@@ -11,6 +11,16 @@ import { NextResponse } from "next/server";
  * 4. Kick off an initial 90 day backfill sync.
  * 5. Redirect back to the client integrations tab with a success toast.
  */
+function parseState(rawState: string): string {
+  try {
+    const decoded = Buffer.from(rawState, "base64url").toString("utf8");
+    const parsed = JSON.parse(decoded) as { clientId?: string };
+    return parsed.clientId ?? "default-workspace";
+  } catch {
+    return rawState || "default-workspace";
+  }
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ provider: string }> },
@@ -25,8 +35,7 @@ export async function GET(
   }
 
   try {
-    // Minimal state validation: trust state contains client id
-    const clientId = state;
+    const clientId = parseState(state);
 
     // load provider implementation
     let impl: any = null;
@@ -43,13 +52,16 @@ export async function GET(
     // Upsert into connections table
     const { createAdminClient } = await import("@/lib/lens/supabase/admin");
     const admin = createAdminClient();
-    await admin.from("connections").upsert({
-      client_id: clientId,
-      provider: provider,
-      external_account_id: tokens?.propertyId ?? tokens?.siteUrl ?? null,
-      encrypted_tokens: enc,
-      status: "active",
-    });
+    await admin.from("connections").upsert(
+      {
+        client_id: clientId,
+        provider: provider,
+        external_account_id: tokens?.propertyId ?? tokens?.siteUrl ?? null,
+        encrypted_tokens: enc,
+        status: "active",
+      },
+      { onConflict: "client_id,provider" },
+    );
 
     // Trigger initial sync (best-effort)
     try {

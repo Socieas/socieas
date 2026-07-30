@@ -1,3 +1,5 @@
+"use client";
+
 import { Topbar } from "@/components/lens/layout/Topbar";
 import { Card } from "@/components/lens/ui/card";
 import { Badge } from "@/components/lens/ui/badge";
@@ -6,9 +8,15 @@ import { providerCatalog } from "@/lib/lens/integrations/registry";
 
 /**
  * Connect accounts per client workspace. OAuth flows start at
- * /api/lens/integrations/[provider]/callback. Tokens are encrypted at rest.
+ * /api/lens/integrations/[provider]/connect and complete at the callback route.
+ * Tokens are encrypted at rest.
  */
 export default function IntegrationsPage() {
+  const startConnect = (provider: string) => {
+    const redirectUrl = `/api/lens/integrations/${provider}/connect?clientId=default-workspace`;
+    window.location.assign(redirectUrl);
+  };
+
   return (
     <>
       <Topbar
@@ -34,6 +42,7 @@ export default function IntegrationsPage() {
               variant={p.status === "available" ? "primary" : "secondary"}
               className="self-start"
               disabled={p.status !== "available"}
+              onClick={() => startConnect(p.key)}
             >
               {p.status === "available" ? "Connect" : "Coming soon"}
             </Button>

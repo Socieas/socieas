@@ -20,7 +20,7 @@ const REAL_MODE = process.env.NEXT_PUBLIC_MOCK_MODE === "false";
  * Agency level overview: portfolio health at a glance.
  * Phase 1: replace mock reads with aggregated queries over metrics_daily.
  */
-export default function DashboardPage() {
+export default async function DashboardPage() {
   // Server-rendered data: use real DB when NEXT_PUBLIC_MOCK_MODE is false
   let cards = mockOverviewCards.slice(0, 8);
   let trend = mockTrend(30);

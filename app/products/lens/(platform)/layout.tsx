@@ -13,14 +13,14 @@ export default async function PlatformLayout({
 }) {
   try {
     const supabase = await createServerSupabase();
-    // supabase.auth.getSession() returns session data; tolerate shape differences
-    const { data } = await supabase.auth.getSession();
-    const session = (data as any)?.session ?? (data as any)?.user ? data : null;
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       redirect(`/products/lens/login`);
     }
-  } catch (err) {
-    // If anything goes wrong, redirect to login
+  } catch {
     redirect(`/products/lens/login`);
   }
 
