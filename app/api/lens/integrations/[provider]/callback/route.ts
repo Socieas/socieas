@@ -24,8 +24,48 @@ export async function GET(
     return NextResponse.json({ error: "Missing code or state" }, { status: 400 });
   }
 
-  // TODO Phase 1: implement the flow above.
-  return NextResponse.redirect(
-    new URL(`/products/lens/integrations?connected=${provider}`, url.origin),
-  );
+  try {
+    // Minimal state validation: trust state contains client id
+    const clientId = state;
+
+    // load provider implementation
+    let impl: any = null;
+    if (provider === "ga4") impl = (await import("@/lib/lens/integrations/ga4")).ga4Provider;
+    else if (provider === "gsc") impl = (await import("@/lib/lens/integrations/gsc")).gscProvider;
+    else return NextResponse.json({ error: "Unknown provider" }, { status: 400 });
+
+    const tokens = await impl.exchangeCode(code);
+
+    // Encrypt tokens
+    const { encryptTokens } = await import("@/lib/lens/crypto");
+    const enc = encryptTokens(JSON.stringify(tokens));
+
+    // Upsert into connections table
+    const { createAdminClient } = await import("@/lib/lens/supabase/admin");
+    const admin = createAdminClient();
+    await admin.from("connections").upsert({
+      client_id: clientId,
+      provider: provider,
+      external_account_id: tokens?.propertyId ?? tokens?.siteUrl ?? null,
+      encrypted_tokens: enc,
+      status: "active",
+    });
+
+    // Trigger initial sync (best-effort)
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/lens/sync`, {
+        method: "POST",
+        headers: { "x-cron-secret": process.env.CRON_SECRET ?? "" },
+      });
+    } catch (err) {
+      console.error("Initial sync trigger failed", err);
+    }
+
+    return NextResponse.redirect(
+      new URL(`/products/lens/integrations?connected=${provider}`, url.origin),
+    );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Integration failed" }, { status: 500 });
+  }
 }

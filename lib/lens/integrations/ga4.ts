@@ -41,13 +41,47 @@ export const ga4Provider: Provider = {
   },
 
   async exchangeCode(_code: string): Promise<ProviderTokens> {
-    // TODO Phase 1: POST https://oauth2.googleapis.com/token
-    throw new Error("Not implemented: Phase 1");
+    const params = new URLSearchParams({
+      code: _code,
+      client_id: process.env.GOOGLE_CLIENT_ID ?? "",
+      client_secret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/lens/integrations/ga4/callback`,
+      grant_type: "authorization_code",
+    });
+    const res = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+    if (!res.ok) throw new Error("Failed to exchange code");
+    const data = await res.json();
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt: data.expires_in ? Date.now() + Number(data.expires_in) * 1000 : undefined,
+    };
   },
 
   async refreshTokens(_tokens: ProviderTokens): Promise<ProviderTokens> {
-    // TODO Phase 1: POST https://oauth2.googleapis.com/token (grant_type=refresh_token)
-    throw new Error("Not implemented: Phase 1");
+    if (!_tokens.refreshToken) throw new Error("No refresh token available");
+    const params = new URLSearchParams({
+      client_id: process.env.GOOGLE_CLIENT_ID ?? "",
+      client_secret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      refresh_token: _tokens.refreshToken,
+      grant_type: "refresh_token",
+    });
+    const res = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+    if (!res.ok) throw new Error("Failed to refresh tokens");
+    const data = await res.json();
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token ?? _tokens.refreshToken,
+      expiresAt: data.expires_in ? Date.now() + Number(data.expires_in) * 1000 : undefined,
+    };
   },
 
   async fetchDailyMetrics(
@@ -56,10 +90,34 @@ export const ga4Provider: Provider = {
     _startDate: string,
     _endDate: string,
   ): Promise<MetricRow[]> {
-    // TODO Phase 1: POST https://analyticsdata.googleapis.com/v1beta/properties/{propertyId}:runReport
-    // dimensions: [{ name: "date" }], metrics: Object.keys(METRIC_MAP)
-    // Return rows mapped through METRIC_MAP.
-    void METRIC_MAP;
-    throw new Error("Not implemented: Phase 1");
+    const metrics = Object.keys(METRIC_MAP).map((m) => ({ name: m }));
+    const body = {
+      dimensions: [{ name: "date" }],
+      metrics,
+      dateRanges: [{ startDate: _startDate, endDate: _endDate }],
+    };
+    const res = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${encodeURIComponent(_propertyId)}:runReport`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${_tokens.accessToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    );
+    if (!res.ok) throw new Error("GA4 runReport failed");
+    const data = await res.json();
+    const rows: MetricRow[] = [];
+    const metricHeaders = (data.metricHeaders || []).map((h: any) => h.name);
+    for (const row of data.rows || []) {
+      const date = row.dimensionValues?.[0]?.value;
+      for (let i = 0; i < (row.metricValues || []).length; i++) {
+        const mName = metricHeaders[i];
+        const mapped = METRIC_MAP[mName];
+        if (!mapped) continue;
+        const value = Number(row.metricValues[i].value ?? 0);
+        rows.push({ metric: mapped, date, value });
+      }
+    }
+    return rows;
   },
 };
