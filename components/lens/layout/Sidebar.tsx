@@ -7,7 +7,6 @@ import {
   Users,
   Plug,
   Telescope,
-  Gauge,
   Settings,
 } from "lucide-react";
 import { LENS_BASE } from "@/lib/lens/routes";
@@ -25,35 +24,14 @@ export function Sidebar() {
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
       <Link href={`${LENS_BASE}/dashboard`} className="px-3">
-        <span className="text-2xl font-black tracking-tight">
+        <span className="block text-2xl font-black tracking-tight">
           Socieas<span className="text-brand">.</span>
         </span>
+        <span className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted">
+          <Telescope className="h-3.5 w-3.5 text-brand" />
+          Lens — Growth Intelligence
+        </span>
       </Link>
-
-      <div className="mt-6 grid grid-cols-2 gap-1 rounded-full bg-raised p-1">
-        <Link
-          href={`${LENS_BASE}/dashboard`}
-          className={cn(
-            "flex items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition",
-            pathname.startsWith(`${LENS_BASE}/`) || pathname === LENS_BASE
-              ? "bg-surface text-ink shadow-card"
-              : "text-muted hover:text-ink",
-          )}
-        >
-          <Telescope className="h-4 w-4 text-brand" /> Lens
-        </Link>
-        <Link
-          href="/tools/linkedin-score"
-          className={cn(
-            "flex items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition",
-            pathname.startsWith("/tools/linkedin-score")
-              ? "bg-surface text-ink shadow-card"
-              : "text-muted hover:text-ink",
-          )}
-        >
-          <Gauge className="h-4 w-4 text-brand" /> Score
-        </Link>
-      </div>
 
       <nav className="mt-8 flex flex-1 flex-col gap-1">
         {lensNav.map(({ href, label, icon: Icon }) => {

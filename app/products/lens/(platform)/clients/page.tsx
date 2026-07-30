@@ -2,49 +2,48 @@ import Link from "next/link";
 import { Topbar } from "@/components/lens/layout/Topbar";
 import { Card } from "@/components/lens/ui/card";
 import { Badge } from "@/components/lens/ui/badge";
-import { formatDelta } from "@/lib/lens/utils";
+import { formatDelta, isMockMode } from "@/lib/lens/utils";
+import { mockClients } from "@/lib/lens/mock/data";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
-import type { ClientSummary } from "@/lib/lens/types";
+import { AddClientForm } from "@/components/lens/clients/AddClientForm";
 
-async function getAgencyClients() {
+export const dynamic = "force-dynamic";
+
+async function getRealClients() {
   const supabase = await createServerSupabase();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const userId = session?.user?.id;
-  if (!userId) return [] as ClientSummary[];
-
-  const { data: profile } = await supabase.from("profiles").select("id,agency_id").eq("id", userId).maybeSingle();
-  const agencyId = (profile as any)?.agency_id ?? null;
-  const { data } = await supabase
+  const { data: clients, error } = await supabase
     .from("clients")
-    .select("id,name,website_url")
-    .eq("agency_id", agencyId)
-    .order("created_at", { ascending: false });
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) console.error("[lens] load clients failed:", error.message);
 
-  return (data || []).map((client: any) => ({
-    id: client.id,
-    name: client.name,
-    websiteUrl: client.website_url ?? "",
-    brandColor: "#2563EB",
-    connected: [],
-    headline: { metric: "No data yet", delta: 0 },
-  }));
+  const list = clients ?? [];
+  const counts: Record<string, number> = {};
+  if (list.length > 0) {
+    const { data: conns } = await supabase
+      .from("connections")
+      .select("client_id")
+      .in(
+        "client_id",
+        list.map((c) => c.id),
+      );
+    for (const row of conns ?? []) {
+      counts[row.client_id] = (counts[row.client_id] ?? 0) + 1;
+    }
+  }
+  return { list, counts };
 }
 
 export default async function ClientsPage() {
-  const clients = await getAgencyClients();
-
-  return (
-    <>
-      <Topbar title="Clients" subtitle="Each client gets an isolated workspace: own connections, branding, and reports." />
-      <main className="grid grid-cols-1 gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3 lg:px-10">
-        {clients.length === 0 ? (
-          <div className="col-span-full rounded-card border border-dashed border-line p-8 text-center text-sm text-muted">
-            No clients yet — add your first client.
-          </div>
-        ) : (
-          clients.map((c) => (
+  if (isMockMode()) {
+    return (
+      <>
+        <Topbar
+          title="Clients"
+          subtitle="Each client gets an isolated workspace: own connections, branding, and reports."
+        />
+        <main className="grid grid-cols-1 gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3 lg:px-10">
+          {mockClients.map((c) => (
             <Link key={c.id} href={`/products/lens/clients/${c.id}/overview`}>
               <Card className="transition hover:shadow-glow">
                 <div className="flex items-center gap-3">
@@ -57,27 +56,69 @@ export default async function ClientsPage() {
                   </span>
                   <div>
                     <p className="text-lg font-bold">{c.name}</p>
-                    <p className="text-xs text-muted">{c.websiteUrl.replace("https://", "")}</p>
+                    <p className="text-xs text-muted">
+                      {c.websiteUrl.replace("https://", "")}
+                    </p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                   <Badge tone="brand">{c.connected.length} connected</Badge>
                   <span className="text-sm text-muted">
                     {c.headline.metric}{" "}
-                    <span className={c.headline.delta >= 0 ? "font-bold text-positive" : "font-bold text-negative"}>
+                    <span
+                      className={
+                        c.headline.delta >= 0
+                          ? "font-bold text-positive"
+                          : "font-bold text-negative"
+                      }
+                    >
                       {formatDelta(c.headline.delta)}
                     </span>
                   </span>
                 </div>
               </Card>
             </Link>
-          ))
-        )}
+          ))}
+          <AddClientForm />
+        </main>
+      </>
+    );
+  }
 
-        {/* Add client */}
-        <button className="flex min-h-40 items-center justify-center rounded-card border-2 border-dashed border-line text-sm font-semibold text-muted transition hover:border-brand hover:text-brand">
-          + Add a client workspace
-        </button>
+  const { list, counts } = await getRealClients();
+
+  return (
+    <>
+      <Topbar
+        title="Clients"
+        subtitle="Each client gets an isolated workspace: own connections, branding, and reports."
+      />
+      <main className="grid grid-cols-1 gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3 lg:px-10">
+        {list.map((c) => (
+          <Card key={c.id} className="transition hover:shadow-glow">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="flex h-12 w-12 items-center justify-center rounded-xl text-base font-black text-white"
+                style={{ backgroundColor: c.brand_color ?? "#7C3AED" }}
+              >
+                {String(c.name ?? "?").slice(0, 1)}
+              </span>
+              <div>
+                <p className="text-lg font-bold">{c.name}</p>
+                <p className="text-xs text-muted">
+                  {String(c.website_url ?? "").replace("https://", "") ||
+                    "No website yet"}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <Badge tone="brand">{counts[c.id] ?? 0} connected</Badge>
+              <span className="text-sm text-muted">Ready to connect platforms</span>
+            </div>
+          </Card>
+        ))}
+        <AddClientForm />
       </main>
     </>
   );
