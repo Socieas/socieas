@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { buildOAuthState, getProviderCallbackUrl } from "@/lib/lens/integrations/oauth";
+import crypto from "crypto";
+import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import {
+  buildAuthUrl,
+  packState,
+  providerScopes,
+} from "@/lib/lens/integrations/google-oauth";
 
 export async function GET(
   request: Request,
@@ -7,19 +13,31 @@ export async function GET(
 ) {
   const { provider } = await params;
   const url = new URL(request.url);
-  const clientId = url.searchParams.get("clientId") ?? "default-workspace";
-  const externalAccountId = url.searchParams.get("externalAccountId") ?? undefined;
+  const clientId = url.searchParams.get("clientId");
 
-  let impl: any = null;
-  if (provider === "ga4") impl = (await import("@/lib/lens/integrations/ga4")).ga4Provider;
-  else if (provider === "gsc") impl = (await import("@/lib/lens/integrations/gsc")).gscProvider;
-  else {
-    return NextResponse.json({ error: "Unknown provider" }, { status: 400 });
+  if (!providerScopes[provider]) {
+    return NextResponse.json(
+      { error: `Provider ${provider} is not available yet` },
+      { status: 400 },
+    );
+  }
+  if (!clientId) {
+    return NextResponse.json({ error: "Missing clientId" }, { status: 400 });
   }
 
-  const redirectUri = getProviderCallbackUrl(provider);
-  const authUrl = impl.getAuthUrl(buildOAuthState({ clientId, externalAccountId }));
-  const redirectUrl = new URL(authUrl);
-  redirectUrl.searchParams.set("redirect_uri", redirectUri);
-  return NextResponse.redirect(redirectUrl.toString());
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.redirect(new URL("/products/lens/login", url.origin));
+  }
+
+  const state = packState({
+    clientId,
+    provider,
+    nonce: crypto.randomUUID(),
+    ts: Date.now(),
+  });
+  return NextResponse.redirect(buildAuthUrl(provider, state));
 }

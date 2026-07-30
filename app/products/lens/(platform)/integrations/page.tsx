@@ -1,78 +1,166 @@
 import { Topbar } from "@/components/lens/layout/Topbar";
-import { Card } from "@/components/lens/ui/card";
+import { Card, CardTitle } from "@/components/lens/ui/card";
 import { Badge } from "@/components/lens/ui/badge";
-import { ButtonLink } from "@/components/lens/ui/button";
-import { providerCatalog } from "@/lib/lens/integrations/registry";
+import { SyncNowButton } from "@/components/lens/dashboard/SyncNowButton";
+import { AccountPicker } from "@/components/lens/integrations/AccountPicker";
+import { isMockMode } from "@/lib/lens/utils";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
-import { buildAppUrl } from "@/lib/lens/integrations/oauth";
 
-async function getConnections() {
+export const dynamic = "force-dynamic";
+
+const catalog = [
+  { key: "ga4", name: "Google Analytics 4", description: "Traffic, engagement and conversions.", available: true },
+  { key: "gsc", name: "Google Search Console", description: "Search clicks, impressions and rankings.", available: true },
+  { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: false },
+  { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: false },
+  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: false },
+  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: false },
+  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: false },
+  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: false },
+];
+
+export default async function IntegrationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ connected?: string; error?: string }>;
+}) {
+  const sp = await searchParams;
+
+  if (isMockMode()) {
+    return (
+      <>
+        <Topbar
+          title="Integrations"
+          subtitle="Connect the platforms your clients live on."
+        />
+        <main className="flex flex-col gap-6 px-6 py-8 lg:px-10">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {catalog.map((p) => (
+              <Card key={p.key}>
+                <div className="flex items-center justify-between gap-3">
+                  <CardTitle>{p.name}</CardTitle>
+                  <Badge tone="brand">Demo</Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted">{p.description}</p>
+              </Card>
+            ))}
+          </div>
+        </main>
+      </>
+    );
+  }
+
   const supabase = await createServerSupabase();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const userId = session?.user?.id;
-  if (!userId) return [] as Array<{ provider: string; status: string }>;
+  const { data: clients } = await supabase
+    .from("clients")
+    .select("id, name")
+    .order("created_at", { ascending: true })
+    .limit(1);
+  const client = clients?.[0] ?? null;
 
-  const { data: profile } = await supabase.from("profiles").select("id,agency_id").eq("id", userId).maybeSingle();
-  const agencyId = (profile as any)?.agency_id ?? null;
-  if (!agencyId) return [] as Array<{ provider: string; status: string }>;
-
-  const { data: clients } = await supabase.from("clients").select("id").eq("agency_id", agencyId);
-  const clientIds = (clients || []).map((client: any) => client.id);
-  if (clientIds.length === 0) return [] as Array<{ provider: string; status: string }>;
-
-  const { data } = await supabase.from("connections").select("provider,status,client_id").in("client_id", clientIds);
-  return (data || []).map((row: any) => ({ provider: row.provider, status: row.status }));
-}
-
-/**
- * Connect accounts per client workspace. OAuth flows start at
- * /api/lens/integrations/[provider]/connect and complete at the callback route.
- * Tokens are encrypted at rest.
- */
-export default async function IntegrationsPage() {
-  const connections = await getConnections();
-  const connectedByProvider = new Map(connections.map((item) => [item.provider, item.status]));
+  const connMap: Record<
+    string,
+    { external_account_id: string | null; last_synced_at: string | null }
+  > = {};
+  if (client) {
+    const { data: conns } = await supabase
+      .from("connections")
+      .select("provider, external_account_id, last_synced_at")
+      .eq("client_id", client.id);
+    for (const c of conns ?? []) {
+      connMap[c.provider] = {
+        external_account_id: c.external_account_id,
+        last_synced_at: c.last_synced_at,
+      };
+    }
+  }
 
   return (
     <>
       <Topbar
         title="Integrations"
-        subtitle="Connect once. Lens syncs daily and keeps every dashboard fresh."
+        subtitle={
+          client
+            ? `Connected platforms for ${client.name}.`
+            : "Connect the platforms your clients live on."
+        }
       />
-      <main className="grid grid-cols-1 gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3 lg:px-10">
-        {providerCatalog.map((p) => {
-          const connectionStatus = connectedByProvider.get(p.key);
-          const isConnected = connectionStatus === "active";
-          const isAvailable = p.status === "available";
-          const actionHref = buildAppUrl(`/api/lens/integrations/${p.key}/connect?clientId=default-workspace`);
-          return (
-            <Card key={p.key} className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl" aria-hidden>
-                  {p.emoji}
-                </span>
-                {isConnected ? (
-                  <Badge tone="positive">Connected</Badge>
-                ) : p.status === "available" ? (
-                  <Badge tone="positive">Available</Badge>
-                ) : (
-                  <Badge tone="attention">Approval pending</Badge>
-                )}
-              </div>
-              <h3 className="text-lg font-bold tracking-tight">{p.name}</h3>
-              <p className="flex-1 text-sm text-muted">{p.blurb}</p>
-              <ButtonLink
-                variant={isConnected ? "secondary" : isAvailable ? "primary" : "secondary"}
-                className="self-start"
-                href={actionHref}
-              >
-                {isConnected ? "Reconnect" : isAvailable ? "Connect" : "Coming soon"}
-              </ButtonLink>
-            </Card>
-          );
-        })}
+      <main className="flex flex-col gap-6 px-6 py-8 lg:px-10">
+        {sp.connected ? (
+          <div className="rounded-xl border border-line bg-brand-soft px-4 py-3 text-sm font-medium text-brand">
+            {sp.connected.toUpperCase()} connected successfully.
+          </div>
+        ) : null}
+        {sp.error ? (
+          <div className="rounded-xl border border-line bg-raised px-4 py-3 text-sm font-medium text-negative">
+            Connection failed: {sp.error}
+          </div>
+        ) : null}
+
+        {!client ? (
+          <Card className="flex flex-col items-start gap-3">
+            <CardTitle>Add a client first</CardTitle>
+            <p className="text-sm text-muted">
+              Integrations are connected per client. Create your first client,
+              then come back here.
+            </p>
+            <a
+              href="/products/lens/clients"
+              className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white"
+            >
+              Go to Clients
+            </a>
+          </Card>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <p className="text-sm text-muted">
+                Connected platforms sync the last 90 days of data.
+              </p>
+              <SyncNowButton />
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {catalog.map((p) => {
+                const conn = connMap[p.key];
+                return (
+                  <Card key={p.key}>
+                    <div className="flex items-center justify-between gap-3">
+                      <CardTitle>{p.name}</CardTitle>
+                      {conn ? (
+                        <Badge tone="positive">Connected</Badge>
+                      ) : p.available ? null : (
+                        <Badge tone="attention">Coming soon</Badge>
+                      )}
+                    </div>
+                    <p className="mt-2 text-sm text-muted">{p.description}</p>
+                    {conn ? (
+                      <>
+                        <AccountPicker
+                          provider={p.key}
+                          clientId={client.id}
+                          selected={conn.external_account_id}
+                        />
+                        {conn.last_synced_at ? (
+                          <p className="mt-2 text-xs text-muted">
+                            Last synced:{" "}
+                            {new Date(conn.last_synced_at).toLocaleString()}
+                          </p>
+                        ) : null}
+                      </>
+                    ) : p.available ? (
+                      <a
+                        href={`/api/lens/integrations/${p.key}/connect?clientId=${client.id}`}
+                        className="mt-4 inline-block rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white"
+                      >
+                        Connect
+                      </a>
+                    ) : null}
+                  </Card>
+                );
+              })}
+            </div>
+          </>
+        )}
       </main>
     </>
   );

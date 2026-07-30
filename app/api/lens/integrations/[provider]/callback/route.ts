@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
-import { encryptTokens } from "@/lib/lens/crypto";
-import { createAdminClient } from "@/lib/lens/supabase/admin";
-import { buildAppUrl, parseAndValidateOAuthState } from "@/lib/lens/integrations/oauth";
+import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import {
+  appUrl,
+  encryptSecret,
+  exchangeCodeForTokens,
+  unpackState,
+} from "@/lib/lens/integrations/google-oauth";
 
 export async function GET(
   request: Request,
@@ -9,48 +13,50 @@ export async function GET(
 ) {
   const { provider } = await params;
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
+  const base = appUrl() || url.origin;
+  const fail = (reason: string) =>
+    NextResponse.redirect(
+      `${base}/products/lens/integrations?error=${encodeURIComponent(reason)}`,
+    );
 
-  if (!code || !state) {
-    return NextResponse.json({ error: "Missing code or state" }, { status: 400 });
+  const code = url.searchParams.get("code");
+  const stateParam = url.searchParams.get("state");
+  if (!code || !stateParam) return fail("Missing code or state");
+
+  const state = unpackState(stateParam);
+  if (!state || state.provider !== provider || !state.clientId) {
+    return fail("Invalid or tampered state");
   }
 
   try {
-    const parsedState = parseAndValidateOAuthState(state);
+    const tokens = await exchangeCodeForTokens(provider, code);
+    const supabase = await createServerSupabase();
 
-    let impl: any = null;
-    if (provider === "ga4") impl = (await import("@/lib/lens/integrations/ga4")).ga4Provider;
-    else if (provider === "gsc") impl = (await import("@/lib/lens/integrations/gsc")).gscProvider;
-    else return NextResponse.json({ error: "Unknown provider" }, { status: 400 });
+    await supabase
+      .from("connections")
+      .delete()
+      .eq("client_id", state.clientId as string)
+      .eq("provider", provider);
 
-    const tokens = await impl.exchangeCode(code);
-    const encryptedTokens = encryptTokens(JSON.stringify(tokens));
-
-    const admin = createAdminClient();
-    await admin.from("connections").upsert(
-      {
-        client_id: parsedState.clientId,
-        provider,
-        external_account_id: parsedState.externalAccountId ?? null,
-        encrypted_tokens: encryptedTokens,
-        status: "active",
-      },
-      { onConflict: "client_id,provider" },
-    );
-
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/lens/sync`, {
-        method: "POST",
-        headers: { "x-cron-secret": process.env.CRON_SECRET ?? "" },
-      });
-    } catch (err) {
-      console.error("Initial sync trigger failed", err);
+    const { error } = await supabase.from("connections").insert({
+      client_id: state.clientId as string,
+      provider,
+      access_token_enc: encryptSecret(tokens.access_token),
+      refresh_token_enc: tokens.refresh_token
+        ? encryptSecret(tokens.refresh_token)
+        : null,
+        scopes: tokens.scope ? tokens.scope.split(" ") : [],
+  status: "active",
+});
+    if (error) {
+      console.error("[lens] save connection failed:", error.message);
+      return fail(error.message);
     }
-
-    return NextResponse.redirect(buildAppUrl(`/products/lens/integrations?connected=${provider}`));
+    return NextResponse.redirect(
+      `${base}/products/lens/integrations?connected=${provider}`,
+    );
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Integration failed" }, { status: 500 });
+    console.error("[lens] oauth callback failed:", err);
+    return fail(err instanceof Error ? err.message : "Connection failed");
   }
 }
