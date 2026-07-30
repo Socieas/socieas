@@ -1,7 +1,9 @@
 import { Card, CardTitle } from "@/components/lens/ui/card";
 import { MetricCard } from "@/components/lens/dashboard/MetricCard";
 import { TrendChart } from "@/components/lens/dashboard/TrendChart";
-import { mockOverviewCards, mockTrend } from "@/lib/lens/mock/data";
+import { mockTrend } from "@/lib/lens/mock/data";
+import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import type { MetricSummary, SeriesPoint } from "@/lib/lens/types";
 
 const topPages = [
   { page: "/blog/ai-search-visibility-guide", sessions: 4820, share: "12.4%" },
@@ -19,19 +21,64 @@ const sources = [
   { source: "Email", sessions: 4850, share: "8%" },
 ];
 
+async function getClientAnalytics(clientId: string) {
+  const supabase = await createServerSupabase();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+  if (!userId) return { cards: [] as MetricSummary[], trend: [] as SeriesPoint[] };
+
+  const { data: profile } = await supabase.from("profiles").select("id,agency_id").eq("id", userId).maybeSingle();
+  const agencyId = (profile as any)?.agency_id ?? null;
+  const { data: client } = await supabase
+    .from("clients")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("id", clientId)
+    .maybeSingle();
+  if (!client) return { cards: [] as MetricSummary[], trend: [] as SeriesPoint[] };
+
+  const end = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - 89);
+  const startDate = start.toISOString().slice(0, 10);
+  const endDate = end.toISOString().slice(0, 10);
+  const { data: rows } = await supabase
+    .from("metrics_daily")
+    .select("metric,value,date")
+    .eq("agency_id", agencyId)
+    .eq("client_id", clientId)
+    .gte("date", startDate)
+    .lte("date", endDate);
+
+  const cards = Object.entries(
+    (rows || []).reduce<Record<string, number>>((acc, row: any) => {
+      acc[row.metric] = (acc[row.metric] || 0) + Number(row.value || 0);
+      return acc;
+    }, {}),
+  )
+    .slice(0, 4)
+    .map(([metric, value]) => ({ key: metric, label: metric, value, delta: 0, source: "Metrics" }));
+
+  const trend = (rows || []).filter((row: any) => row.metric === "sessions").map((row: any) => ({ date: row.date, value: Number(row.value || 0) }));
+  return { cards, trend };
+}
+
 /** GA4 module: users, sessions, engagement, sources, devices, countries. */
-export default function AnalyticsPage() {
+export default async function AnalyticsPage({ params }: { params: Promise<{ clientId: string }> }) {
+  const { clientId } = await params;
+  const { cards, trend } = await getClientAnalytics(clientId);
+
   return (
     <div className="flex flex-col gap-8">
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {mockOverviewCards.slice(0, 4).map((m) => (
-          <MetricCard key={m.key} metric={m} />
-        ))}
+        {cards.length > 0 ? cards.map((m) => <MetricCard key={m.key} metric={m} />) : <div className="col-span-full rounded-card border border-dashed border-line p-8 text-center text-sm text-muted">No analytics data yet for this client.</div>}
       </section>
 
       <Card>
         <CardTitle className="mb-4">Users over time</CardTitle>
-        <TrendChart data={mockTrend(90, 900)} />
+        <TrendChart data={trend.length > 0 ? trend : mockTrend(90, 900)} />
       </Card>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">

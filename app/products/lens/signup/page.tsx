@@ -26,25 +26,35 @@ export default function SignupPage() {
       return;
     }
 
-    // Expect an immediate user id when possible; if not, the user may need
-    // to confirm via email. Try to initialize DB rows when we have an id.
     const userId = (data as any)?.user?.id ?? (data as any)?.user_id ?? null;
-    if (userId) {
-      try {
-        await fetch("/api/lens/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, email, fullName, agencyName }),
-        });
-      } catch (err) {
-        // non-fatal client-side; surface to UI
-        console.error(err);
-      }
+    if (!userId) {
+      setError("Signup was created, but the user id was not returned. Please try again.");
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
-    // Redirect to login to continue (or landing)
-    window.location.assign(buildAppUrl("/products/lens/login"));
+    try {
+      const response = await fetch("/api/lens/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, email, fullName, agencyName }),
+      });
+
+      const body = await response.json().catch(() => null);
+      if (!response.ok) {
+        const message = body?.error ?? "Signup initialization failed.";
+        throw new Error(message);
+      }
+
+      setLoading(false);
+      window.location.assign(buildAppUrl("/products/lens/login"));
+      return;
+    } catch (err) {
+      console.error("Lens signup initialization failed", err);
+      setError(err instanceof Error ? err.message : "Signup initialization failed.");
+      setLoading(false);
+      return;
+    }
   }
 
   return (
