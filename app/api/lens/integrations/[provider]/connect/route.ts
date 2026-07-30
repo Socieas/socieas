@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-
-function buildState(clientId: string) {
-  const payload = JSON.stringify({ clientId });
-  return Buffer.from(payload, "utf8").toString("base64url");
-}
+import { buildOAuthState, getProviderCallbackUrl } from "@/lib/lens/integrations/oauth";
 
 export async function GET(
   request: Request,
@@ -12,6 +8,7 @@ export async function GET(
   const { provider } = await params;
   const url = new URL(request.url);
   const clientId = url.searchParams.get("clientId") ?? "default-workspace";
+  const externalAccountId = url.searchParams.get("externalAccountId") ?? undefined;
 
   let impl: any = null;
   if (provider === "ga4") impl = (await import("@/lib/lens/integrations/ga4")).ga4Provider;
@@ -20,6 +17,9 @@ export async function GET(
     return NextResponse.json({ error: "Unknown provider" }, { status: 400 });
   }
 
-  const authUrl = impl.getAuthUrl(buildState(clientId));
-  return NextResponse.redirect(authUrl);
+  const redirectUri = getProviderCallbackUrl(provider);
+  const authUrl = impl.getAuthUrl(buildOAuthState({ clientId, externalAccountId }));
+  const redirectUrl = new URL(authUrl);
+  redirectUrl.searchParams.set("redirect_uri", redirectUri);
+  return NextResponse.redirect(redirectUrl.toString());
 }

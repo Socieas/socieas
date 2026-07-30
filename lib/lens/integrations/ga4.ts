@@ -1,4 +1,5 @@
 import type { MetricRow, Provider, ProviderTokens } from "./types";
+import { getProviderCallbackUrl } from "./oauth";
 
 /**
  * Google Analytics 4 via the Analytics Data API v1.
@@ -30,7 +31,7 @@ export const ga4Provider: Provider = {
   getAuthUrl(state: string): string {
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID ?? "",
-      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/lens/integrations/ga4/callback`,
+      redirect_uri: getProviderCallbackUrl("ga4"),
       response_type: "code",
       access_type: "offline",
       prompt: "consent",
@@ -45,7 +46,7 @@ export const ga4Provider: Provider = {
       code: _code,
       client_id: process.env.GOOGLE_CLIENT_ID ?? "",
       client_secret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/lens/integrations/ga4/callback`,
+      redirect_uri: getProviderCallbackUrl("ga4"),
       grant_type: "authorization_code",
     });
     const res = await fetch("https://oauth2.googleapis.com/token", {

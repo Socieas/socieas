@@ -1,4 +1,5 @@
 import type { MetricRow, Provider, ProviderTokens } from "./types";
+import { getProviderCallbackUrl } from "./oauth";
 
 /**
  * Google Search Console via the Search Console API.
@@ -19,7 +20,7 @@ export const gscProvider: Provider = {
   getAuthUrl(state: string): string {
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID ?? "",
-      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/lens/integrations/gsc/callback`,
+      redirect_uri: getProviderCallbackUrl("gsc"),
       response_type: "code",
       access_type: "offline",
       prompt: "consent",
@@ -34,7 +35,7 @@ export const gscProvider: Provider = {
       code: _code,
       client_id: process.env.GOOGLE_CLIENT_ID ?? "",
       client_secret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/lens/integrations/gsc/callback`,
+      redirect_uri: getProviderCallbackUrl("gsc"),
       grant_type: "authorization_code",
     });
     const res = await fetch("https://oauth2.googleapis.com/token", {

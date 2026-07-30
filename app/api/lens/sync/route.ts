@@ -51,13 +51,16 @@ export async function POST(request: Request) {
 
         // Upsert rows into metrics_daily
         for (const r of metricRows) {
-          await admin.from("metrics_daily").upsert({
-            client_id: conn.client_id,
-            metric: r.metric,
-            dimension: r.dimension ?? null,
-            date: r.date,
-            value: r.value,
-          }, { onConflict: ["client_id", "metric", "date", "dimension"] });
+          await admin.from("metrics_daily").upsert(
+            {
+              client_id: conn.client_id,
+              metric: r.metric,
+              dimension: r.dimension ?? null,
+              date: r.date,
+              value: r.value,
+            },
+            { onConflict: "client_id,metric,date,dimension" },
+          );
         }
       } catch (err) {
         console.error("Failed to sync connection", conn.id, err);

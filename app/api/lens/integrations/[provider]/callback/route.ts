@@ -1,25 +1,7 @@
 import { NextResponse } from "next/server";
-
-/**
- * OAuth callback for every provider: /api/lens/integrations/ga4/callback etc.
- *
- * Phase 1 flow:
- * 1. Validate `state` (contains client workspace id + CSRF nonce).
- * 2. provider.exchangeCode(code) -> tokens.
- * 3. Encrypt tokens with TOKEN_ENCRYPTION_KEY (AES-256-GCM) and upsert the
- *    `connections` row for this client + provider.
- * 4. Kick off an initial 90 day backfill sync.
- * 5. Redirect back to the client integrations tab with a success toast.
- */
-function parseState(rawState: string): string {
-  try {
-    const decoded = Buffer.from(rawState, "base64url").toString("utf8");
-    const parsed = JSON.parse(decoded) as { clientId?: string };
-    return parsed.clientId ?? "default-workspace";
-  } catch {
-    return rawState || "default-workspace";
-  }
-}
+import { encryptTokens } from "@/lib/lens/crypto";
+import { createAdminClient } from "@/lib/lens/supabase/admin";
+import { parseAndValidateOAuthState } from "@/lib/lens/integrations/oauth";
 
 export async function GET(
   request: Request,
@@ -35,35 +17,28 @@ export async function GET(
   }
 
   try {
-    const clientId = parseState(state);
+    const parsedState = parseAndValidateOAuthState(state);
 
-    // load provider implementation
     let impl: any = null;
     if (provider === "ga4") impl = (await import("@/lib/lens/integrations/ga4")).ga4Provider;
     else if (provider === "gsc") impl = (await import("@/lib/lens/integrations/gsc")).gscProvider;
     else return NextResponse.json({ error: "Unknown provider" }, { status: 400 });
 
     const tokens = await impl.exchangeCode(code);
+    const encryptedTokens = encryptTokens(JSON.stringify(tokens));
 
-    // Encrypt tokens
-    const { encryptTokens } = await import("@/lib/lens/crypto");
-    const enc = encryptTokens(JSON.stringify(tokens));
-
-    // Upsert into connections table
-    const { createAdminClient } = await import("@/lib/lens/supabase/admin");
     const admin = createAdminClient();
     await admin.from("connections").upsert(
       {
-        client_id: clientId,
-        provider: provider,
-        external_account_id: tokens?.propertyId ?? tokens?.siteUrl ?? null,
-        encrypted_tokens: enc,
+        client_id: parsedState.clientId,
+        provider,
+        external_account_id: parsedState.externalAccountId ?? null,
+        encrypted_tokens: encryptedTokens,
         status: "active",
       },
       { onConflict: "client_id,provider" },
     );
 
-    // Trigger initial sync (best-effort)
     try {
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/lens/sync`, {
         method: "POST",
