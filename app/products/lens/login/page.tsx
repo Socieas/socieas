@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/lens/supabase/client";
+import { buildAppUrl } from "@/lib/lens/integrations/oauth";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -17,7 +18,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) setError(error.message);
-    else window.location.href = "/products/lens";
+    else window.location.assign(buildAppUrl("/products/lens"));
   }
 
   return (

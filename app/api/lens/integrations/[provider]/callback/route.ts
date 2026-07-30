@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { encryptTokens } from "@/lib/lens/crypto";
 import { createAdminClient } from "@/lib/lens/supabase/admin";
-import { parseAndValidateOAuthState } from "@/lib/lens/integrations/oauth";
+import { buildAppUrl, parseAndValidateOAuthState } from "@/lib/lens/integrations/oauth";
 
 export async function GET(
   request: Request,
@@ -48,9 +48,7 @@ export async function GET(
       console.error("Initial sync trigger failed", err);
     }
 
-    return NextResponse.redirect(
-      new URL(`/products/lens/integrations?connected=${provider}`, url.origin),
-    );
+    return NextResponse.redirect(buildAppUrl(`/products/lens/integrations?connected=${provider}`));
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Integration failed" }, { status: 500 });

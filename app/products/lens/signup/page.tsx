@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/lens/supabase/client";
+import { buildAppUrl } from "@/lib/lens/integrations/oauth";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -43,7 +44,7 @@ export default function SignupPage() {
 
     setLoading(false);
     // Redirect to login to continue (or landing)
-    window.location.href = "/products/lens/login";
+    window.location.assign(buildAppUrl("/products/lens/login"));
   }
 
   return (

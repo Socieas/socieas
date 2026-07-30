@@ -12,6 +12,11 @@ export function getProviderCallbackUrl(provider: string, baseUrl = process.env.N
   return `${baseUrl.replace(/\/$/, "")}/api/lens/integrations/${provider}/callback`;
 }
 
+export function buildAppUrl(path: string, baseUrl = process.env.NEXT_PUBLIC_APP_URL) {
+  if (!baseUrl) throw new Error("Missing NEXT_PUBLIC_APP_URL");
+  return new URL(path, `${baseUrl.replace(/\/$/, "")}/`).toString();
+}
+
 export function buildOAuthState(payload: OAuthStatePayload) {
   const statePayload: OAuthStatePayload = {
     clientId: payload.clientId,
