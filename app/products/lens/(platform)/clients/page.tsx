@@ -1,124 +1,101 @@
 import Link from "next/link";
 import { Topbar } from "@/components/lens/layout/Topbar";
-import { Card } from "@/components/lens/ui/card";
-import { Badge } from "@/components/lens/ui/badge";
-import { formatDelta, isMockMode } from "@/lib/lens/utils";
+import { Card, CardTitle } from "@/components/lens/ui/card";
+import { AddClientForm } from "@/components/lens/clients/AddClientForm";
+import { isMockMode } from "@/lib/lens/utils";
 import { mockClients } from "@/lib/lens/mock/data";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
-import { AddClientForm } from "@/components/lens/clients/AddClientForm";
 
 export const dynamic = "force-dynamic";
-
-async function getRealClients() {
-  const supabase = await createServerSupabase();
-  const { data: clients, error } = await supabase
-    .from("clients")
-    .select("*")
-    .order("created_at", { ascending: true });
-  if (error) console.error("[lens] load clients failed:", error.message);
-
-  const list = clients ?? [];
-  const counts: Record<string, number> = {};
-  if (list.length > 0) {
-    const { data: conns } = await supabase
-      .from("connections")
-      .select("client_id")
-      .in(
-        "client_id",
-        list.map((c) => c.id),
-      );
-    for (const row of conns ?? []) {
-      counts[row.client_id] = (counts[row.client_id] ?? 0) + 1;
-    }
-  }
-  return { list, counts };
-}
 
 export default async function ClientsPage() {
   if (isMockMode()) {
     return (
       <>
-        <Topbar
-          title="Clients"
-          subtitle="Each client gets an isolated workspace: own connections, branding, and reports."
-        />
-        <main className="grid grid-cols-1 gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3 lg:px-10">
-          {mockClients.map((c) => (
-            <Link key={c.id} href={`/products/lens/clients/${c.id}/overview`}>
-              <Card className="transition hover:shadow-glow">
+        <Topbar title="Clients" subtitle="Every client workspace in one place." />
+        <main className="flex flex-col gap-6 px-6 py-8 lg:px-10">
+          <AddClientForm />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {mockClients.map((c) => (
+              <Card key={c.id}>
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden
-                    className="flex h-12 w-12 items-center justify-center rounded-xl text-base font-black text-white"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black text-white"
                     style={{ backgroundColor: c.brandColor }}
                   >
                     {c.name.slice(0, 1)}
                   </span>
                   <div>
-                    <p className="text-lg font-bold">{c.name}</p>
+                    <p className="font-bold">{c.name}</p>
                     <p className="text-xs text-muted">
-                      {c.websiteUrl.replace("https://", "")}
+                      {c.connected.length} platforms connected
                     </p>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <Badge tone="brand">{c.connected.length} connected</Badge>
-                  <span className="text-sm text-muted">
-                    {c.headline.metric}{" "}
-                    <span
-                      className={
-                        c.headline.delta >= 0
-                          ? "font-bold text-positive"
-                          : "font-bold text-negative"
-                      }
-                    >
-                      {formatDelta(c.headline.delta)}
-                    </span>
-                  </span>
-                </div>
               </Card>
-            </Link>
-          ))}
-          <AddClientForm />
+            ))}
+          </div>
         </main>
       </>
     );
   }
 
-  const { list, counts } = await getRealClients();
+  const supabase = await createServerSupabase();
+  const { data: clients } = await supabase
+    .from("clients")
+    .select("*")
+    .order("created_at", { ascending: true });
+  const list = clients ?? [];
+
+  const { data: conns } = await supabase
+    .from("connections")
+    .select("client_id");
+  const counts: Record<string, number> = {};
+  for (const row of conns ?? []) {
+    counts[row.client_id] = (counts[row.client_id] ?? 0) + 1;
+  }
 
   return (
     <>
-      <Topbar
-        title="Clients"
-        subtitle="Each client gets an isolated workspace: own connections, branding, and reports."
-      />
-      <main className="grid grid-cols-1 gap-4 px-6 py-8 md:grid-cols-2 xl:grid-cols-3 lg:px-10">
-        {list.map((c) => (
-          <Card key={c.id} className="transition hover:shadow-glow">
-            <div className="flex items-center gap-3">
-              <span
-                aria-hidden
-                className="flex h-12 w-12 items-center justify-center rounded-xl text-base font-black text-white"
-                style={{ backgroundColor: c.brand_color ?? "#7C3AED" }}
-              >
-                {String(c.name ?? "?").slice(0, 1)}
-              </span>
-              <div>
-                <p className="text-lg font-bold">{c.name}</p>
-                <p className="text-xs text-muted">
-                  {String(c.website_url ?? "").replace("https://", "") ||
-                    "No website yet"}
-                </p>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center justify-between">
-              <Badge tone="brand">{counts[c.id] ?? 0} connected</Badge>
-              <span className="text-sm text-muted">Ready to connect platforms</span>
-            </div>
-          </Card>
-        ))}
+      <Topbar title="Clients" subtitle="Every client workspace in one place." />
+      <main className="flex flex-col gap-6 px-6 py-8 lg:px-10">
         <AddClientForm />
+        {list.length === 0 ? (
+          <Card>
+            <CardTitle>No clients yet</CardTitle>
+            <p className="mt-2 text-sm text-muted">
+              Add your first client above to get started.
+            </p>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {list.map((c) => (
+              <Link key={c.id} href={`/products/lens/clients/${c.id}`}>
+                <Card className="transition hover:shadow-glow">
+                  <div className="flex items-center gap-3">
+                    <span
+                      aria-hidden
+                      className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black text-white"
+                      style={{ backgroundColor: c.brand_color ?? "#7C3AED" }}
+                    >
+                      {String(c.name ?? "?").slice(0, 1)}
+                    </span>
+                    <div>
+                      <p className="font-bold">{c.name}</p>
+                      <p className="text-xs text-muted">
+                        {counts[c.id] ?? 0} platforms connected
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-4 truncate text-sm text-muted">
+                    {c.website_url}
+                  </p>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
       </main>
     </>
   );

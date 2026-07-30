@@ -7,109 +7,150 @@ import {
 
 const DAYS = 90;
 
+const GSC_SITES_URL = "https://www.googleapis.com/webmasters/v3/sites";
+const GA4_DATA_URL = "https://analyticsdata.googleapis.com/v1beta/";
+const GA4_ADMIN_URL =
+  "https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=50";
+
 function isoDaysAgo(days: number) {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d.toISOString().slice(0, 10);
 }
 
-type MetricPoint = { metric: string; date: string; value: number };
+type MetricRow = {
+  metric: string;
+  date: string;
+  value: number;
+  dimension?: string | null;
+};
 
-async function ga4FirstProperty(accessToken: string): Promise<string | null> {
-  const res = await fetch(
-    "https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=50",
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
+async function ga4Run(
+  accessToken: string,
+  propertyId: string,
+  body: Record<string, unknown>,
+) {
+  const res = await fetch(GA4_DATA_URL + propertyId + ":runReport", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + accessToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
   const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json?.error?.message ?? "Could not list GA4 properties");
-  }
-  for (const acc of json.accountSummaries ?? []) {
-    const prop = (acc.propertySummaries ?? [])[0];
-    if (prop?.property) return prop.property as string;
-  }
-  return null;
+  if (!res.ok) throw new Error(json?.error?.message ?? "GA4 report failed");
+  return json;
 }
 
 async function ga4Fetch(
   accessToken: string,
   propertyId: string,
-): Promise<MetricPoint[]> {
-  const res = await fetch(
-    `https://analyticsdata.googleapis.com/v1beta/${propertyId}:runReport`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        dateRanges: [{ startDate: `${DAYS}daysAgo`, endDate: "today" }],
-        dimensions: [{ name: "date" }],
-        metrics: [
-          { name: "sessions" },
-          { name: "totalUsers" },
-          { name: "screenPageViews" },
-        ],
-      }),
-    },
-  );
-  const json = await res.json();
-  if (!res.ok) throw new Error(json?.error?.message ?? "GA4 report failed");
+): Promise<MetricRow[]> {
+  const out: MetricRow[] = [];
 
-  const names = ["sessions", "users", "pageviews"];
-  const out: MetricPoint[] = [];
-  for (const row of json.rows ?? []) {
+  const daily = await ga4Run(accessToken, propertyId, {
+    dateRanges: [{ startDate: DAYS + "daysAgo", endDate: "today" }],
+    dimensions: [{ name: "date" }],
+    metrics: [
+      { name: "sessions" },
+      { name: "totalUsers" },
+      { name: "screenPageViews" },
+      { name: "engagementRate" },
+      { name: "averageSessionDuration" },
+    ],
+  });
+  const names = [
+    "sessions",
+    "users",
+    "pageviews",
+    "engagement_rate",
+    "avg_engagement_time",
+  ];
+  for (const row of daily.rows ?? []) {
     const raw = String(row.dimensionValues?.[0]?.value ?? "");
-    const date = `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;
-    (row.metricValues ?? []).forEach(
-      (mv: { value?: string }, i: number) => {
-        out.push({ metric: names[i] ?? `metric_${i}`, date, value: Number(mv?.value ?? 0) });
-      },
-    );
+    const date =
+      raw.slice(0, 4) + "-" + raw.slice(4, 6) + "-" + raw.slice(6, 8);
+    (row.metricValues ?? []).forEach((mv: { value?: string }, i: number) => {
+      let value = Number(mv?.value ?? 0);
+      if (names[i] === "engagement_rate") value = value * 100;
+      out.push({ metric: names[i] ?? "metric_" + i, date, value });
+    });
   }
+
+  const pages = await ga4Run(accessToken, propertyId, {
+    dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+    dimensions: [{ name: "pagePath" }],
+    metrics: [{ name: "screenPageViews" }],
+    orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
+    limit: 10,
+  });
+  for (const row of pages.rows ?? []) {
+    out.push({
+      metric: "top_pages",
+      date: isoDaysAgo(0),
+      dimension: String(row.dimensionValues?.[0]?.value ?? ""),
+      value: Number(row.metricValues?.[0]?.value ?? 0),
+    });
+  }
+
+  const channels = await ga4Run(accessToken, propertyId, {
+    dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+    dimensions: [{ name: "sessionDefaultChannelGroup" }],
+    metrics: [{ name: "sessions" }],
+    orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
+    limit: 20,
+  });
+  for (const row of channels.rows ?? []) {
+    out.push({
+      metric: "traffic_channel",
+      date: isoDaysAgo(0),
+      dimension: String(row.dimensionValues?.[0]?.value ?? ""),
+      value: Number(row.metricValues?.[0]?.value ?? 0),
+    });
+  }
+
   return out;
 }
 
-async function gscSites(accessToken: string): Promise<string[]> {
-  const res = await fetch("https://www.googleapis.com/webmasters/v3/sites", {
-    headers: { Authorization: `Bearer ${accessToken}` },
+async function gscQuery(
+  accessToken: string,
+  siteUrl: string,
+  body: Record<string, unknown>,
+) {
+  const gscUrl =
+    GSC_SITES_URL +
+    "/" +
+    encodeURIComponent(siteUrl) +
+    "/searchAnalytics/query";
+  const res = await fetch(gscUrl, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + accessToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
   });
   const json = await res.json();
   if (!res.ok) {
-    throw new Error(
-      json?.error?.message ?? "Could not list Search Console sites",
-    );
+    throw new Error(json?.error?.message ?? "Search Console query failed");
   }
-  return (json.siteEntry ?? []).map((s: { siteUrl: string }) => s.siteUrl);
+  return json;
 }
 
 async function gscFetch(
   accessToken: string,
   siteUrl: string,
-): Promise<MetricPoint[]> {
-  const res = await fetch(
-    `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        startDate: isoDaysAgo(DAYS),
-        endDate: isoDaysAgo(1),
-        dimensions: ["date"],
-        rowLimit: 1000,
-      }),
-    },
-  );
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json?.error?.message ?? "Search Console query failed");
-  }
-  const out: MetricPoint[] = [];
-  for (const row of json.rows ?? []) {
+): Promise<MetricRow[]> {
+  const out: MetricRow[] = [];
+
+  const daily = await gscQuery(accessToken, siteUrl, {
+    startDate: isoDaysAgo(DAYS),
+    endDate: isoDaysAgo(1),
+    dimensions: ["date"],
+    rowLimit: 1000,
+  });
+  for (const row of daily.rows ?? []) {
     const date = String(row.keys?.[0] ?? "");
     out.push({ metric: "clicks", date, value: Number(row.clicks ?? 0) });
     out.push({
@@ -123,6 +164,43 @@ async function gscFetch(
       value: Number(row.position ?? 0),
     });
   }
+
+  const geo = await gscQuery(accessToken, siteUrl, {
+    startDate: isoDaysAgo(30),
+    endDate: isoDaysAgo(1),
+    dimensions: ["country"],
+    rowLimit: 250,
+  });
+  const geoDate = isoDaysAgo(1);
+  for (const row of geo.rows ?? []) {
+    const country = String(row.keys?.[0] ?? "").toUpperCase();
+    if (!country) continue;
+    out.push({
+      metric: "geo_clicks",
+      date: geoDate,
+      dimension: country,
+      value: Number(row.clicks ?? 0),
+    });
+    out.push({
+      metric: "geo_impressions",
+      date: geoDate,
+      dimension: country,
+      value: Number(row.impressions ?? 0),
+    });
+    out.push({
+      metric: "geo_position",
+      date: geoDate,
+      dimension: country,
+      value: Number(row.position ?? 0),
+    });
+    out.push({
+      metric: "geo_ctr",
+      date: geoDate,
+      dimension: country,
+      value: Number(row.ctr ?? 0) * 100,
+    });
+  }
+
   return out;
 }
 
@@ -166,10 +244,27 @@ export async function POST(request: Request) {
       }
 
       let account = (conn.external_account_id as string | null) ?? null;
-      let rows: MetricPoint[] = [];
+      let rows: MetricRow[] = [];
 
       if (conn.provider === "ga4") {
-        if (!account) account = await ga4FirstProperty(accessToken);
+        if (!account) {
+          const res = await fetch(GA4_ADMIN_URL, {
+            headers: { Authorization: "Bearer " + accessToken },
+          });
+          const json = await res.json();
+          if (!res.ok) {
+            throw new Error(
+              json?.error?.message ?? "Could not list GA4 properties",
+            );
+          }
+          for (const acc of json.accountSummaries ?? []) {
+            const prop = (acc.propertySummaries ?? [])[0];
+            if (prop?.property) {
+              account = prop.property as string;
+              break;
+            }
+          }
+        }
         if (!account) {
           throw new Error("No GA4 property found for this Google account");
         }
@@ -185,9 +280,22 @@ export async function POST(request: Request) {
             .replace(/^https?:\/\//, "")
             .replace(/^www\./, "")
             .replace(/\/.*$/, "");
-          const sites = await gscSites(accessToken);
+          const res = await fetch(GSC_SITES_URL, {
+            headers: { Authorization: "Bearer " + accessToken },
+          });
+          const json = await res.json();
+          if (!res.ok) {
+            throw new Error(
+              json?.error?.message ?? "Could not list Search Console sites",
+            );
+          }
+          const sites = (json.siteEntry ?? []).map(
+            (s: { siteUrl: string }) => s.siteUrl,
+          );
           account =
-            sites.find((s) => domain && s.includes(domain)) ?? sites[0] ?? null;
+            sites.find((s: string) => domain && s.includes(domain)) ??
+            sites[0] ??
+            null;
         }
         if (!account) {
           throw new Error("No verified Search Console site found");
@@ -207,12 +315,14 @@ export async function POST(request: Request) {
             client_id: conn.client_id,
             provider: conn.provider,
             metric: r.metric,
-            dimension: null,
+            dimension: r.dimension ?? null,
             date: r.date,
             value: r.value,
           })),
         );
-        if (insErr) throw new Error(`Saving metrics failed: ${insErr.message}`);
+        if (insErr) {
+          throw new Error("Saving metrics failed: " + insErr.message);
+        }
       }
 
       await supabase
@@ -225,7 +335,7 @@ export async function POST(request: Request) {
 
       results.push({ provider: conn.provider, saved: rows.length });
     } catch (err) {
-      console.error(`[lens] sync failed for ${conn.provider}:`, err);
+      console.error("[lens] sync failed for " + conn.provider + ":", err);
       results.push({
         provider: conn.provider,
         error: err instanceof Error ? err.message : "Unknown error",

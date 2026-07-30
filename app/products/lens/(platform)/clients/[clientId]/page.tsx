@@ -9,7 +9,12 @@ import { createClient as createServerSupabase } from "@/lib/lens/supabase/server
 
 export const dynamic = "force-dynamic";
 
-type Row = { metric: string; date: string; value: number };
+type Row = {
+  metric: string;
+  date: string;
+  value: number;
+  dimension: string | null;
+};
 
 function isoDaysAgo(days: number) {
   const d = new Date();
@@ -17,21 +22,19 @@ function isoDaysAgo(days: number) {
   return d.toISOString().slice(0, 10);
 }
 
-function sumRange(rows: Row[], metric: string, from: string, to: string) {
+function sumRange(rows: Row[], metric: string, from: string) {
   let total = 0;
   for (const r of rows) {
-    if (r.metric === metric && r.date >= from && r.date < to) {
-      total += r.value;
-    }
+    if (r.metric === metric && !r.dimension && r.date >= from) total += r.value;
   }
   return total;
 }
 
-function avgRange(rows: Row[], metric: string, from: string, to: string) {
+function avgRange(rows: Row[], metric: string, from: string) {
   let total = 0;
   let count = 0;
   for (const r of rows) {
-    if (r.metric === metric && r.date >= from && r.date < to) {
+    if (r.metric === metric && !r.dimension && r.date >= from) {
       total += r.value;
       count += 1;
     }
@@ -39,10 +42,10 @@ function avgRange(rows: Row[], metric: string, from: string, to: string) {
   return count > 0 ? total / count : 0;
 }
 
-function series(rows: Row[], metric: string, from: string, to: string) {
+function series(rows: Row[], metric: string, from: string) {
   const byDate: Record<string, number> = {};
   for (const r of rows) {
-    if (r.metric !== metric || r.date < from || r.date >= to) continue;
+    if (r.metric !== metric || r.dimension || r.date < from) continue;
     byDate[r.date] = (byDate[r.date] ?? 0) + r.value;
   }
   return Object.keys(byDate)
@@ -50,25 +53,22 @@ function series(rows: Row[], metric: string, from: string, to: string) {
     .map((date) => ({ date, value: byDate[date] }));
 }
 
+function dimRows(rows: Row[], metric: string) {
+  return rows
+    .filter((r) => r.metric === metric && r.dimension)
+    .sort((a, b) => b.value - a.value);
+}
+
+function formatDuration(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  return `${m}m ${s}s`;
+}
+
 const providerNames: Record<string, string> = {
   ga4: "Google Analytics 4",
   gsc: "Google Search Console",
-  instagram: "Instagram",
-  facebook: "Facebook",
-  linkedin: "LinkedIn",
-  youtube: "YouTube",
-  google_ads: "Google Ads",
-  meta_ads: "Meta Ads",
 };
-
-const statConfig = [
-  { label: "Sessions", metric: "sessions", source: "Analytics", kind: "sum" },
-  { label: "Users", metric: "users", source: "Analytics", kind: "sum" },
-  { label: "Pageviews", metric: "pageviews", source: "Analytics", kind: "sum" },
-  { label: "Search clicks", metric: "clicks", source: "Search Console", kind: "sum" },
-  { label: "Impressions", metric: "impressions", source: "Search Console", kind: "sum" },
-  { label: "Avg. position", metric: "avg_position", source: "Search Console", kind: "avg" },
-] as const;
 
 export default async function ClientDetailPage({
   params,
@@ -102,44 +102,81 @@ export default async function ClientDetailPage({
 
   const { data: conns } = await supabase
     .from("connections")
-    .select("provider, status, last_synced_at")
+    .select("provider, last_synced_at")
     .eq("client_id", clientId);
   const connections = conns ?? [];
 
   const { data: metricsRaw } = await supabase
     .from("metrics_daily")
-    .select("metric, date, value")
+    .select("metric, date, value, dimension")
     .eq("client_id", clientId)
-    .limit(5000);
+    .limit(8000);
   const rows: Row[] = (metricsRaw ?? []).map((r) => ({
     metric: String(r.metric),
     date: String(r.date),
     value: Number(r.value ?? 0),
+    dimension: r.dimension ? String(r.dimension) : null,
   }));
 
   const from30 = isoDaysAgo(30);
-  const from60 = isoDaysAgo(60);
   const from90 = isoDaysAgo(90);
-  const farFuture = "9999-12-31";
 
-  const stats = statConfig
-    .filter((s) => rows.some((r) => r.metric === s.metric))
-    .map((s) => {
-      const cur =
-        s.kind === "avg"
-          ? avgRange(rows, s.metric, from30, farFuture)
-          : sumRange(rows, s.metric, from30, farFuture);
-      const prev =
-        s.kind === "avg"
-          ? avgRange(rows, s.metric, from60, from30)
-          : sumRange(rows, s.metric, from60, from30);
-      const delta = prev > 0 ? ((cur - prev) / prev) * 100 : null;
-      const goodWhenDown = s.metric === "avg_position";
-      return { ...s, cur, delta, goodWhenDown };
+  const sessions = sumRange(rows, "sessions", from30);
+  const users = sumRange(rows, "users", from30);
+  const pageviews = sumRange(rows, "pageviews", from30);
+  const engagementRate = avgRange(rows, "engagement_rate", from30);
+  const avgEngagementTime = avgRange(rows, "avg_engagement_time", from30);
+
+  const impressions = sumRange(rows, "impressions", from30);
+  const clicks = sumRange(rows, "clicks", from30);
+  const avgCtr = impressions > 0 ? (clicks / impressions) * 100 : 0;
+  const avgPosition = avgRange(rows, "avg_position", from30);
+
+  const topPages = dimRows(rows, "top_pages").slice(0, 10);
+  const channels = dimRows(rows, "traffic_channel");
+  const socialTraffic = channels
+    .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
+    .reduce((acc, c) => acc + c.value, 0);
+
+  const geoMap: Record<
+    string,
+    { clicks: number; impressions: number; position: number; ctr: number }
+  > = {};
+  for (const r of rows) {
+    if (!r.dimension || !r.metric.startsWith("geo_")) continue;
+    const g = (geoMap[r.dimension] ??= {
+      clicks: 0,
+      impressions: 0,
+      position: 0,
+      ctr: 0,
     });
+    if (r.metric === "geo_clicks") g.clicks = r.value;
+    if (r.metric === "geo_impressions") g.impressions = r.value;
+    if (r.metric === "geo_position") g.position = r.value;
+    if (r.metric === "geo_ctr") g.ctr = r.value;
+  }
+  const geo = Object.entries(geoMap)
+    .sort((a, b) => b[1].clicks - a[1].clicks || b[1].impressions - a[1].impressions)
+    .slice(0, 10);
 
-  const sessionsTrend = series(rows, "sessions", from90, farFuture);
-  const clicksTrend = series(rows, "clicks", from90, farFuture);
+  const sessionsTrend = series(rows, "sessions", from90);
+  const clicksTrend = series(rows, "clicks", from90);
+
+  const analyticsCards = [
+    { label: "Total sessions", value: Math.round(sessions).toLocaleString("en-US") },
+    { label: "Total users", value: Math.round(users).toLocaleString("en-US") },
+    { label: "Page views", value: Math.round(pageviews).toLocaleString("en-US") },
+    { label: "Engagement rate", value: `${engagementRate.toFixed(1)}%` },
+    { label: "Avg. engagement time / session", value: formatDuration(avgEngagementTime) },
+    { label: "Social media traffic", value: Math.round(socialTraffic).toLocaleString("en-US") },
+  ];
+
+  const gscCards = [
+    { label: "Total impressions", value: Math.round(impressions).toLocaleString("en-US") },
+    { label: "Total clicks", value: Math.round(clicks).toLocaleString("en-US") },
+    { label: "Average CTR", value: `${avgCtr.toFixed(2)}%` },
+    { label: "Average position", value: avgPosition.toFixed(1) },
+  ];
 
   return (
     <>
@@ -147,7 +184,7 @@ export default async function ClientDetailPage({
         title={String(client.name ?? "Client")}
         subtitle={String(client.website_url ?? "")}
       />
-      <main className="flex flex-col gap-8 px-6 py-8 lg:px-10">
+      <main className="flex flex-col gap-10 px-6 py-8 lg:px-10">
         <div className="flex flex-wrap items-center gap-2">
           {connections.length > 0 ? (
             connections.map((c) => (
@@ -176,61 +213,176 @@ export default async function ClientDetailPage({
           </Card>
         ) : (
           <>
-            <section
-              aria-label="Key metrics"
-              className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
-            >
-              {stats.map((s) => (
-                <Card key={s.label}>
-                  <p className="text-sm font-medium text-muted">{s.label}</p>
-                  <p className="mt-2 text-3xl font-bold tracking-tight">
-                    {s.kind === "avg"
-                      ? s.cur.toFixed(1)
-                      : Math.round(s.cur).toLocaleString("en-US")}
-                  </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                    {s.delta !== null ? (
-                      <span
-                        className={
-                          s.delta >= 0 !== s.goodWhenDown
-                            ? "font-bold text-positive"
-                            : "font-bold text-negative"
-                        }
-                      >
-                        {`${s.delta >= 0 ? "+" : ""}${s.delta.toFixed(1)}%`}
-                      </span>
-                    ) : null}
-                    <span className="text-muted">
-                      last 30 days · {s.source}
-                    </span>
-                  </div>
-                </Card>
-              ))}
-            </section>
-
-            <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <section className="flex flex-col gap-4">
+              <div>
+                <h2 className="text-lg font-bold tracking-tight">
+                  Website analytics
+                </h2>
+                <p className="text-xs text-muted">Last 30 days · Google Analytics 4</p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {analyticsCards.map((c) => (
+                  <Card key={c.label}>
+                    <p className="text-sm font-medium text-muted">{c.label}</p>
+                    <p className="mt-2 text-2xl font-bold tracking-tight">
+                      {c.value}
+                    </p>
+                  </Card>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                {topPages.length > 0 ? (
+                  <Card>
+                    <CardTitle>Top pages (30 days)</CardTitle>
+                    <table className="mt-3 w-full text-sm">
+                      <tbody>
+                        {topPages.map((p) => (
+                          <tr key={p.dimension} className="border-t border-line">
+                            <td className="max-w-0 truncate py-2 pr-4">
+                              {p.dimension}
+                            </td>
+                            <td className="py-2 text-right font-semibold">
+                              {Math.round(p.value).toLocaleString("en-US")}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </Card>
+                ) : null}
+                {channels.length > 0 ? (
+                  <Card>
+                    <CardTitle>Traffic by channel (30 days)</CardTitle>
+                    <table className="mt-3 w-full text-sm">
+                      <tbody>
+                        {channels.map((c) => (
+                          <tr key={c.dimension} className="border-t border-line">
+                            <td className="py-2 pr-4">
+                              {c.dimension}
+                              {(c.dimension ?? "")
+                                .toLowerCase()
+                                .includes("social") ? (
+                                <span className="ml-2 text-xs font-semibold text-brand">
+                                  Social
+                                </span>
+                              ) : null}
+                            </td>
+                            <td className="py-2 text-right font-semibold">
+                              {Math.round(c.value).toLocaleString("en-US")}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </Card>
+                ) : null}
+              </div>
               {sessionsTrend.length > 0 ? (
                 <Card>
-                  <div className="mb-4">
-                    <CardTitle>Sessions — last 90 days</CardTitle>
-                    <p className="mt-1 text-xs text-muted">
-                      Google Analytics 4
-                    </p>
+                  <CardTitle>Sessions — last 90 days</CardTitle>
+                  <div className="mt-4">
+                    <TrendChart data={sessionsTrend} />
                   </div>
-                  <TrendChart data={sessionsTrend} />
                 </Card>
               ) : null}
+            </section>
+
+            <section className="flex flex-col gap-4">
+              <div>
+                <h2 className="text-lg font-bold tracking-tight">
+                  Google Search Console
+                </h2>
+                <p className="text-xs text-muted">Last 30 days</p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {gscCards.map((c) => (
+                  <Card key={c.label}>
+                    <p className="text-sm font-medium text-muted">{c.label}</p>
+                    <p className="mt-2 text-2xl font-bold tracking-tight">
+                      {c.value}
+                    </p>
+                  </Card>
+                ))}
+              </div>
               {clicksTrend.length > 0 ? (
                 <Card>
-                  <div className="mb-4">
-                    <CardTitle>Search clicks — last 90 days</CardTitle>
-                    <p className="mt-1 text-xs text-muted">
-                      Google Search Console
-                    </p>
+                  <CardTitle>Search clicks — last 90 days</CardTitle>
+                  <div className="mt-4">
+                    <TrendChart data={clicksTrend} />
                   </div>
-                  <TrendChart data={clicksTrend} />
                 </Card>
               ) : null}
+            </section>
+
+            <section className="flex flex-col gap-4">
+              <div>
+                <h2 className="text-lg font-bold tracking-tight">
+                  GEO — performance by country
+                </h2>
+                <p className="text-xs text-muted">Last 30 days · Search Console</p>
+              </div>
+              {geo.length > 0 ? (
+                <Card>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-xs text-muted">
+                        <th className="pb-2">Country</th>
+                        <th className="pb-2 text-right">Clicks</th>
+                        <th className="pb-2 text-right">Impressions</th>
+                        <th className="pb-2 text-right">Avg. position</th>
+                        <th className="pb-2 text-right">Avg. CTR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {geo.map(([country, g]) => (
+                        <tr key={country} className="border-t border-line">
+                          <td className="py-2 font-semibold">{country}</td>
+                          <td className="py-2 text-right">
+                            {Math.round(g.clicks).toLocaleString("en-US")}
+                          </td>
+                          <td className="py-2 text-right">
+                            {Math.round(g.impressions).toLocaleString("en-US")}
+                          </td>
+                          <td className="py-2 text-right">
+                            {g.position.toFixed(1)}
+                          </td>
+                          <td className="py-2 text-right">
+                            {g.ctr.toFixed(2)}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card>
+              ) : (
+                <Card>
+                  <p className="text-sm text-muted">
+                    Country data appears after the next sync.
+                  </p>
+                </Card>
+              )}
+            </section>
+
+            <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              <Card>
+                <CardTitle>SGE / AEO visibility</CardTitle>
+                <p className="mt-2 text-sm text-muted">
+                  Google does not expose SGE or AI Overview performance data
+                  through the Search Console API. Track the proxies here — CTR
+                  and average position trends — and optimize with structured
+                  answers, FAQ schema and concise definitions to earn AI
+                  citations.
+                </p>
+              </Card>
+              <Card>
+                <CardTitle>Social media performance</CardTitle>
+                <p className="mt-2 text-sm text-muted">
+                  Follower growth, reach, impressions, engagement rate and top
+                  posts arrive with the Meta and LinkedIn integrations (Phase
+                  4).
+                </p>
+                <Badge tone="attention">Coming soon</Badge>
+              </Card>
             </section>
           </>
         )}
