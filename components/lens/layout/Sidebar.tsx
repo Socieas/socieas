@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   Plug,
+  FileText,
   Telescope,
   Settings,
 } from "lucide-react";
@@ -15,6 +16,7 @@ import { cn } from "@/lib/lens/utils";
 const lensNav = [
   { href: `${LENS_BASE}/dashboard`, label: "Dashboard", icon: LayoutDashboard },
   { href: `${LENS_BASE}/clients`, label: "Clients", icon: Users },
+  { href: `${LENS_BASE}/reports`, label: "Reports", icon: FileText },
   { href: `${LENS_BASE}/integrations`, label: "Integrations", icon: Plug },
 ];
 
