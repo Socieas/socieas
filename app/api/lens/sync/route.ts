@@ -11,11 +11,26 @@ const GSC_SITES_URL = "https://www.googleapis.com/webmasters/v3/sites";
 const GA4_DATA_URL = "https://analyticsdata.googleapis.com/v1beta/";
 const GA4_ADMIN_URL =
   "https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=50";
+const GRAPH_URL = "https://graph.facebook.com/v23.0";
 
 function isoDaysAgo(days: number) {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d.toISOString().slice(0, 10);
+}
+
+function safeDecrypt(packed: string, provider: string): string {
+  try {
+    return decryptSecret(packed);
+  } catch {
+    throw new Error(
+      "Saved " +
+        provider +
+        " login could not be unlocked (encryption key changed). Open Integrations and click Reconnect on " +
+        provider +
+        ".",
+    );
+  }
 }
 
 type MetricRow = {
@@ -204,6 +219,248 @@ async function gscFetch(
   return out;
 }
 
+async function graphGet(path: string, params: Record<string, string>) {
+  const qs = new URLSearchParams(params);
+  const res = await fetch(GRAPH_URL + path + "?" + qs.toString());
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json?.error?.message ?? "Meta API request failed");
+  }
+  return json;
+}
+
+type MetaPage = {
+  id: string;
+  name?: string;
+  access_token?: string;
+  followers_count?: number;
+  instagram_business_account?: {
+    id: string;
+    username?: string;
+    followers_count?: number;
+  };
+};
+
+async function listMetaPages(userToken: string): Promise<MetaPage[]> {
+  const json = await graphGet("/me/accounts", {
+    access_token: userToken,
+    fields:
+      "id,name,access_token,followers_count,instagram_business_account{id,username,followers_count}",
+  });
+  return (json.data ?? []) as MetaPage[];
+}
+
+async function facebookFetch(
+  userToken: string,
+  page: MetaPage,
+): Promise<MetricRow[]> {
+  const out: MetricRow[] = [];
+  const pageToken = page.access_token ?? userToken;
+  const today = isoDaysAgo(0);
+
+  if (typeof page.followers_count === "number") {
+    out.push({ metric: "followers", date: today, value: page.followers_count });
+  }
+
+  const insightNameMap: Record<string, string> = {
+    page_impressions: "impressions",
+    page_impressions_unique: "reach",
+    page_post_engagements: "engagements",
+    page_views_total: "profile_views",
+  };
+  for (const metricName of Object.keys(insightNameMap)) {
+    try {
+      const insights = await graphGet("/" + page.id + "/insights", {
+        access_token: pageToken,
+        metric: metricName,
+        period: "day",
+        since: isoDaysAgo(DAYS),
+        until: today,
+      });
+      for (const item of insights.data ?? []) {
+        for (const v of item.values ?? []) {
+          const date = String(v.end_time ?? "").slice(0, 10);
+          if (!date) continue;
+          out.push({
+            metric: insightNameMap[metricName],
+            date,
+            value: Number(v.value ?? 0),
+          });
+        }
+      }
+    } catch (err) {
+      console.error(
+        "[lens] facebook metric " + metricName + " unavailable:",
+        err,
+      );
+    }
+  }
+
+  try {
+    const posts = await graphGet("/" + page.id + "/posts", {
+      access_token: pageToken,
+      fields:
+        "permalink_url,created_time,attachments{media_type},likes.summary(true),comments.summary(true),shares",
+      since: isoDaysAgo(30),
+      limit: "25",
+    });
+    let best: { link: string; type: string; score: number } | null = null;
+    for (const post of posts.data ?? []) {
+      const score =
+        Number(post.likes?.summary?.total_count ?? 0) +
+        Number(post.comments?.summary?.total_count ?? 0) +
+        Number(post.shares?.count ?? 0);
+      const link = String(post.permalink_url ?? "");
+      const type = String(post.attachments?.data?.[0]?.media_type ?? "post");
+      if (link && (!best || score > best.score)) {
+        best = { link, type, score };
+      }
+    }
+    if (best) {
+      out.push({
+        metric: "top_post",
+        date: today,
+        dimension: best.link,
+        value: best.score,
+      });
+      out.push({
+        metric: "top_post_type",
+        date: today,
+        dimension: best.type,
+        value: best.score,
+      });
+    }
+  } catch (err) {
+    console.error("[lens] facebook posts failed:", err);
+  }
+
+  return out;
+}
+
+async function igDailyInsights(
+  userToken: string,
+  igId: string,
+  metrics: string[],
+): Promise<MetricRow[]> {
+  const json = await graphGet("/" + igId + "/insights", {
+    access_token: userToken,
+    metric: metrics.join(","),
+    period: "day",
+    since: isoDaysAgo(29),
+    until: isoDaysAgo(0),
+  });
+  const nameMap: Record<string, string> = {
+    reach: "reach",
+    follower_count: "follower_change",
+  };
+  const out: MetricRow[] = [];
+  for (const item of json.data ?? []) {
+    const metric = nameMap[String(item.name ?? "")];
+    if (!metric) continue;
+    for (const v of item.values ?? []) {
+      const date = String(v.end_time ?? "").slice(0, 10);
+      if (!date) continue;
+      out.push({ metric, date, value: Number(v.value ?? 0) });
+    }
+  }
+  return out;
+}
+
+async function instagramFetch(
+  userToken: string,
+  igId: string,
+  followersCount: number | null,
+): Promise<MetricRow[]> {
+  const out: MetricRow[] = [];
+  const today = isoDaysAgo(0);
+
+  if (followersCount == null) {
+    try {
+      const info = await graphGet("/" + igId, {
+        access_token: userToken,
+        fields: "followers_count",
+      });
+      if (typeof info.followers_count === "number") {
+        followersCount = info.followers_count;
+      }
+    } catch (err) {
+      console.error("[lens] instagram profile failed:", err);
+    }
+  }
+  if (typeof followersCount === "number") {
+    out.push({ metric: "followers", date: today, value: followersCount });
+  }
+
+  try {
+    const rows = await igDailyInsights(userToken, igId, [
+      "reach",
+      "follower_count",
+    ]);
+    out.push(...rows);
+  } catch {
+    try {
+      const rows = await igDailyInsights(userToken, igId, ["reach"]);
+      out.push(...rows);
+    } catch (err) {
+      console.error("[lens] instagram insights failed:", err);
+    }
+  }
+
+  try {
+    const pv = await graphGet("/" + igId + "/insights", {
+      access_token: userToken,
+      metric: "profile_views",
+      period: "day",
+      metric_type: "total_value",
+      since: isoDaysAgo(29),
+      until: today,
+    });
+    const total = Number(pv.data?.[0]?.total_value?.value ?? 0);
+    out.push({ metric: "profile_views", date: today, value: total });
+  } catch (err) {
+    console.error("[lens] instagram profile_views failed:", err);
+  }
+
+  try {
+    const media = await graphGet("/" + igId + "/media", {
+      access_token: userToken,
+      fields: "permalink,like_count,comments_count,media_type,timestamp",
+      limit: "25",
+    });
+    const cutoff = isoDaysAgo(30);
+    let best: { link: string; type: string; score: number } | null = null;
+    for (const m of media.data ?? []) {
+      const ts = String(m.timestamp ?? "").slice(0, 10);
+      if (ts && ts < cutoff) continue;
+      const score =
+        Number(m.like_count ?? 0) + Number(m.comments_count ?? 0);
+      const link = String(m.permalink ?? "");
+      const type = String(m.media_type ?? "post");
+      if (link && (!best || score > best.score)) {
+        best = { link, type, score };
+      }
+    }
+    if (best) {
+      out.push({
+        metric: "top_post",
+        date: today,
+        dimension: best.link,
+        value: best.score,
+      });
+      out.push({
+        metric: "top_post_type",
+        date: today,
+        dimension: best.type,
+        value: best.score,
+      });
+    }
+  } catch (err) {
+    console.error("[lens] instagram media failed:", err);
+  }
+
+  return out;
+}
+
 export async function POST(request: Request) {
   const supabase = await createServerSupabase();
 
@@ -231,76 +488,121 @@ export async function POST(request: Request) {
 
   for (const conn of conns ?? []) {
     try {
-      if (conn.provider !== "ga4" && conn.provider !== "gsc") continue;
-
-      let accessToken: string;
-      if (conn.refresh_token_enc) {
-        const refreshed = await refreshAccessToken(
-          decryptSecret(conn.refresh_token_enc),
-        );
-        accessToken = refreshed.access_token;
-      } else {
-        accessToken = decryptSecret(conn.access_token_enc);
+      if (
+        conn.provider !== "ga4" &&
+        conn.provider !== "gsc" &&
+        conn.provider !== "facebook" &&
+        conn.provider !== "instagram"
+      ) {
+        continue;
       }
 
       let account = (conn.external_account_id as string | null) ?? null;
       let rows: MetricRow[] = [];
 
-      if (conn.provider === "ga4") {
-        if (!account) {
-          const res = await fetch(GA4_ADMIN_URL, {
-            headers: { Authorization: "Bearer " + accessToken },
-          });
-          const json = await res.json();
-          if (!res.ok) {
+      if (conn.provider === "facebook" || conn.provider === "instagram") {
+        const userToken = safeDecrypt(conn.access_token_enc, conn.provider);
+        const pagesList = await listMetaPages(userToken);
+
+        if (conn.provider === "facebook") {
+          const page =
+            pagesList.find((p) => p.id === account) ?? pagesList[0] ?? null;
+          if (!page) {
             throw new Error(
-              json?.error?.message ?? "Could not list GA4 properties",
+              "No Facebook Page found for this account. Make sure you granted page access during connect.",
             );
           }
-          for (const acc of json.accountSummaries ?? []) {
-            const prop = (acc.propertySummaries ?? [])[0];
-            if (prop?.property) {
-              account = prop.property as string;
-              break;
+          account = page.id;
+          rows = await facebookFetch(userToken, page);
+        } else {
+          const withIg =
+            pagesList.find(
+              (p) =>
+                p.instagram_business_account &&
+                (account ? p.instagram_business_account.id === account : true),
+            ) ??
+            pagesList.find((p) => p.instagram_business_account) ??
+            null;
+          const ig = withIg?.instagram_business_account ?? null;
+          if (!ig) {
+            throw new Error(
+              "No Instagram business account is linked to your Facebook Page. Link it in Meta Business settings, then reconnect.",
+            );
+          }
+          account = ig.id;
+          rows = await instagramFetch(
+            userToken,
+            ig.id,
+            typeof ig.followers_count === "number" ? ig.followers_count : null,
+          );
+        }
+      } else {
+        let accessToken: string;
+        if (conn.refresh_token_enc) {
+          const refreshed = await refreshAccessToken(
+            safeDecrypt(conn.refresh_token_enc, conn.provider),
+          );
+          accessToken = refreshed.access_token;
+        } else {
+          accessToken = safeDecrypt(conn.access_token_enc, conn.provider);
+        }
+
+        if (conn.provider === "ga4") {
+          if (!account) {
+            const res = await fetch(GA4_ADMIN_URL, {
+              headers: { Authorization: "Bearer " + accessToken },
+            });
+            const json = await res.json();
+            if (!res.ok) {
+              throw new Error(
+                json?.error?.message ?? "Could not list GA4 properties",
+              );
+            }
+            for (const acc of json.accountSummaries ?? []) {
+              const prop = (acc.propertySummaries ?? [])[0];
+              if (prop?.property) {
+                account = prop.property as string;
+                break;
+              }
             }
           }
-        }
-        if (!account) {
-          throw new Error("No GA4 property found for this Google account");
-        }
-        rows = await ga4Fetch(accessToken, account);
-      } else {
-        if (!account) {
-          const { data: clientRow } = await supabase
-            .from("clients")
-            .select("website_url")
-            .eq("id", conn.client_id)
-            .maybeSingle();
-          const domain = String(clientRow?.website_url ?? "")
-            .replace(/^https?:\/\//, "")
-            .replace(/^www\./, "")
-            .replace(/\/.*$/, "");
-          const res = await fetch(GSC_SITES_URL, {
-            headers: { Authorization: "Bearer " + accessToken },
-          });
-          const json = await res.json();
-          if (!res.ok) {
-            throw new Error(
-              json?.error?.message ?? "Could not list Search Console sites",
-            );
+          if (!account) {
+            throw new Error("No GA4 property found for this Google account");
           }
-          const sites = (json.siteEntry ?? []).map(
-            (s: { siteUrl: string }) => s.siteUrl,
-          );
-          account =
-            sites.find((s: string) => domain && s.includes(domain)) ??
-            sites[0] ??
-            null;
+          rows = await ga4Fetch(accessToken, account);
+        } else {
+          if (!account) {
+            const { data: clientRow } = await supabase
+              .from("clients")
+              .select("website_url")
+              .eq("id", conn.client_id)
+              .maybeSingle();
+            const domain = String(clientRow?.website_url ?? "")
+              .replace(/^https?:\/\//, "")
+              .replace(/^www\./, "")
+              .replace(/\/.*$/, "");
+            const res = await fetch(GSC_SITES_URL, {
+              headers: { Authorization: "Bearer " + accessToken },
+            });
+            const json = await res.json();
+            if (!res.ok) {
+              throw new Error(
+                json?.error?.message ?? "Could not list Search Console sites",
+              );
+            }
+            const sites = (json.siteEntry ?? []).map(
+              (s: { siteUrl: string }) => s.siteUrl,
+            );
+            account =
+              sites.find((s: string) => domain && s.includes(domain)) ??
+              sites[0] ??
+              null;
+          }
+          if (!account) {
+            throw new Error("No verified Search Console site found");
+          }
+          rows = await gscFetch(accessToken, account);
         }
-        if (!account) {
-          throw new Error("No verified Search Console site found");
-        }
-        rows = await gscFetch(accessToken, account);
       }
 
       await supabase

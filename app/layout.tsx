@@ -89,7 +89,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body className="antialiased">
+     <body className="antialiased" suppressHydrationWarning>
         {children}
         <GoogleTagManager gtmId="GTM-NTK3Q4P9" />
       </body>
