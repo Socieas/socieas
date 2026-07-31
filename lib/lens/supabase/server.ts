@@ -13,8 +13,13 @@ export async function createClient() {
         setAll: (
           list: { name: string; value: string; options: CookieOptions }[],
         ) => {
-          for (const { name, value, options } of list) {
-            cookieStore.set(name, value, options);
+          try {
+            for (const { name, value, options } of list) {
+              cookieStore.set(name, value, options);
+            }
+          } catch {
+            // Server components cannot write cookies; the middleware
+            // handles session refresh instead. Safe to ignore.
           }
         },
       },
