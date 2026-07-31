@@ -13,10 +13,10 @@ const catalog = [
   { key: "gsc", name: "Google Search Console", description: "Search clicks, impressions and rankings.", available: true },
   { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: true },
   { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: true },
-  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: true },
-  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: true },
-  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: true },
-  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: true },
+  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: false },
+  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: false },
+  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: false },
+  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: false },
 ];
 
 export default async function IntegrationsPage({
@@ -122,6 +122,11 @@ export default async function IntegrationsPage({
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {catalog.map((p) => {
                 const conn = connMap[p.key];
+                const connectHref =
+                  "/api/lens/integrations/" +
+                  p.key +
+                  "/connect?clientId=" +
+                  client.id;
                 return (
                   <Card key={p.key}>
                     <div className="flex items-center justify-between gap-3">
@@ -135,21 +140,29 @@ export default async function IntegrationsPage({
                     <p className="mt-2 text-sm text-muted">{p.description}</p>
                     {conn ? (
                       <>
-                        <AccountPicker
-                          provider={p.key}
-                          clientId={client.id}
-                          selected={conn.external_account_id}
-                        />
+                        {p.key === "ga4" || p.key === "gsc" ? (
+                          <AccountPicker
+                            provider={p.key}
+                            clientId={client.id}
+                            selected={conn.external_account_id}
+                          />
+                        ) : null}
                         {conn.last_synced_at ? (
                           <p className="mt-2 text-xs text-muted">
                             Last synced:{" "}
                             {new Date(conn.last_synced_at).toLocaleString()}
                           </p>
                         ) : null}
+                        <a
+                          href={connectHref}
+                          className="mt-3 inline-block rounded-xl border border-line px-4 py-2 text-sm font-semibold text-brand"
+                        >
+                          Reconnect
+                        </a>
                       </>
                     ) : p.available ? (
                       <a
-                        href={`/api/lens/integrations/${p.key}/connect?clientId=${client.id}`}
+                        href={connectHref}
                         className="mt-4 inline-block rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white"
                       >
                         Connect

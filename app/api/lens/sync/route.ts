@@ -26,9 +26,9 @@ function safeDecrypt(packed: string, provider: string): string {
     throw new Error(
       "Saved " +
         provider +
-        " login could not be unlocked (encryption key changed). Open Integrations and click Connect on " +
+        " login could not be unlocked (encryption key changed). Open Integrations and click Reconnect on " +
         provider +
-        " again.",
+        ".",
     );
   }
 }
@@ -262,30 +262,38 @@ async function facebookFetch(
     out.push({ metric: "followers", date: today, value: page.followers_count });
   }
 
-  try {
-    const insights = await graphGet("/" + page.id + "/insights", {
-      access_token: pageToken,
-      metric: "page_impressions,page_impressions_unique,page_post_engagements",
-      period: "day",
-      since: isoDaysAgo(DAYS),
-      until: today,
-    });
-    const nameMap: Record<string, string> = {
-      page_impressions: "impressions",
-      page_impressions_unique: "reach",
-      page_post_engagements: "engagements",
-    };
-    for (const item of insights.data ?? []) {
-      const metric = nameMap[String(item.name ?? "")];
-      if (!metric) continue;
-      for (const v of item.values ?? []) {
-        const date = String(v.end_time ?? "").slice(0, 10);
-        if (!date) continue;
-        out.push({ metric, date, value: Number(v.value ?? 0) });
+  const insightNameMap: Record<string, string> = {
+    page_impressions: "impressions",
+    page_impressions_unique: "reach",
+    page_post_engagements: "engagements",
+    page_views_total: "profile_views",
+  };
+  for (const metricName of Object.keys(insightNameMap)) {
+    try {
+      const insights = await graphGet("/" + page.id + "/insights", {
+        access_token: pageToken,
+        metric: metricName,
+        period: "day",
+        since: isoDaysAgo(DAYS),
+        until: today,
+      });
+      for (const item of insights.data ?? []) {
+        for (const v of item.values ?? []) {
+          const date = String(v.end_time ?? "").slice(0, 10);
+          if (!date) continue;
+          out.push({
+            metric: insightNameMap[metricName],
+            date,
+            value: Number(v.value ?? 0),
+          });
+        }
       }
+    } catch (err) {
+      console.error(
+        "[lens] facebook metric " + metricName + " unavailable:",
+        err,
+      );
     }
-  } catch (err) {
-    console.error("[lens] facebook insights failed:", err);
   }
 
   try {
@@ -638,4 +646,4 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ results });
-}pclien
+}
