@@ -1,10 +1,12 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/lens/layout/Sidebar";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
 import { redirect } from "next/navigation";
 
 /**
  * Authenticated platform shell shared by Socieas Lens and Socieas Score.
- * Phase 1: wrap with Supabase auth (redirect to /products/lens/login when no session).
+ * Site navbar on top, footer below, sidebar + content in between.
  */
 export default async function PlatformLayout({
   children,
@@ -25,9 +27,13 @@ export default async function PlatformLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="min-w-0 flex-1">{children}</div>
-    </div>
+    <>
+      <Navbar />
+      <div className="flex min-h-screen pt-20">
+        <Sidebar />
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+      <Footer />
+    </>
   );
 }
