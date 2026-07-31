@@ -1,60 +1,103 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Moon, Sun, Bell } from "lucide-react";
+import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const RANGES = ["7D", "30D", "90D", "Custom"] as const;
-export type Range = (typeof RANGES)[number];
+const RANGES = [
+  { label: "7D", days: 7 },
+  { label: "30D", days: 30 },
+  { label: "90D", days: 90 },
+];
 
-export function Topbar({ title, subtitle }: { title: string; subtitle?: string }) {
-  const [range, setRange] = useState<Range>("30D");
-  const [dark, setDark] = useState(false);
+export function Topbar({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle?: string;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeRange = searchParams.get("range") ?? "30";
+  const isCustom = Boolean(searchParams.get("from") && searchParams.get("to"));
+  const [showCustom, setShowCustom] = useState(false);
+  const [from, setFrom] = useState(searchParams.get("from") ?? "");
+  const [to, setTo] = useState(searchParams.get("to") ?? "");
+  const isDashboard = Boolean(pathname?.includes("/dashboard"));
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-  }, [dark]);
+  function setRange(days: number) {
+    setShowCustom(false);
+    router.push(`${pathname}?range=${days}`);
+  }
+
+  function applyCustom() {
+    if (!from || !to || from > to) return;
+    setShowCustom(false);
+    router.push(`${pathname}?from=${from}&to=${to}`);
+  }
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-canvas px-6 py-5 lg:px-10">
-      <div>
-        <h1 className="display text-2xl md:text-3xl">{title}</h1>
-        {subtitle ? <p className="mt-1 text-sm text-muted">{subtitle}</p> : null}
-      </div>
-
-      <div className="flex items-center gap-3">
-        {/* Date range switcher: drives every chart on the page */}
-        <div className="flex rounded-full bg-raised p-1" role="tablist" aria-label="Date range">
-          {RANGES.map((r) => (
-            <button
-              key={r}
-              role="tab"
-              aria-selected={range === r}
-              onClick={() => setRange(r)}
-              className={
-                range === r
-                  ? "rounded-full bg-surface px-4 py-1.5 text-sm font-semibold text-ink shadow-card"
-                  : "rounded-full px-4 py-1.5 text-sm font-medium text-muted hover:text-ink"
-              }
-            >
-              {r}
-            </button>
-          ))}
+    <header className="flex flex-col gap-4 border-b border-line bg-surface px-6 py-5 lg:px-10">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          {subtitle ? (
+            <p className="mt-1 text-sm text-muted">{subtitle}</p>
+          ) : null}
         </div>
-
-        <button
-          aria-label="Notifications"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface text-muted transition hover:text-ink"
-        >
-          <Bell className="h-4 w-4" />
-        </button>
-        <button
-          aria-label="Toggle dark mode"
-          onClick={() => setDark((d) => !d)}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface text-muted transition hover:text-ink"
-        >
-          {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-        </button>
+        {isDashboard ? (
+          <div className="flex items-center gap-1 rounded-xl border border-line bg-raised p-1">
+            {RANGES.map((r) => (
+              <button
+                key={r.label}
+                type="button"
+                onClick={() => setRange(r.days)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  !isCustom && activeRange === String(r.days)
+                    ? "bg-brand text-white"
+                    : "text-muted hover:text-ink"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => setShowCustom((v) => !v)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                isCustom ? "bg-brand text-white" : "text-muted hover:text-ink"
+              }`}
+            >
+              Custom
+            </button>
+          </div>
+        ) : null}
       </div>
+      {isDashboard && showCustom ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs"
+          />
+          <span className="text-xs text-muted">to</span>
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs"
+          />
+          <button
+            type="button"
+            onClick={applyCustom}
+            className="rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white"
+          >
+            Apply
+          </button>
+        </div>
+      ) : null}
     </header>
   );
 }

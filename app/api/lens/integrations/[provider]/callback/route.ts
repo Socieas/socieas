@@ -1,31 +1,62 @@
 import { NextResponse } from "next/server";
+import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import {
+  appUrl,
+  encryptSecret,
+  exchangeCodeForTokens,
+  unpackState,
+} from "@/lib/lens/integrations/google-oauth";
 
-/**
- * OAuth callback for every provider: /api/lens/integrations/ga4/callback etc.
- *
- * Phase 1 flow:
- * 1. Validate `state` (contains client workspace id + CSRF nonce).
- * 2. provider.exchangeCode(code) -> tokens.
- * 3. Encrypt tokens with TOKEN_ENCRYPTION_KEY (AES-256-GCM) and upsert the
- *    `connections` row for this client + provider.
- * 4. Kick off an initial 90 day backfill sync.
- * 5. Redirect back to the client integrations tab with a success toast.
- */
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ provider: string }> },
 ) {
   const { provider } = await params;
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
+  const base = appUrl() || url.origin;
+  const fail = (reason: string) =>
+    NextResponse.redirect(
+      `${base}/products/lens/integrations?error=${encodeURIComponent(reason)}`,
+    );
 
-  if (!code || !state) {
-    return NextResponse.json({ error: "Missing code or state" }, { status: 400 });
+  const code = url.searchParams.get("code");
+  const stateParam = url.searchParams.get("state");
+  if (!code || !stateParam) return fail("Missing code or state");
+
+  const state = unpackState(stateParam);
+  if (!state || state.provider !== provider || !state.clientId) {
+    return fail("Invalid or tampered state");
   }
 
-  // TODO Phase 1: implement the flow above.
-  return NextResponse.redirect(
-    new URL(`/products/lens/integrations?connected=${provider}`, url.origin),
-  );
+  try {
+    const tokens = await exchangeCodeForTokens(provider, code);
+    const supabase = await createServerSupabase();
+
+    await supabase
+      .from("connections")
+      .delete()
+      .eq("client_id", state.clientId as string)
+      .eq("provider", provider);
+
+    const { error } = await supabase.from("connections").insert({
+      client_id: state.clientId as string,
+      provider,
+      access_token_enc: encryptSecret(tokens.access_token),
+      refresh_token_enc: tokens.refresh_token
+        ? encryptSecret(tokens.refresh_token)
+        : null,
+        scopes: tokens.scope ? tokens.scope.split(" ") : [],
+  status: "active",
+});
+    if (error) {
+      console.error("[lens] save connection failed:", error.message);
+      return fail(error.message);
+    }
+    return NextResponse.redirect(
+      `${base}/products/lens/integrations?connected=${provider}`,
+    );
+  } catch (err) {
+    console.error("[lens] oauth callback failed:", err);
+    return fail(err instanceof Error ? err.message : "Connection failed");
+  }
 }
