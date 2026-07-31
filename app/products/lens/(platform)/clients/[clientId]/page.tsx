@@ -10,6 +10,7 @@ import { createClient as createServerSupabase } from "@/lib/lens/supabase/server
 export const dynamic = "force-dynamic";
 
 type Row = {
+  provider: string;
   metric: string;
   date: string;
   value: number;
@@ -65,10 +66,83 @@ function formatDuration(seconds: number) {
   return `${m}m ${s}s`;
 }
 
+function fmtNum(n: number | null) {
+  if (n == null) return "—";
+  return Math.round(n).toLocaleString("en-US");
+}
+
+function fmtSigned(n: number | null) {
+  if (n == null) return "—";
+  const rounded = Math.round(n);
+  const label = Math.abs(rounded).toLocaleString("en-US");
+  if (rounded > 0) return "+" + label;
+  if (rounded < 0) return "-" + label;
+  return "0";
+}
+
 const providerNames: Record<string, string> = {
   ga4: "Google Analytics 4",
   gsc: "Google Search Console",
+  facebook: "Facebook Page",
+  instagram: "Instagram",
+  linkedin: "LinkedIn",
+  youtube: "YouTube",
+  google_ads: "Google Ads",
+  meta_ads: "Meta Ads",
 };
+
+type SocialSummary = {
+  followers: number | null;
+  followersStart: number | null;
+  netChange: number | null;
+  reach: number;
+  impressions: number;
+  engagements: number;
+  engagementRate: number | null;
+  profileViews: number;
+  topPostLink: string | null;
+  topPostType: string | null;
+  topPostScore: number;
+  reachTrend: Array<{ date: string; value: number }>;
+};
+
+function socialSummary(provRows: Row[], from: string): SocialSummary {
+  const followerRows = provRows
+    .filter((r) => r.metric === "followers" && !r.dimension)
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+  const followers = followerRows.length > 0 ? followerRows[0].value : null;
+  const hasChange = provRows.some(
+    (r) => r.metric === "follower_change" && !r.dimension,
+  );
+  const netChange = hasChange
+    ? sumRange(provRows, "follower_change", from)
+    : null;
+  const reach = sumRange(provRows, "reach", from);
+  const impressions = sumRange(provRows, "impressions", from);
+  const engagements = sumRange(provRows, "engagements", from);
+  const profileViews = sumRange(provRows, "profile_views", from);
+  const denominator = reach > 0 ? reach : impressions;
+  const engagementRate =
+    denominator > 0 ? (engagements / denominator) * 100 : null;
+  const top = dimRows(provRows, "top_post")[0] ?? null;
+  const topType = dimRows(provRows, "top_post_type")[0] ?? null;
+  const followersStart =
+    followers != null && netChange != null ? followers - netChange : null;
+  return {
+    followers,
+    followersStart,
+    netChange,
+    reach,
+    impressions,
+    engagements,
+    engagementRate,
+    profileViews,
+    topPostLink: top ? top.dimension : null,
+    topPostType: topType ? topType.dimension : null,
+    topPostScore: top ? top.value : 0,
+    reachTrend: series(provRows, "reach", from),
+  };
+}
 
 export default async function ClientDetailPage({
   params,
@@ -108,32 +182,38 @@ export default async function ClientDetailPage({
 
   const { data: metricsRaw } = await supabase
     .from("metrics_daily")
-    .select("metric, date, value, dimension")
+    .select("provider, metric, date, value, dimension")
     .eq("client_id", clientId)
     .limit(8000);
   const rows: Row[] = (metricsRaw ?? []).map((r) => ({
+    provider: String(r.provider ?? ""),
     metric: String(r.metric),
     date: String(r.date),
     value: Number(r.value ?? 0),
     dimension: r.dimension ? String(r.dimension) : null,
   }));
 
+  const ga4Rows = rows.filter((r) => r.provider === "ga4");
+  const gscRows = rows.filter((r) => r.provider === "gsc");
+  const fbRows = rows.filter((r) => r.provider === "facebook");
+  const igRows = rows.filter((r) => r.provider === "instagram");
+
   const from30 = isoDaysAgo(30);
   const from90 = isoDaysAgo(90);
 
-  const sessions = sumRange(rows, "sessions", from30);
-  const users = sumRange(rows, "users", from30);
-  const pageviews = sumRange(rows, "pageviews", from30);
-  const engagementRate = avgRange(rows, "engagement_rate", from30);
-  const avgEngagementTime = avgRange(rows, "avg_engagement_time", from30);
+  const sessions = sumRange(ga4Rows, "sessions", from30);
+  const users = sumRange(ga4Rows, "users", from30);
+  const pageviews = sumRange(ga4Rows, "pageviews", from30);
+  const engagementRate = avgRange(ga4Rows, "engagement_rate", from30);
+  const avgEngagementTime = avgRange(ga4Rows, "avg_engagement_time", from30);
 
-  const impressions = sumRange(rows, "impressions", from30);
-  const clicks = sumRange(rows, "clicks", from30);
+  const impressions = sumRange(gscRows, "impressions", from30);
+  const clicks = sumRange(gscRows, "clicks", from30);
   const avgCtr = impressions > 0 ? (clicks / impressions) * 100 : 0;
-  const avgPosition = avgRange(rows, "avg_position", from30);
+  const avgPosition = avgRange(gscRows, "avg_position", from30);
 
-  const topPages = dimRows(rows, "top_pages").slice(0, 10);
-  const channels = dimRows(rows, "traffic_channel");
+  const topPages = dimRows(ga4Rows, "top_pages").slice(0, 10);
+  const channels = dimRows(ga4Rows, "traffic_channel");
   const socialTraffic = channels
     .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
     .reduce((acc, c) => acc + c.value, 0);
@@ -142,7 +222,7 @@ export default async function ClientDetailPage({
     string,
     { clicks: number; impressions: number; position: number; ctr: number }
   > = {};
-  for (const r of rows) {
+  for (const r of gscRows) {
     if (!r.dimension || !r.metric.startsWith("geo_")) continue;
     const g = (geoMap[r.dimension] ??= {
       clicks: 0,
@@ -156,11 +236,13 @@ export default async function ClientDetailPage({
     if (r.metric === "geo_ctr") g.ctr = r.value;
   }
   const geo = Object.entries(geoMap)
-    .sort((a, b) => b[1].clicks - a[1].clicks || b[1].impressions - a[1].impressions)
+    .sort(
+      (a, b) => b[1].clicks - a[1].clicks || b[1].impressions - a[1].impressions,
+    )
     .slice(0, 10);
 
-  const sessionsTrend = series(rows, "sessions", from90);
-  const clicksTrend = series(rows, "clicks", from90);
+  const sessionsTrend = series(ga4Rows, "sessions", from90);
+  const clicksTrend = series(gscRows, "clicks", from90);
 
   const analyticsCards = [
     { label: "Total sessions", value: Math.round(sessions).toLocaleString("en-US") },
@@ -177,6 +259,23 @@ export default async function ClientDetailPage({
     { label: "Average CTR", value: `${avgCtr.toFixed(2)}%` },
     { label: "Average position", value: avgPosition.toFixed(1) },
   ];
+
+  const hasProvider = (p: string) =>
+    connections.some((c) => c.provider === p);
+  const socialPlatforms = [
+    {
+      key: "facebook",
+      name: "Facebook",
+      summary: socialSummary(fbRows, from30),
+      show: fbRows.length > 0 || hasProvider("facebook"),
+    },
+    {
+      key: "instagram",
+      name: "Instagram",
+      summary: socialSummary(igRows, from30),
+      show: igRows.length > 0 || hasProvider("instagram"),
+    },
+  ].filter((p) => p.show);
 
   return (
     <>
@@ -287,6 +386,102 @@ export default async function ClientDetailPage({
               ) : null}
             </section>
 
+            {socialPlatforms.length > 0 ? (
+              <section className="flex flex-col gap-4">
+                <div>
+                  <h2 className="text-lg font-bold tracking-tight">
+                    Social media performance
+                  </h2>
+                  <p className="text-xs text-muted">Last 30 days · Meta</p>
+                </div>
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                  {socialPlatforms.map((p) => {
+                    const s = p.summary;
+                    const stats = [
+                      { label: "Current followers", value: fmtNum(s.followers) },
+                      {
+                        label: "Followers 30 days ago",
+                        value: fmtNum(s.followersStart),
+                      },
+                      {
+                        label: "Net follower change",
+                        value: fmtSigned(s.netChange),
+                      },
+                      { label: "Reach", value: fmtNum(s.reach) },
+                      { label: "Impressions", value: fmtNum(s.impressions) },
+                      { label: "Engagements", value: fmtNum(s.engagements) },
+                      {
+                        label: "Engagement rate",
+                        value:
+                          s.engagementRate == null
+                            ? "—"
+                            : `${s.engagementRate.toFixed(2)}%`,
+                      },
+                      { label: "Profile views", value: fmtNum(s.profileViews) },
+                    ];
+                    return (
+                      <Card key={p.key}>
+                        <div className="flex items-center justify-between">
+                          <CardTitle>{p.name}</CardTitle>
+                          <Badge tone="positive">Connected</Badge>
+                        </div>
+                        <div className="mt-4 grid grid-cols-2 gap-4">
+                          {stats.map((st) => (
+                            <div key={st.label}>
+                              <p className="text-xs font-medium text-muted">
+                                {st.label}
+                              </p>
+                              <p className="mt-1 text-xl font-bold tracking-tight">
+                                {st.value}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 border-t border-line pt-3">
+                          <p className="text-xs font-medium text-muted">
+                            Top post of the month
+                          </p>
+                          {s.topPostLink ? (
+                            <p className="mt-1 text-sm">
+                              <a
+                                href={s.topPostLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-semibold text-brand hover:underline"
+                              >
+                                View top post
+                              </a>
+                              <span className="ml-2 text-muted">
+                                {s.topPostType ?? "post"} ·{" "}
+                                {Math.round(s.topPostScore).toLocaleString(
+                                  "en-US",
+                                )}{" "}
+                                engagements
+                              </span>
+                            </p>
+                          ) : (
+                            <p className="mt-1 text-sm text-muted">
+                              No post data in the last 30 days yet.
+                            </p>
+                          )}
+                        </div>
+                        {s.reachTrend.length > 1 ? (
+                          <div className="mt-4">
+                            <p className="text-xs font-medium text-muted">
+                              Reach — last 30 days
+                            </p>
+                            <div className="mt-2">
+                              <TrendChart data={s.reachTrend} />
+                            </div>
+                          </div>
+                        ) : null}
+                      </Card>
+                    );
+                  })}
+                </div>
+              </section>
+            ) : null}
+
             <section className="flex flex-col gap-4">
               <div>
                 <h2 className="text-lg font-bold tracking-tight">
@@ -375,11 +570,10 @@ export default async function ClientDetailPage({
                 </p>
               </Card>
               <Card>
-                <CardTitle>Social media performance</CardTitle>
+                <CardTitle>More platforms</CardTitle>
                 <p className="mt-2 text-sm text-muted">
-                  Follower growth, reach, impressions, engagement rate and top
-                  posts arrive with the Meta and LinkedIn integrations (Phase
-                  4).
+                  LinkedIn and YouTube performance will appear here once those
+                  integrations are approved and connected.
                 </p>
                 <Badge tone="attention">Coming soon</Badge>
               </Card>

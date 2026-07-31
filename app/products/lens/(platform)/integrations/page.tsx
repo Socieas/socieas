@@ -11,12 +11,12 @@ export const dynamic = "force-dynamic";
 const catalog = [
   { key: "ga4", name: "Google Analytics 4", description: "Traffic, engagement and conversions.", available: true },
   { key: "gsc", name: "Google Search Console", description: "Search clicks, impressions and rankings.", available: true },
-  { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: false },
-  { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: false },
-  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: false },
-  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: false },
-  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: false },
-  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: false },
+  { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: true },
+  { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: true },
+  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: true },
+  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: true },
+  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: true },
+  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: true },
 ];
 
 export default async function IntegrationsPage({
