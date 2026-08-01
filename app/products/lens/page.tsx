@@ -38,14 +38,14 @@ export const metadata: Metadata = {
 };
 
 const platforms = [
-  "Google Analytics 4",
-  "Search Console",
-  "Instagram",
-  "Facebook",
-  "LinkedIn",
-  "YouTube",
-  "Google Ads",
-  "Meta Ads",
+  { name: "Google Analytics 4", icon: "/lens/icons/google-analytics.svg" },
+  { name: "Search Console", icon: "/lens/icons/search-console.svg" },
+  { name: "Instagram", icon: "/lens/icons/instagram.svg" },
+  { name: "Facebook", icon: "/lens/icons/facebook.svg" },
+  { name: "LinkedIn", icon: "/lens/icons/linkedin.svg" },
+  { name: "YouTube", icon: "/lens/icons/youtube.svg" },
+  { name: "Google Ads", icon: null },
+  { name: "Meta Ads", icon: null },
 ];
 
 const steps = [
@@ -139,7 +139,7 @@ export default function LensLandingPage() {
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted">
               The marketing analytics dashboard that turns GA4, Search Console,
-              and social data into plain-language answers to the only question
+              and social data into plain language answers to the only question
               that counts: what should we do next?
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -161,19 +161,42 @@ export default function LensLandingPage() {
             </p>
 
             <div className="mt-14 flex flex-wrap items-center justify-center gap-2">
-              {platforms.map((p) => (
-                <span
-                  key={p}
-                  className="rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted"
-                >
-                  {p}
-                </span>
-              ))}
+             {platforms.map((p) => (
+  <span
+    key={p.name}
+    className="flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted"
+  >
+    {p.icon ? (
+      <img src={p.icon} alt="" className="h-4 w-4" />
+    ) : null}
+    {p.name}
+  </span>
+))}
             </div>
           </div>
         </section>
 
-        {/* How it works */}
+        {/* Numbers band */}
+<section className="px-6 pb-24">
+  <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 md:grid-cols-4">
+    {[
+      { big: "6+", small: "platforms in one dashboard" },
+      { big: "12 mo", small: "of history synced automatically" },
+      { big: "1 click", small: "branded PDF and CSV reports" },
+      { big: "Daily", small: "automatic syncs every morning" },
+    ].map((s) => (
+      <div
+        key={s.big}
+        className="rounded-card border border-line bg-surface p-6 text-center shadow-card"
+      >
+        <p className="gradient-text text-3xl font-black">{s.big}</p>
+        <p className="mt-2 text-sm text-muted">{s.small}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+{/* How it works */}
         <section id="how" className="px-6 pb-24">
           <div className="mx-auto max-w-6xl">
             <h2 className="display text-center text-3xl md:text-4xl">

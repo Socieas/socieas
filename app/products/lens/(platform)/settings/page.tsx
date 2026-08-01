@@ -110,7 +110,9 @@ export default async function SettingsPage() {
               initialName={String(c.name ?? "")}
               initialWebsite={String(c.website_url ?? "")}
               initialColor={String(c.brand_color ?? "#7C3AED")}
-              initialLogoUrl={String(c.logo_url ?? "")}
+initialSecondary={String(c.brand_color_secondary ?? "#EC4899")}
+initialAccent={String(c.brand_color_accent ?? "#F59E0B")}
+initialLogoUrl={String(c.logo_url ?? "")}
             />
           ))}
         </section>

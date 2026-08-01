@@ -78,9 +78,18 @@ xl:grid-cols-[1.3fr_0.8fr_0.8fr_1fr]">
         {/* BRAND */}
 
         <div>
-          <div className="text-[38px] font-black tracking-[-2px] text-black">
-            Socieas.
-          </div>
+          <Link href="/" className="inline-block">
+            <img
+              src="/lens/img/socieas-logo.webp"
+              alt="Socieas"
+              className="h-10 w-auto dark:hidden"
+            />
+            <img
+              src="/lens/img/socieas-logo-white.webp"
+              alt="Socieas"
+              className="hidden h-10 w-auto dark:block"
+            />
+          </Link>
 
           <p className="mt-6 max-w-md text-[15px] leading-relaxed text-[#6B7280]">
             Founder-led growth systems focused on visibility,

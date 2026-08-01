@@ -12,20 +12,20 @@ import { ClientSwitcher } from "@/components/lens/ClientSwitcher";
 export const dynamic = "force-dynamic";
 
 const catalog = [
-  { key: "ga4", name: "Google Analytics 4", description: "Traffic, engagement and conversions.", available: true },
-  { key: "gsc", name: "Google Search Console", description: "Search clicks, impressions and rankings.", available: true },
-  { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: true },
-  { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: true },
-  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: false },
-  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: true },
-  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: false },
-  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: false },
+  { key: "ga4", name: "Google Analytics 4", description: "Traffic, engagement and conversions.", available: true, icon: "/lens/icons/google-analytics.svg" },
+  { key: "gsc", name: "Google Search Console", description: "Search clicks, impressions, rankings and keywords.", available: true, icon: "/lens/icons/search-console.svg" },
+  { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: true, icon: "/lens/icons/instagram.svg" },
+  { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: true, icon: "/lens/icons/facebook.svg" },
+  { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: false, icon: "/lens/icons/linkedin.svg" },
+  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: true, icon: "/lens/icons/youtube.svg" },
+  { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: false, icon: null },
+  { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: false, icon: null },
 ];
 
 export default async function IntegrationsPage({
   searchParams,
 }: {
-searchParams: Promise<{ connected?: string; error?: string; client?: string }>;
+  searchParams: Promise<{ connected?: string; error?: string; client?: string }>;
 }) {
   const sp = await searchParams;
 
@@ -59,13 +59,13 @@ searchParams: Promise<{ connected?: string; error?: string; client?: string }>;
   }
 
   const supabase = await createServerSupabase();
-const { data: clients } = await supabase
-  .from("clients")
-  .select("id, name")
-  .order("created_at", { ascending: true });
-const clientList = clients ?? [];
-const client =
-  clientList.find((c) => String(c.id) === sp.client) ?? clientList[0] ?? null;
+  const { data: clients } = await supabase
+    .from("clients")
+    .select("id, name")
+    .order("created_at", { ascending: true });
+  const clientList = clients ?? [];
+  const client =
+    clientList.find((c) => String(c.id) === sp.client) ?? clientList[0] ?? null;
 
   const connMap: Record<
     string,
@@ -122,21 +122,22 @@ const client =
           </Card>
         ) : (
           <>
-           <div className="flex flex-wrap items-center justify-between gap-4">
-  <div className="flex flex-wrap items-center gap-3">
-    <ClientSwitcher
-      clients={clientList.map((c) => ({
-        id: String(c.id),
-        name: String(c.name ?? "Client"),
-      }))}
-      selectedId={String(client.id)}
-    />
-    <p className="text-sm text-muted">
-      Connected platforms sync the last 90 days of data.
-    </p>
-  </div>
-  <SyncNowButton />
-</div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <ClientSwitcher
+                  clients={clientList.map((c) => ({
+                    id: String(c.id),
+                    name: String(c.name ?? "Client"),
+                  }))}
+                  selectedId={String(client.id)}
+                />
+                <p className="text-sm text-muted">
+                  Lens syncs up to 12 months of history and keeps adding new
+                  data every day.
+                </p>
+              </div>
+              <SyncNowButton />
+            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {catalog.map((p) => {
                 const conn = connMap[p.key];
@@ -148,7 +149,16 @@ const client =
                 return (
                   <Card key={p.key}>
                     <div className="flex items-center justify-between gap-3">
-                      <CardTitle>{p.name}</CardTitle>
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        {p.icon ? (
+                          <img
+                            src={p.icon}
+                            alt=""
+                            className="h-6 w-6 shrink-0"
+                          />
+                        ) : null}
+                        <CardTitle>{p.name}</CardTitle>
+                      </div>
                       {conn ? (
                         <Badge tone="positive">Connected</Badge>
                       ) : p.available ? null : (
@@ -171,12 +181,34 @@ const client =
                             {new Date(conn.last_synced_at).toLocaleString()}
                           </p>
                         ) : null}
-                        <a
-                          href={connectHref}
-                          className="mt-3 inline-block rounded-xl border border-line px-4 py-2 text-sm font-semibold text-brand"
-                        >
-                          Reconnect
-                        </a>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <a
+                            href={connectHref}
+                            className="inline-block rounded-xl border border-line px-4 py-2 text-sm font-semibold text-brand"
+                          >
+                            Reconnect
+                          </a>
+                          <form
+                            action={
+                              "/api/lens/integrations/" +
+                              p.key +
+                              "/disconnect"
+                            }
+                            method="POST"
+                          >
+                            <input
+                              type="hidden"
+                              name="clientId"
+                              value={String(client.id)}
+                            />
+                            <button
+                              type="submit"
+                              className="rounded-xl border border-line px-4 py-2 text-sm font-semibold text-negative"
+                            >
+                              Disconnect
+                            </button>
+                          </form>
+                        </div>
                       </>
                     ) : p.available ? (
                       <a

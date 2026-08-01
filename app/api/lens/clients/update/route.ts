@@ -15,7 +15,9 @@ export async function POST(request: Request) {
     name?: string;
     websiteUrl?: string;
     brandColor?: string;
-    logoUrl?: string;
+brandColorSecondary?: string;
+brandColorAccent?: string;
+logoUrl?: string;
   } | null;
   if (!body?.clientId || !body.name) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -27,7 +29,9 @@ export async function POST(request: Request) {
       name: body.name,
       website_url: body.websiteUrl || null,
       brand_color: body.brandColor || null,
-      logo_url: body.logoUrl || null,
+brand_color_secondary: body.brandColorSecondary || null,
+brand_color_accent: body.brandColorAccent || null,
+logo_url: body.logoUrl || null,
     })
     .eq("id", body.clientId);
   if (error) {
