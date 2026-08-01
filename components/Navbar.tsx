@@ -105,11 +105,20 @@ export default function Navbar() {
               {/* LOGO */}
 
               <Link
-                href="/"
-                className="shrink-0 text-[25px] font-black tracking-[-0.08em] text-[#111111] transition duration-300 hover:opacity-80"
-              >
-                Socieas.
-              </Link>
+  href="/"
+  className="flex shrink-0 items-center transition duration-300 hover:opacity-80"
+>
+ <img
+  src="/lens/img/socieas-logo.webp"
+  alt="Socieas"
+  className="h-8 w-auto dark:hidden"
+/>
+<img
+  src="/lens/img/socieas-logo-white.webp"
+  alt="Socieas"
+  className="hidden h-8 w-auto dark:block"
+/>
+</Link>
 
               {/* DESKTOP NAV */}
 
