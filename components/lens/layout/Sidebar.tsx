@@ -82,13 +82,13 @@ export function Sidebar({
       </nav>
 
       {portal ? null : (
-        <Link
-          href={`${LENS_BASE}/dashboard`}
-          className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition hover:bg-raised hover:text-ink"
-        >
-          <Settings className="h-4 w-4" />
-          Workspace settings
-        </Link>
+       <Link
+  href={`${LENS_BASE}/settings`}
+  className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition hover:bg-raised hover:text-ink"
+>
+  <Settings className="h-4 w-4" />
+  Workspace settings
+</Link>
       )}
     </aside>
   );

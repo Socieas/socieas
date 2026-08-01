@@ -32,6 +32,12 @@ function shiftMonth(month: string, delta: number) {
   return d.toISOString().slice(0, 7);
 }
 
+function shiftDays(dateStr: string, days: number) {
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
 function monthLabel(month: string) {
   const parts = month.split("-").map(Number);
   const d = new Date(Date.UTC(parts[0], parts[1] - 1, 1));
@@ -42,28 +48,44 @@ function monthLabel(month: string) {
   });
 }
 
-function sumMonth(rows: Row[], metric: string, month: string) {
+function sumRange(rows: Row[], metric: string, from: string, toNext: string) {
   let total = 0;
   for (const r of rows) {
-    if (r.metric === metric && !r.dimension && r.date.startsWith(month)) {
+    if (
+      r.metric === metric &&
+      !r.dimension &&
+      r.date >= from &&
+      r.date < toNext
+    ) {
       total += r.value;
     }
   }
   return total;
 }
 
-function avgMonth(rows: Row[], metric: string, month: string) {
+function avgRange(rows: Row[], metric: string, from: string, toNext: string) {
   const vals = rows.filter(
-    (r) => r.metric === metric && !r.dimension && r.date.startsWith(month),
+    (r) =>
+      r.metric === metric && !r.dimension && r.date >= from && r.date < toNext,
   );
   if (vals.length === 0) return null;
   return vals.reduce((acc, r) => acc + r.value, 0) / vals.length;
 }
 
-function seriesMonth(rows: Row[], metric: string, month: string) {
+function seriesRange(
+  rows: Row[],
+  metric: string,
+  from: string,
+  toNext: string,
+) {
   const byDate: Record<string, number> = {};
   for (const r of rows) {
-    if (r.metric !== metric || r.dimension || !r.date.startsWith(month)) {
+    if (
+      r.metric !== metric ||
+      r.dimension ||
+      r.date < from ||
+      r.date >= toNext
+    ) {
       continue;
     }
     byDate[r.date] = (byDate[r.date] ?? 0) + r.value;
@@ -106,7 +128,11 @@ function fmtDuration(sec: number | null) {
   return m + "m " + s + "s";
 }
 
-function StatTable({ stats }: { stats: Array<{ label: string; value: string }> }) {
+function StatTable({
+  stats,
+}: {
+  stats: Array<{ label: string; value: string }>;
+}) {
   return (
     <table className="mt-4 w-full text-sm">
       <tbody>
@@ -124,14 +150,33 @@ function StatTable({ stats }: { stats: Array<{ label: string; value: string }> }
 export default async function ReportsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ month?: string; client?: string }>;
+  searchParams: Promise<{
+    month?: string;
+    client?: string;
+    from?: string;
+    to?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const viewer = await getViewer();
   const canEdit = viewer.type !== "client";
   const nowMonth = currentMonth();
-  const month =
-    sp.month && /^\d{4}-\d{2}$/.test(sp.month) ? sp.month : nowMonth;
+
+  const isDate = (s?: string) => Boolean(s && /^\d{4}-\d{2}-\d{2}$/.test(s));
+  const custom =
+    isDate(sp.from) && isDate(sp.to) && (sp.from as string) <= (sp.to as string);
+  const month = custom
+    ? (sp.from as string).slice(0, 7)
+    : sp.month && /^\d{4}-\d{2}$/.test(sp.month)
+      ? sp.month
+      : nowMonth;
+  const periodStart = custom ? (sp.from as string) : month + "-01";
+  const periodEndNext = custom
+    ? shiftDays(sp.to as string, 1)
+    : shiftMonth(month, 1) + "-01";
+  const periodLabel = custom
+    ? sp.from + " → " + sp.to
+    : monthLabel(month);
 
   if (isMockMode()) {
     return (
@@ -194,25 +239,56 @@ export default async function ReportsPage({
 
   // ---------- Website analytics (GA4) ----------
   const ga4Rows = rows.filter((r) => r.provider === "ga4");
-  const sessions = sumMonth(ga4Rows, "sessions", month);
-  const users = sumMonth(ga4Rows, "users", month);
-  const pageviews = sumMonth(ga4Rows, "pageviews", month);
-  const engagementRate = avgMonth(ga4Rows, "engagement_rate", month);
-  const avgTime = avgMonth(ga4Rows, "avg_engagement_time", month);
+  const sessions = sumRange(ga4Rows, "sessions", periodStart, periodEndNext);
+  const users = sumRange(ga4Rows, "users", periodStart, periodEndNext);
+  const pageviews = sumRange(ga4Rows, "pageviews", periodStart, periodEndNext);
+  const engagementRate = avgRange(
+    ga4Rows,
+    "engagement_rate",
+    periodStart,
+    periodEndNext,
+  );
+  const avgTime = avgRange(
+    ga4Rows,
+    "avg_engagement_time",
+    periodStart,
+    periodEndNext,
+  );
   const topPages = dimRows(ga4Rows, "top_pages").slice(0, 8);
   const channels = dimRows(ga4Rows, "traffic_channel");
   const socialTraffic = channels
-  .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
-  .reduce((acc, c) => acc + c.value, 0);
-const sessionsSeries = seriesMonth(ga4Rows, "sessions", month);
+    .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
+    .reduce((acc, c) => acc + c.value, 0);
+  const sessionsSeries = seriesRange(
+    ga4Rows,
+    "sessions",
+    periodStart,
+    periodEndNext,
+  );
 
   // ---------- Search Console (GSC) ----------
   const gscRows = rows.filter((r) => r.provider === "gsc");
-  const clicks = sumMonth(gscRows, "clicks", month);
-  const impressions = sumMonth(gscRows, "impressions", month);
+  const clicks = sumRange(gscRows, "clicks", periodStart, periodEndNext);
+  const impressions = sumRange(
+    gscRows,
+    "impressions",
+    periodStart,
+    periodEndNext,
+  );
   const ctr = impressions > 0 ? (clicks / impressions) * 100 : null;
-  const avgPosition = avgMonth(gscRows, "avg_position", month);
-const clicksSeries = seriesMonth(gscRows, "clicks", month);
+  const avgPosition = avgRange(
+    gscRows,
+    "avg_position",
+    periodStart,
+    periodEndNext,
+  );
+  const clicksSeries = seriesRange(
+    gscRows,
+    "clicks",
+    periodStart,
+    periodEndNext,
+  );
+  const topQueries = dimRows(gscRows, "top_queries").slice(0, 10);
 
   const geoMap = new Map<
     string,
@@ -241,87 +317,112 @@ const clicksSeries = seriesMonth(gscRows, "clicks", month);
 
   // ---------- Social platforms ----------
   const platforms = ["facebook", "instagram", "youtube"]
-  .map((provider) => {
-    const provRows = rows.filter((r) => r.provider === provider);
-    if (provRows.length === 0) return null;
+    .map((provider) => {
+      const provRows = rows.filter((r) => r.provider === provider);
+      if (provRows.length === 0) return null;
 
-    const followerRows = provRows
-      .filter((r) => r.metric === "followers" && !r.dimension)
-      .sort((a, b) => (a.date < b.date ? 1 : -1));
-    const followers =
-      followerRows.length > 0 ? followerRows[0].value : null;
-    const hasChange = provRows.some(
-      (r) => r.metric === "follower_change" && !r.dimension,
-    );
-    const netChange = hasChange
-      ? sumMonth(provRows, "follower_change", month)
-      : null;
-    const followersStart =
-      followers != null && netChange != null ? followers - netChange : null;
+      const followerRows = provRows
+        .filter((r) => r.metric === "followers" && !r.dimension)
+        .sort((a, b) => (a.date < b.date ? 1 : -1));
+      const followers =
+        followerRows.length > 0 ? followerRows[0].value : null;
+      const hasChange = provRows.some(
+        (r) => r.metric === "follower_change" && !r.dimension,
+      );
+      const netChange = hasChange
+        ? sumRange(provRows, "follower_change", periodStart, periodEndNext)
+        : null;
+      const followersStart =
+        followers != null && netChange != null ? followers - netChange : null;
 
-    const tops = dimRows(provRows, "top_post");
-    const topTypes = dimRows(provRows, "top_post_type");
-    const noteKey = month + ":" + provider;
-    const saved = noteFor(noteKey);
+      const tops = dimRows(provRows, "top_post");
+      const topTypes = dimRows(provRows, "top_post_type");
+      const noteKey = month + ":" + provider;
+      const saved = noteFor(noteKey);
 
-    let name = "Facebook";
-    if (provider === "instagram") name = "Instagram";
-    if (provider === "youtube") name = "YouTube";
+      let name = "Facebook";
+      if (provider === "instagram") name = "Instagram";
+      if (provider === "youtube") name = "YouTube";
 
-    let stats: Array<{ label: string; value: string }>;
-    if (provider === "youtube") {
-      const views = sumMonth(provRows, "views", month);
-      const watchMinutes = sumMonth(provRows, "watch_minutes", month);
-      const engagements = sumMonth(provRows, "engagements", month);
-      stats = [
-        {
-          label: "Subscribers at month start",
-          value: fmtNum(followersStart),
-        },
-        { label: "Current subscribers", value: fmtNum(followers) },
-        { label: "Net subscriber change", value: fmtSigned(netChange) },
-        { label: "Views", value: fmtNum(views) },
-        { label: "Watch time (minutes)", value: fmtNum(watchMinutes) },
-        {
-          label: "Engagements (likes, comments, shares)",
-          value: fmtNum(engagements),
-        },
-      ];
-    } else {
-      const reach = sumMonth(provRows, "reach", month);
-      const impressionsSocial = sumMonth(provRows, "impressions", month);
-      const engagements = sumMonth(provRows, "engagements", month);
-      const profileViews = sumMonth(provRows, "profile_views", month);
-      const denominator = reach > 0 ? reach : impressionsSocial;
-      const engagementRateSocial =
-        denominator > 0 ? (engagements / denominator) * 100 : null;
-      stats = [
-        {
-          label: "Followers at month start",
-          value: fmtNum(followersStart),
-        },
-        { label: "Current followers", value: fmtNum(followers) },
-        { label: "Net follower change", value: fmtSigned(netChange) },
-        { label: "Reach", value: fmtNum(reach) },
-        { label: "Impressions", value: fmtNum(impressionsSocial) },
-        { label: "Engagements", value: fmtNum(engagements) },
-        { label: "Engagement rate", value: fmtPct(engagementRateSocial) },
-        { label: "Profile views", value: fmtNum(profileViews) },
-      ];
-    }
+      let stats: Array<{ label: string; value: string }>;
+      if (provider === "youtube") {
+        const views = sumRange(provRows, "views", periodStart, periodEndNext);
+        const watchMinutes = sumRange(
+          provRows,
+          "watch_minutes",
+          periodStart,
+          periodEndNext,
+        );
+        const engagements = sumRange(
+          provRows,
+          "engagements",
+          periodStart,
+          periodEndNext,
+        );
+        stats = [
+          {
+            label: "Subscribers at period start",
+            value: fmtNum(followersStart),
+          },
+          { label: "Current subscribers", value: fmtNum(followers) },
+          { label: "Net subscriber change", value: fmtSigned(netChange) },
+          { label: "Views", value: fmtNum(views) },
+          { label: "Watch time (minutes)", value: fmtNum(watchMinutes) },
+          {
+            label: "Engagements (likes, comments, shares)",
+            value: fmtNum(engagements),
+          },
+        ];
+      } else {
+        const reach = sumRange(provRows, "reach", periodStart, periodEndNext);
+        const impressionsSocial = sumRange(
+          provRows,
+          "impressions",
+          periodStart,
+          periodEndNext,
+        );
+        const engagements = sumRange(
+          provRows,
+          "engagements",
+          periodStart,
+          periodEndNext,
+        );
+        const profileViews = sumRange(
+          provRows,
+          "profile_views",
+          periodStart,
+          periodEndNext,
+        );
+        const denominator = reach > 0 ? reach : impressionsSocial;
+        const engagementRateSocial =
+          denominator > 0 ? (engagements / denominator) * 100 : null;
+        stats = [
+          {
+            label: "Followers at period start",
+            value: fmtNum(followersStart),
+          },
+          { label: "Current followers", value: fmtNum(followers) },
+          { label: "Net follower change", value: fmtSigned(netChange) },
+          { label: "Reach", value: fmtNum(reach) },
+          { label: "Impressions", value: fmtNum(impressionsSocial) },
+          { label: "Engagements", value: fmtNum(engagements) },
+          { label: "Engagement rate", value: fmtPct(engagementRateSocial) },
+          { label: "Profile views", value: fmtNum(profileViews) },
+        ];
+      }
 
-    return {
-      provider,
-      name,
-      stats,
-      topPostLink: tops[0]?.dimension ?? null,
-      topPostType: topTypes[0]?.dimension ?? null,
-      noteKey,
-      bestTime: String(saved.best_time ?? ""),
-      notes: String(saved.notes ?? ""),
-    };
-  })
-  .filter((p) => p !== null);
+      return {
+        provider,
+        name,
+        stats,
+        topPostLink: tops[0]?.dimension ?? null,
+        topPostType: topTypes[0]?.dimension ?? null,
+        noteKey,
+        bestTime: String(saved.best_time ?? ""),
+        notes: String(saved.notes ?? ""),
+      };
+    })
+    .filter((p) => p !== null);
 
   const prev = shiftMonth(month, -1);
   const next = shiftMonth(month, 1);
@@ -329,58 +430,65 @@ const clicksSeries = seriesMonth(gscRows, "clicks", month);
   const websiteNote = noteFor(month + ":website");
   const searchNote = noteFor(month + ":gsc");
 
-const csvRows: string[][] = [["Section", "Metric", "Value"]];
-if (ga4Rows.length > 0) {
-  csvRows.push(
-    ["Website", "Month", monthLabel(month)],
-    ["Website", "Total sessions", fmtNum(sessions)],
-    ["Website", "Total users", fmtNum(users)],
-    ["Website", "Page views", fmtNum(pageviews)],
-    ["Website", "Engagement rate", fmtPct(engagementRate)],
-    ["Website", "Avg engagement time", fmtDuration(avgTime)],
-    ["Website", "Social media traffic (30d)", fmtNum(socialTraffic)],
-  );
-  for (const p of topPages) {
-    csvRows.push(["Top pages (30d)", String(p.dimension), fmtNum(p.value)]);
+  const csvRows: string[][] = [["Section", "Metric", "Value"]];
+  if (ga4Rows.length > 0) {
+    csvRows.push(
+      ["Website", "Period", periodLabel],
+      ["Website", "Total sessions", fmtNum(sessions)],
+      ["Website", "Total users", fmtNum(users)],
+      ["Website", "Page views", fmtNum(pageviews)],
+      ["Website", "Engagement rate", fmtPct(engagementRate)],
+      ["Website", "Avg engagement time", fmtDuration(avgTime)],
+      ["Website", "Social media traffic (30d)", fmtNum(socialTraffic)],
+    );
+    for (const p of topPages) {
+      csvRows.push(["Top pages (30d)", String(p.dimension), fmtNum(p.value)]);
+    }
+    for (const c of channels) {
+      csvRows.push([
+        "Traffic by channel (30d)",
+        String(c.dimension),
+        fmtNum(c.value),
+      ]);
+    }
   }
-  for (const c of channels) {
-    csvRows.push([
-      "Traffic by channel (30d)",
-      String(c.dimension),
-      fmtNum(c.value),
-    ]);
+  if (gscRows.length > 0) {
+    csvRows.push(
+      ["Search Console", "Total impressions", fmtNum(impressions)],
+      ["Search Console", "Total clicks", fmtNum(clicks)],
+      ["Search Console", "Average CTR", fmtPct(ctr)],
+      [
+        "Search Console",
+        "Average position",
+        avgPosition == null ? "-" : avgPosition.toFixed(1),
+      ],
+    );
+    for (const q of topQueries) {
+      csvRows.push([
+        "Top keywords (30d)",
+        String(q.dimension),
+        fmtNum(q.value) + " clicks",
+      ]);
+    }
+    for (const [country, g] of geo) {
+      csvRows.push([
+        "Top countries (30d)",
+        country,
+        fmtNum(g.clicks) + " clicks",
+      ]);
+    }
   }
-}
-if (gscRows.length > 0) {
-  csvRows.push(
-    ["Search Console", "Total impressions", fmtNum(impressions)],
-    ["Search Console", "Total clicks", fmtNum(clicks)],
-    ["Search Console", "Average CTR", fmtPct(ctr)],
-    [
-      "Search Console",
-      "Average position",
-      avgPosition == null ? "-" : avgPosition.toFixed(1),
-    ],
-  );
-  for (const [country, g] of geo) {
-    csvRows.push([
-      "Top countries (30d)",
-      country,
-      fmtNum(g.clicks) + " clicks",
-    ]);
+  for (const p of platforms) {
+    for (const st of p.stats) {
+      csvRows.push([p.name, st.label, st.value]);
+    }
   }
-}
-for (const p of platforms) {
-  for (const st of p.stats) {
-    csvRows.push([p.name, st.label, st.value]);
-  }
-}
 
   return (
     <>
       <Topbar
         title="Reports"
-        subtitle={"Monthly report for " + String(client.name ?? "client")}
+        subtitle={"Report for " + String(client.name ?? "client")}
       />
       <main className="flex flex-col gap-8 px-6 py-8 lg:px-10">
         <div className="flex flex-wrap items-center gap-3">
@@ -390,20 +498,33 @@ for (const p of platforms) {
               name: String(c.name ?? "Client"),
             }))}
             selectedId={String(client.id)}
-            extraQuery={"&month=" + month}
+            extraQuery={
+              custom ? "&from=" + sp.from + "&to=" + sp.to : "&month=" + month
+            }
           />
-          <span className="print:hidden">
-            <Link
-              href={"/products/lens/reports?month=" + prev + clientQuery}
-              className="inline-block rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
-            >
-              ← {monthLabel(prev)}
-            </Link>
-          </span>
+          {custom ? (
+            <span className="print:hidden">
+              <Link
+                href={"/products/lens/reports?month=" + month + clientQuery}
+                className="inline-block rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
+              >
+                ← Back to monthly view
+              </Link>
+            </span>
+          ) : (
+            <span className="print:hidden">
+              <Link
+                href={"/products/lens/reports?month=" + prev + clientQuery}
+                className="inline-block rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
+              >
+                ← {monthLabel(prev)}
+              </Link>
+            </span>
+          )}
           <span className="text-lg font-bold tracking-tight">
-            {monthLabel(month)}
+            {periodLabel}
           </span>
-          {month < nowMonth ? (
+          {!custom && month < nowMonth ? (
             <span className="print:hidden">
               <Link
                 href={"/products/lens/reports?month=" + next + clientQuery}
@@ -413,13 +534,13 @@ for (const p of platforms) {
               </Link>
             </span>
           ) : null}
-         <div className="ml-auto flex items-center gap-2">
-  <CsvButton
-    rows={csvRows}
-    filename={"lens-report-" + month + ".csv"}
-  />
-  <PrintButton />
-</div>
+          <div className="ml-auto flex items-center gap-2">
+            <CsvButton
+              rows={csvRows}
+              filename={"lens-report-" + (custom ? sp.from + "-" + sp.to : month) + ".csv"}
+            />
+            <PrintButton />
+          </div>
         </div>
 
         {/* Website analytics */}
@@ -427,13 +548,13 @@ for (const p of platforms) {
           <Card>
             <div className="flex items-center justify-between gap-3">
               <CardTitle>Website analytics</CardTitle>
-              <Badge tone="brand">{monthLabel(month)}</Badge>
+              <Badge tone="brand">{periodLabel}</Badge>
             </div>
             <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div>
                 <StatTable
                   stats={[
-                    { label: "Date range", value: monthLabel(month) },
+                    { label: "Period", value: periodLabel },
                     { label: "Total sessions", value: fmtNum(sessions) },
                     { label: "Total users", value: fmtNum(users) },
                     { label: "Page views", value: fmtNum(pageviews) },
@@ -457,21 +578,19 @@ for (const p of platforms) {
                   />
                 ) : null}
               </div>
-             <div className="flex flex-col gap-6">
-  {sessionsSeries.length > 1 ? (
-    <div>
-      <p className="text-sm font-semibold">
-        Sessions this month
-      </p>
-      <div className="mt-2">
-        <TrendChart data={sessionsSeries} />
-      </div>
-    </div>
-  ) : null}
-  <div>
-    <p className="text-sm font-semibold">
-      Top pages (last 30 days)
-    </p>
+              <div className="flex flex-col gap-6">
+                {sessionsSeries.length > 1 ? (
+                  <div>
+                    <p className="text-sm font-semibold">Sessions</p>
+                    <div className="mt-2">
+                      <TrendChart data={sessionsSeries} />
+                    </div>
+                  </div>
+                ) : null}
+                <div>
+                  <p className="text-sm font-semibold">
+                    Top pages (last 30 days)
+                  </p>
                   <table className="mt-2 w-full text-sm">
                     <tbody>
                       {topPages.map((p) => (
@@ -487,34 +606,18 @@ for (const p of platforms) {
                     </tbody>
                   </table>
                 </div>
-               <div>
-  {clicksSeries.length > 1 ? (
-    <div className="mb-6">
-      <p className="text-sm font-semibold">
-        Search clicks this month
-      </p>
-      <div className="mt-2">
-        <TrendChart data={clicksSeries} />
-      </div>
-    </div>
-  ) : null}
-  <p className="text-sm font-semibold">
-    Top countries (last 30 days)
-  </p>
-                  <table className="mt-2 w-full text-sm">
-                    <tbody>
-                      {channels.map((c) => (
-                        <tr key={c.dimension} className="border-t border-line">
-                          <td className="py-1.5 pr-4 text-muted">
-                            {c.dimension}
-                          </td>
-                          <td className="py-1.5 text-right font-semibold">
-                            {fmtNum(c.value)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div>
+                  <p className="text-sm font-semibold">
+                    Traffic by channel (last 30 days)
+                  </p>
+                  <div className="mt-2">
+                    <BarList
+                      items={channels.slice(0, 6).map((c) => ({
+                        label: String(c.dimension),
+                        value: c.value,
+                      }))}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -526,7 +629,7 @@ for (const p of platforms) {
           <Card>
             <div className="flex items-center justify-between gap-3">
               <CardTitle>Search Console</CardTitle>
-              <Badge tone="brand">{monthLabel(month)}</Badge>
+              <Badge tone="brand">{periodLabel}</Badge>
             </div>
             <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div>
@@ -542,6 +645,21 @@ for (const p of platforms) {
                     },
                   ]}
                 />
+                {topQueries.length > 0 ? (
+                  <div className="mt-6">
+                    <p className="text-sm font-semibold">
+                      Top keywords (last 30 days)
+                    </p>
+                    <div className="mt-2">
+                      <BarList
+                        items={topQueries.map((q) => ({
+                          label: String(q.dimension),
+                          value: q.value,
+                        }))}
+                      />
+                    </div>
+                  </div>
+                ) : null}
                 {canEdit ? (
                   <NotesEditor
                     clientId={String(client.id)}
@@ -552,6 +670,14 @@ for (const p of platforms) {
                 ) : null}
               </div>
               <div>
+                {clicksSeries.length > 1 ? (
+                  <div className="mb-6">
+                    <p className="text-sm font-semibold">Search clicks</p>
+                    <div className="mt-2">
+                      <TrendChart data={clicksSeries} />
+                    </div>
+                  </div>
+                ) : null}
                 <p className="text-sm font-semibold">
                   Top countries (last 30 days)
                 </p>
@@ -569,7 +695,9 @@ for (const p of platforms) {
                     {geo.map(([country, g]) => (
                       <tr key={country} className="border-t border-line">
                         <td className="py-1.5 pr-2 font-medium">{country}</td>
-                        <td className="py-1.5 text-right">{fmtNum(g.clicks)}</td>
+                        <td className="py-1.5 text-right">
+                          {fmtNum(g.clicks)}
+                        </td>
                         <td className="py-1.5 text-right">
                           {fmtNum(g.impressions)}
                         </td>
@@ -591,9 +719,9 @@ for (const p of platforms) {
         {/* Social media */}
         {platforms.length === 0 ? (
           <Card>
-            <CardTitle>No social data for this month</CardTitle>
+            <CardTitle>No social data for this period</CardTitle>
             <p className="mt-2 text-sm text-muted">
-              Connect Facebook and Instagram, then run a sync from the
+              Connect Facebook, Instagram or YouTube, then run a sync from the
               Integrations page.
             </p>
           </Card>
@@ -603,45 +731,30 @@ for (const p of platforms) {
               <Card key={p.provider}>
                 <div className="flex items-center justify-between gap-3">
                   <CardTitle>{p.name}</CardTitle>
-                  <Badge tone="brand">{monthLabel(month)}</Badge>
+                  <Badge tone="brand">{periodLabel}</Badge>
                 </div>
-                <table className="mt-4 w-full text-sm">
-                  <tbody>
-                    {p.stats.map((st) => (
-                      <tr key={st.label} className="border-t border-line">
-                        <td className="py-2 pr-4 text-muted">{st.label}</td>
-                        <td className="py-2 text-right font-semibold">
-                          {st.value}
-                        </td>
-                      </tr>
-                    ))}
-                    <tr className="border-t border-line">
-                      <td className="py-2 pr-4 text-muted">
-                        Top post (latest sync)
-                      </td>
-                      <td className="py-2 text-right font-semibold">
-                        {p.topPostLink ? (
-                          <a
-                            href={p.topPostLink}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-brand hover:underline"
-                          >
-                            View post
-                          </a>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                    </tr>
-                    <tr className="border-t border-line">
-                      <td className="py-2 pr-4 text-muted">Post type</td>
-                      <td className="py-2 text-right font-semibold">
-                        {p.topPostType ?? "—"}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <StatTable stats={p.stats} />
+                {p.topPostLink ? (
+                  <div className="mt-4">
+                    <p className="text-sm font-semibold">
+                      Top {p.provider === "youtube" ? "video" : "post"} (last
+                      30 days)
+                    </p>
+                    <a
+                      href={p.topPostLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 block truncate text-sm font-semibold text-brand underline"
+                    >
+                      {p.topPostLink}
+                    </a>
+                    {p.topPostType ? (
+                      <p className="mt-1 text-xs text-muted">
+                        {p.topPostType}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
                 {canEdit ? (
                   <NotesEditor
                     clientId={String(client.id)}
@@ -655,13 +768,17 @@ for (const p of platforms) {
           </div>
         )}
 
-        <p className="text-xs text-muted">
-          Data notes: monthly totals are summed from daily synced data for the
-          selected month. Tables marked "last 30 days" are snapshots from the
-          most recent sync. LinkedIn will appear here automatically once
-connected.
-          once connected.
-        </p>
+        <Card className="print:hidden">
+          <CardTitle>Data notes</CardTitle>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Daily metrics cover up to 12 months for Google and YouTube.
+            Facebook and Instagram are limited by Meta to roughly the last 90
+            and 30 days, but every daily sync keeps adding to your stored
+            history. Lists like top pages, keywords and countries are 30-day
+            snapshots from the most recent sync. LinkedIn will appear here
+            automatically once connected.
+          </p>
+        </Card>
       </main>
     </>
   );

@@ -26,23 +26,28 @@ export function Topbar({
   const [from, setFrom] = useState(searchParams.get("from") ?? "");
   const [to, setTo] = useState(searchParams.get("to") ?? "");
   const isDashboard = Boolean(pathname?.includes("/dashboard"));
-const viewParam = searchParams.get("view")
-  ? "&view=" + searchParams.get("view")
-  : "";
+  const isReports = Boolean(pathname?.includes("/reports"));
+  const showRanges = isDashboard || isReports;
 
-function setRange(days: number) {
-  setShowCustom(false);
-  router.push(`${pathname}?range=${days}${viewParam}`);
-}
+  const keep =
+    (searchParams.get("view") ? "&view=" + searchParams.get("view") : "") +
+    (searchParams.get("client")
+      ? "&client=" + searchParams.get("client")
+      : "");
 
-function applyCustom() {
-  if (!from || !to || from > to) return;
-  setShowCustom(false);
-  router.push(`${pathname}?from=${from}&to=${to}${viewParam}`);
-}
+  function setRange(days: number) {
+    setShowCustom(false);
+    router.push(`${pathname}?range=${days}${keep}`);
+  }
+
+  function applyCustom() {
+    if (!from || !to || from > to) return;
+    setShowCustom(false);
+    router.push(`${pathname}?from=${from}&to=${to}${keep}`);
+  }
 
   return (
-    <header className="flex flex-col gap-4 border-b border-line bg-surface px-6 py-5 lg:px-10">
+    <header className="flex flex-col gap-4 border-b border-line bg-surface px-6 py-5 lg:px-10 print:hidden">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
@@ -51,22 +56,24 @@ function applyCustom() {
           ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {isDashboard ? (
+          {showRanges ? (
             <div className="flex items-center gap-1 rounded-xl border border-line bg-raised p-1">
-              {RANGES.map((r) => (
-                <button
-                  key={r.label}
-                  type="button"
-                  onClick={() => setRange(r.days)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                    !isCustom && activeRange === String(r.days)
-                      ? "bg-brand text-white"
-                      : "text-muted hover:text-ink"
-                  }`}
-                >
-                  {r.label}
-                </button>
-              ))}
+              {isDashboard
+                ? RANGES.map((r) => (
+                    <button
+                      key={r.label}
+                      type="button"
+                      onClick={() => setRange(r.days)}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                        !isCustom && activeRange === String(r.days)
+                          ? "bg-brand text-white"
+                          : "text-muted hover:text-ink"
+                      }`}
+                    >
+                      {r.label}
+                    </button>
+                  ))
+                : null}
               <button
                 type="button"
                 onClick={() => setShowCustom((v) => !v)}
@@ -74,7 +81,7 @@ function applyCustom() {
                   isCustom ? "bg-brand text-white" : "text-muted hover:text-ink"
                 }`}
               >
-                Custom
+                {isReports ? "Custom dates" : "Custom"}
               </button>
             </div>
           ) : null}
@@ -89,7 +96,7 @@ function applyCustom() {
           </form>
         </div>
       </div>
-      {isDashboard && showCustom ? (
+      {showRanges && showCustom ? (
         <div className="flex flex-wrap items-center gap-2">
           <input
             type="date"
