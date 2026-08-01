@@ -212,11 +212,28 @@ async function gscFetch(
       dimension: country,
       value: Number(row.position ?? 0),
     });
-    out.push({
+       out.push({
       metric: "geo_ctr",
       date: geoDate,
       dimension: country,
       value: Number(row.ctr ?? 0) * 100,
+    });
+  }
+
+  const queries = await gscQuery(accessToken, siteUrl, {
+    startDate: isoDaysAgo(30),
+    endDate: isoDaysAgo(1),
+    dimensions: ["query"],
+    rowLimit: 20,
+  });
+  for (const row of queries.rows ?? []) {
+    const q = String(row.keys?.[0] ?? "");
+    if (!q) continue;
+    out.push({
+      metric: "top_queries",
+      date: geoDate,
+      dimension: q,
+      value: Number(row.clicks ?? 0),
     });
   }
 
