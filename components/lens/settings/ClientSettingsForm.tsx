@@ -120,4 +120,4 @@ export function ClientSettingsForm({
       </div>
     </form>
   );
-}mkdir -p app/api/lens/clients/update && touch app/api/lens/clients/update/route.ts
+}
