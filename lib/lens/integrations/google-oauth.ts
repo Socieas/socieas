@@ -6,6 +6,10 @@ const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 export const providerScopes: Record<string, string[]> = {
   ga4: ["https://www.googleapis.com/auth/analytics.readonly"],
   gsc: ["https://www.googleapis.com/auth/webmasters.readonly"],
+  youtube: [
+    "https://www.googleapis.com/auth/youtube.readonly",
+    "https://www.googleapis.com/auth/yt-analytics.readonly",
+  ],
 };
 
 export function appUrl() {

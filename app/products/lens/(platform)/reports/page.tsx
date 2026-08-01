@@ -223,24 +223,54 @@ export default async function ReportsPage({
     .slice(0, 10);
 
   // ---------- Social platforms ----------
-  const platforms = ["facebook", "instagram"]
-    .map((provider) => {
-      const provRows = rows.filter((r) => r.provider === provider);
-      if (provRows.length === 0) return null;
+  const platforms = ["facebook", "instagram", "youtube"]
+  .map((provider) => {
+    const provRows = rows.filter((r) => r.provider === provider);
+    if (provRows.length === 0) return null;
 
-      const followerRows = provRows
-        .filter((r) => r.metric === "followers" && !r.dimension)
-        .sort((a, b) => (a.date < b.date ? 1 : -1));
-      const followers =
-        followerRows.length > 0 ? followerRows[0].value : null;
-      const hasChange = provRows.some(
-        (r) => r.metric === "follower_change" && !r.dimension,
-      );
-      const netChange = hasChange
-        ? sumMonth(provRows, "follower_change", month)
-        : null;
-      const followersStart =
-        followers != null && netChange != null ? followers - netChange : null;
+    const followerRows = provRows
+      .filter((r) => r.metric === "followers" && !r.dimension)
+      .sort((a, b) => (a.date < b.date ? 1 : -1));
+    const followers =
+      followerRows.length > 0 ? followerRows[0].value : null;
+    const hasChange = provRows.some(
+      (r) => r.metric === "follower_change" && !r.dimension,
+    );
+    const netChange = hasChange
+      ? sumMonth(provRows, "follower_change", month)
+      : null;
+    const followersStart =
+      followers != null && netChange != null ? followers - netChange : null;
+
+    const tops = dimRows(provRows, "top_post");
+    const topTypes = dimRows(provRows, "top_post_type");
+    const noteKey = month + ":" + provider;
+    const saved = noteFor(noteKey);
+
+    let name = "Facebook";
+    if (provider === "instagram") name = "Instagram";
+    if (provider === "youtube") name = "YouTube";
+
+    let stats: Array<{ label: string; value: string }>;
+    if (provider === "youtube") {
+      const views = sumMonth(provRows, "views", month);
+      const watchMinutes = sumMonth(provRows, "watch_minutes", month);
+      const engagements = sumMonth(provRows, "engagements", month);
+      stats = [
+        {
+          label: "Subscribers at month start",
+          value: fmtNum(followersStart),
+        },
+        { label: "Current subscribers", value: fmtNum(followers) },
+        { label: "Net subscriber change", value: fmtSigned(netChange) },
+        { label: "Views", value: fmtNum(views) },
+        { label: "Watch time (minutes)", value: fmtNum(watchMinutes) },
+        {
+          label: "Engagements (likes, comments, shares)",
+          value: fmtNum(engagements),
+        },
+      ];
+    } else {
       const reach = sumMonth(provRows, "reach", month);
       const impressionsSocial = sumMonth(provRows, "impressions", month);
       const engagements = sumMonth(provRows, "engagements", month);
@@ -248,33 +278,33 @@ export default async function ReportsPage({
       const denominator = reach > 0 ? reach : impressionsSocial;
       const engagementRateSocial =
         denominator > 0 ? (engagements / denominator) * 100 : null;
+      stats = [
+        {
+          label: "Followers at month start",
+          value: fmtNum(followersStart),
+        },
+        { label: "Current followers", value: fmtNum(followers) },
+        { label: "Net follower change", value: fmtSigned(netChange) },
+        { label: "Reach", value: fmtNum(reach) },
+        { label: "Impressions", value: fmtNum(impressionsSocial) },
+        { label: "Engagements", value: fmtNum(engagements) },
+        { label: "Engagement rate", value: fmtPct(engagementRateSocial) },
+        { label: "Profile views", value: fmtNum(profileViews) },
+      ];
+    }
 
-      const tops = dimRows(provRows, "top_post");
-      const topTypes = dimRows(provRows, "top_post_type");
-      const noteKey = month + ":" + provider;
-      const saved = noteFor(noteKey);
-
-      return {
-        provider,
-        name: provider === "facebook" ? "Facebook" : "Instagram",
-        stats: [
-          { label: "Followers at month start", value: fmtNum(followersStart) },
-          { label: "Current followers", value: fmtNum(followers) },
-          { label: "Net follower change", value: fmtSigned(netChange) },
-          { label: "Reach", value: fmtNum(reach) },
-          { label: "Impressions", value: fmtNum(impressionsSocial) },
-          { label: "Engagements", value: fmtNum(engagements) },
-          { label: "Engagement rate", value: fmtPct(engagementRateSocial) },
-          { label: "Profile views", value: fmtNum(profileViews) },
-        ],
-        topPostLink: tops[0]?.dimension ?? null,
-        topPostType: topTypes[0]?.dimension ?? null,
-        noteKey,
-        bestTime: String(saved.best_time ?? ""),
-        notes: String(saved.notes ?? ""),
-      };
-    })
-    .filter((p) => p !== null);
+    return {
+      provider,
+      name,
+      stats,
+      topPostLink: tops[0]?.dimension ?? null,
+      topPostType: topTypes[0]?.dimension ?? null,
+      noteKey,
+      bestTime: String(saved.best_time ?? ""),
+      notes: String(saved.notes ?? ""),
+    };
+  })
+  .filter((p) => p !== null);
 
   const prev = shiftMonth(month, -1);
   const next = shiftMonth(month, 1);
@@ -587,7 +617,8 @@ for (const p of platforms) {
         <p className="text-xs text-muted">
           Data notes: monthly totals are summed from daily synced data for the
           selected month. Tables marked "last 30 days" are snapshots from the
-          most recent sync. LinkedIn and YouTube will appear here automatically
+          most recent sync. LinkedIn will appear here automatically once
+connected.
           once connected.
         </p>
       </main>

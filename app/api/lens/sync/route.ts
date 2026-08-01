@@ -12,6 +12,10 @@ const GA4_DATA_URL = "https://analyticsdata.googleapis.com/v1beta/";
 const GA4_ADMIN_URL =
   "https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=50";
 const GRAPH_URL = "https://graph.facebook.com/v23.0";
+const YT_CHANNELS_URL =
+  "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true";
+const YT_ANALYTICS_URL = "https://youtubeanalytics.googleapis.com/v2/reports";
+const YT_VIDEOS_URL = "https://www.googleapis.com/youtube/v3/videos";
 
 function isoDaysAgo(days: number) {
   const d = new Date();
@@ -217,6 +221,107 @@ async function gscFetch(
   }
 
   return out;
+}
+
+async function ytGet(url: string, accessToken: string) {
+  const res = await fetch(url, {
+    headers: { Authorization: "Bearer " + accessToken },
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json?.error?.message ?? "YouTube API request failed");
+  }
+  return json;
+}
+
+async function youtubeFetch(
+  accessToken: string,
+): Promise<{ channelId: string; rows: MetricRow[] }> {
+  const out: MetricRow[] = [];
+  const today = isoDaysAgo(0);
+
+  const channels = await ytGet(YT_CHANNELS_URL, accessToken);
+  const channel = (channels.items ?? [])[0];
+  if (!channel) {
+    throw new Error(
+      "No YouTube channel found for this Google account. Connect with the Google account that owns the channel.",
+    );
+  }
+  const channelId = String(channel.id);
+  const subs = Number(channel.statistics?.subscriberCount ?? 0);
+  out.push({ metric: "followers", date: today, value: subs });
+
+  const qs = new URLSearchParams({
+    ids: "channel==" + channelId,
+    startDate: isoDaysAgo(DAYS),
+    endDate: today,
+    metrics:
+      "views,estimatedMinutesWatched,likes,comments,shares,subscribersGained,subscribersLost",
+    dimensions: "day",
+  });
+  const daily = await ytGet(
+    YT_ANALYTICS_URL + "?" + qs.toString(),
+    accessToken,
+  );
+  for (const row of daily.rows ?? []) {
+    const date = String(row[0] ?? "");
+    if (!date) continue;
+    out.push({ metric: "views", date, value: Number(row[1] ?? 0) });
+    out.push({ metric: "watch_minutes", date, value: Number(row[2] ?? 0) });
+    out.push({
+      metric: "engagements",
+      date,
+      value:
+        Number(row[3] ?? 0) + Number(row[4] ?? 0) + Number(row[5] ?? 0),
+    });
+    out.push({
+      metric: "follower_change",
+      date,
+      value: Number(row[6] ?? 0) - Number(row[7] ?? 0),
+    });
+  }
+
+  try {
+    const topQs = new URLSearchParams({
+      ids: "channel==" + channelId,
+      startDate: isoDaysAgo(30),
+      endDate: today,
+      metrics: "views",
+      dimensions: "video",
+      sort: "-views",
+      maxResults: "5",
+    });
+    const top = await ytGet(
+      YT_ANALYTICS_URL + "?" + topQs.toString(),
+      accessToken,
+    );
+    const bestRow = (top.rows ?? [])[0];
+    if (bestRow) {
+      const videoId = String(bestRow[0]);
+      const views = Number(bestRow[1] ?? 0);
+      out.push({
+        metric: "top_post",
+        date: today,
+        dimension: "https://www.youtube.com/watch?v=" + videoId,
+        value: views,
+      });
+      const vids = await ytGet(
+        YT_VIDEOS_URL + "?part=snippet&id=" + videoId,
+        accessToken,
+      );
+      const title = String(vids.items?.[0]?.snippet?.title ?? "video");
+      out.push({
+        metric: "top_post_type",
+        date: today,
+        dimension: title,
+        value: views,
+      });
+    }
+  } catch (err) {
+    console.error("[lens] youtube top video failed:", err);
+  }
+
+  return { channelId, rows: out };
 }
 
 async function graphGet(path: string, params: Record<string, string>) {
@@ -491,6 +596,7 @@ export async function POST(request: Request) {
       if (
         conn.provider !== "ga4" &&
         conn.provider !== "gsc" &&
+        conn.provider !== "youtube" &&
         conn.provider !== "facebook" &&
         conn.provider !== "instagram"
       ) {
@@ -570,6 +676,10 @@ export async function POST(request: Request) {
             throw new Error("No GA4 property found for this Google account");
           }
           rows = await ga4Fetch(accessToken, account);
+        } else if (conn.provider === "youtube") {
+          const yt = await youtubeFetch(accessToken);
+          account = yt.channelId;
+          rows = yt.rows;
         } else {
           if (!account) {
             const { data: clientRow } = await supabase
