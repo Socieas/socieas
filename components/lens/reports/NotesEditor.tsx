@@ -34,7 +34,7 @@ export function NotesEditor(props: {
   }
 
   return (
-    <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
+    <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4 print:hidden">
       <div>
         <label className="text-xs font-medium text-muted">
           Best time to post

@@ -3,6 +3,9 @@ import { Topbar } from "@/components/lens/layout/Topbar";
 import { Card, CardTitle } from "@/components/lens/ui/card";
 import { Badge } from "@/components/lens/ui/badge";
 import { NotesEditor } from "@/components/lens/reports/NotesEditor";
+import { PrintButton } from "@/components/lens/reports/PrintButton";
+import { CsvButton } from "@/components/lens/reports/CsvButton";
+import { ClientSwitcher } from "@/components/lens/ClientSwitcher";
 import { isMockMode } from "@/lib/lens/utils";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
 import { getViewer } from "@/lib/lens/viewer";
@@ -106,7 +109,7 @@ function StatTable({ stats }: { stats: Array<{ label: string; value: string }> }
 export default async function ReportsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ month?: string }>;
+  searchParams: Promise<{ month?: string; client?: string }>;
 }) {
   const sp = await searchParams;
   const viewer = await getViewer();
@@ -134,9 +137,10 @@ export default async function ReportsPage({
   const { data: clients } = await supabase
     .from("clients")
     .select("*")
-    .order("created_at", { ascending: true })
-    .limit(1);
-  const client = clients?.[0] ?? null;
+    .order("created_at", { ascending: true });
+  const clientList = clients ?? [];
+  const client =
+    clientList.find((c) => String(c.id) === sp.client) ?? clientList[0] ?? null;
 
   if (!client) {
     return (
@@ -274,8 +278,56 @@ export default async function ReportsPage({
 
   const prev = shiftMonth(month, -1);
   const next = shiftMonth(month, 1);
+  const clientQuery = "&client=" + String(client.id);
   const websiteNote = noteFor(month + ":website");
   const searchNote = noteFor(month + ":gsc");
+
+const csvRows: string[][] = [["Section", "Metric", "Value"]];
+if (ga4Rows.length > 0) {
+  csvRows.push(
+    ["Website", "Month", monthLabel(month)],
+    ["Website", "Total sessions", fmtNum(sessions)],
+    ["Website", "Total users", fmtNum(users)],
+    ["Website", "Page views", fmtNum(pageviews)],
+    ["Website", "Engagement rate", fmtPct(engagementRate)],
+    ["Website", "Avg engagement time", fmtDuration(avgTime)],
+    ["Website", "Social media traffic (30d)", fmtNum(socialTraffic)],
+  );
+  for (const p of topPages) {
+    csvRows.push(["Top pages (30d)", String(p.dimension), fmtNum(p.value)]);
+  }
+  for (const c of channels) {
+    csvRows.push([
+      "Traffic by channel (30d)",
+      String(c.dimension),
+      fmtNum(c.value),
+    ]);
+  }
+}
+if (gscRows.length > 0) {
+  csvRows.push(
+    ["Search Console", "Total impressions", fmtNum(impressions)],
+    ["Search Console", "Total clicks", fmtNum(clicks)],
+    ["Search Console", "Average CTR", fmtPct(ctr)],
+    [
+      "Search Console",
+      "Average position",
+      avgPosition == null ? "-" : avgPosition.toFixed(1),
+    ],
+  );
+  for (const [country, g] of geo) {
+    csvRows.push([
+      "Top countries (30d)",
+      country,
+      fmtNum(g.clicks) + " clicks",
+    ]);
+  }
+}
+for (const p of platforms) {
+  for (const st of p.stats) {
+    csvRows.push([p.name, st.label, st.value]);
+  }
+}
 
   return (
     <>
@@ -285,23 +337,38 @@ export default async function ReportsPage({
       />
       <main className="flex flex-col gap-8 px-6 py-8 lg:px-10">
         <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href={"/products/lens/reports?month=" + prev}
-            className="rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
-          >
-            ← {monthLabel(prev)}
-          </Link>
+          <ClientSwitcher
+            clients={clientList.map((c) => ({
+              id: String(c.id),
+              name: String(c.name ?? "Client"),
+            }))}
+            selectedId={String(client.id)}
+            extraQuery={"&month=" + month}
+          />
+          <span className="print:hidden">
+            <Link
+              href={"/products/lens/reports?month=" + prev + clientQuery}
+              className="inline-block rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
+            >
+              ← {monthLabel(prev)}
+            </Link>
+          </span>
           <span className="text-lg font-bold tracking-tight">
             {monthLabel(month)}
           </span>
           {month < nowMonth ? (
-            <Link
-              href={"/products/lens/reports?month=" + next}
-              className="rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
-            >
-              {monthLabel(next)} →
-            </Link>
+            <span className="print:hidden">
+              <Link
+                href={"/products/lens/reports?month=" + next + clientQuery}
+                className="inline-block rounded-xl border border-line px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink"
+              >
+                {monthLabel(next)} →
+              </Link>
+            </span>
           ) : null}
+          <div className="ml-auto">
+            <PrintButton />
+          </div>
         </div>
 
         {/* Website analytics */}

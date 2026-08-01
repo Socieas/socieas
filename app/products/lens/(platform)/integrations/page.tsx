@@ -7,6 +7,7 @@ import { isMockMode } from "@/lib/lens/utils";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
 import { getViewer } from "@/lib/lens/viewer";
 import { redirect } from "next/navigation";
+import { ClientSwitcher } from "@/components/lens/ClientSwitcher";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ const catalog = [
 export default async function IntegrationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ connected?: string; error?: string }>;
+searchParams: Promise<{ connected?: string; error?: string; client?: string }>;
 }) {
   const sp = await searchParams;
 
@@ -58,12 +59,13 @@ export default async function IntegrationsPage({
   }
 
   const supabase = await createServerSupabase();
-  const { data: clients } = await supabase
-    .from("clients")
-    .select("id, name")
-    .order("created_at", { ascending: true })
-    .limit(1);
-  const client = clients?.[0] ?? null;
+const { data: clients } = await supabase
+  .from("clients")
+  .select("id, name")
+  .order("created_at", { ascending: true });
+const clientList = clients ?? [];
+const client =
+  clientList.find((c) => String(c.id) === sp.client) ?? clientList[0] ?? null;
 
   const connMap: Record<
     string,
@@ -120,12 +122,21 @@ export default async function IntegrationsPage({
           </Card>
         ) : (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-sm text-muted">
-                Connected platforms sync the last 90 days of data.
-              </p>
-              <SyncNowButton />
-            </div>
+           <div className="flex flex-wrap items-center justify-between gap-4">
+  <div className="flex flex-wrap items-center gap-3">
+    <ClientSwitcher
+      clients={clientList.map((c) => ({
+        id: String(c.id),
+        name: String(c.name ?? "Client"),
+      }))}
+      selectedId={String(client.id)}
+    />
+    <p className="text-sm text-muted">
+      Connected platforms sync the last 90 days of data.
+    </p>
+  </div>
+  <SyncNowButton />
+</div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {catalog.map((p) => {
                 const conn = connMap[p.key];
