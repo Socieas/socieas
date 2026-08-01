@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 const RANGES = [
   { label: "7D", days: 7 },
@@ -46,33 +47,44 @@ export function Topbar({
             <p className="mt-1 text-sm text-muted">{subtitle}</p>
           ) : null}
         </div>
-        {isDashboard ? (
-          <div className="flex items-center gap-1 rounded-xl border border-line bg-raised p-1">
-            {RANGES.map((r) => (
+        <div className="flex flex-wrap items-center gap-2">
+          {isDashboard ? (
+            <div className="flex items-center gap-1 rounded-xl border border-line bg-raised p-1">
+              {RANGES.map((r) => (
+                <button
+                  key={r.label}
+                  type="button"
+                  onClick={() => setRange(r.days)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    !isCustom && activeRange === String(r.days)
+                      ? "bg-brand text-white"
+                      : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
               <button
-                key={r.label}
                 type="button"
-                onClick={() => setRange(r.days)}
+                onClick={() => setShowCustom((v) => !v)}
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                  !isCustom && activeRange === String(r.days)
-                    ? "bg-brand text-white"
-                    : "text-muted hover:text-ink"
+                  isCustom ? "bg-brand text-white" : "text-muted hover:text-ink"
                 }`}
               >
-                {r.label}
+                Custom
               </button>
-            ))}
+            </div>
+          ) : null}
+          <form action="/api/lens/auth/signout" method="POST">
             <button
-              type="button"
-              onClick={() => setShowCustom((v) => !v)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                isCustom ? "bg-brand text-white" : "text-muted hover:text-ink"
-              }`}
+              type="submit"
+              className="flex items-center gap-2 rounded-xl border border-line px-3 py-1.5 text-xs font-semibold text-muted transition hover:text-negative"
             >
-              Custom
+              <LogOut className="h-3.5 w-3.5" />
+              Log out
             </button>
-          </div>
-        ) : null}
+          </form>
+        </div>
       </div>
       {isDashboard && showCustom ? (
         <div className="flex flex-wrap items-center gap-2">
