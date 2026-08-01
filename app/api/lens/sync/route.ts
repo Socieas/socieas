@@ -5,7 +5,7 @@ import {
   refreshAccessToken,
 } from "@/lib/lens/integrations/google-oauth";
 
-const DAYS = 90;
+const DAYS = 365;
 
 const GSC_SITES_URL = "https://www.googleapis.com/webmasters/v3/sites";
 const GA4_DATA_URL = "https://analyticsdata.googleapis.com/v1beta/";
