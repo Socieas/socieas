@@ -396,9 +396,13 @@ for (const p of platforms) {
               </Link>
             </span>
           ) : null}
-          <div className="ml-auto">
-            <PrintButton />
-          </div>
+         <div className="ml-auto flex items-center gap-2">
+  <CsvButton
+    rows={csvRows}
+    filename={"lens-report-" + month + ".csv"}
+  />
+  <PrintButton />
+</div>
         </div>
 
         {/* Website analytics */}
