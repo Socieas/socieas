@@ -8,18 +8,24 @@ export function ClientSettingsForm({
   initialName,
   initialWebsite,
   initialColor,
+  initialSecondary,
+  initialAccent,
   initialLogoUrl,
 }: {
   clientId: string;
   initialName: string;
   initialWebsite: string;
   initialColor: string;
+  initialSecondary: string;
+  initialAccent: string;
   initialLogoUrl: string;
 }) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [website, setWebsite] = useState(initialWebsite);
   const [color, setColor] = useState(initialColor);
+  const [secondary, setSecondary] = useState(initialSecondary);
+  const [accent, setAccent] = useState(initialAccent);
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -36,6 +42,8 @@ export function ClientSettingsForm({
         name: name.trim(),
         websiteUrl: website.trim(),
         brandColor: color,
+        brandColorSecondary: secondary,
+        brandColorAccent: accent,
         logoUrl: logoUrl.trim(),
       }),
     });
@@ -57,12 +65,32 @@ export function ClientSettingsForm({
       className="rounded-card border border-line bg-surface p-5 shadow-card"
     >
       <div className="flex items-center gap-3">
-        <span
-          aria-hidden
-          className="h-8 w-8 rounded-lg"
-          style={{ backgroundColor: color }}
-        />
-        <p className="font-bold">{name || "Client"}</p>
+        {logoUrl.trim() ? (
+          <img
+            src={logoUrl.trim()}
+            alt="Client logo preview"
+            className="h-10 w-10 rounded-lg border border-line object-contain"
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="h-10 w-10 rounded-lg"
+            style={{ backgroundColor: color }}
+          />
+        )}
+        <div>
+          <p className="font-bold">{name || "Client"}</p>
+          <div className="mt-1 flex gap-1.5">
+            {[color, secondary, accent].map((c, i) => (
+              <span
+                key={i}
+                aria-hidden
+                className="h-3 w-6 rounded-full border border-line"
+                style={{ backgroundColor: c }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
@@ -87,7 +115,7 @@ export function ClientSettingsForm({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-semibold">
-            Brand color
+            Primary color
           </label>
           <input
             type="color"
@@ -98,12 +126,34 @@ export function ClientSettingsForm({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-semibold">
-            Logo image link (optional)
+            Secondary color
+          </label>
+          <input
+            type="color"
+            value={secondary}
+            onChange={(e) => setSecondary(e.target.value)}
+            className="h-10 w-full cursor-pointer rounded-xl border border-line bg-transparent px-1"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-semibold">
+            Supporting color
+          </label>
+          <input
+            type="color"
+            value={accent}
+            onChange={(e) => setAccent(e.target.value)}
+            className="h-10 w-full cursor-pointer rounded-xl border border-line bg-transparent px-1"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-semibold">
+            Logo image link
           </label>
           <input
             value={logoUrl}
             onChange={(e) => setLogoUrl(e.target.value)}
-            placeholder="https://your-site.com/logo.webp"
+            placeholder="/lens/img/clients/socieas.webp"
             className="w-full rounded-xl border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
           />
         </div>

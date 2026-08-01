@@ -2,25 +2,22 @@ import Link from "next/link";
 import { Topbar } from "@/components/lens/layout/Topbar";
 import { Card, CardTitle } from "@/components/lens/ui/card";
 import { Badge } from "@/components/lens/ui/badge";
-import { NotesEditor } from "@/components/lens/reports/NotesEditor";
 import { PrintButton } from "@/components/lens/reports/PrintButton";
 import { CsvButton } from "@/components/lens/reports/CsvButton";
 import { ClientSwitcher } from "@/components/lens/ClientSwitcher";
 import { TrendChart } from "@/components/lens/dashboard/TrendChart";
 import { BarList } from "@/components/lens/charts/BarList";
 import { isMockMode } from "@/lib/lens/utils";
+import {
+  websiteInsights,
+  searchInsights,
+  socialInsights,
+  type Insight,
+  type MetricRow,
+} from "@/lib/lens/insights";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
-import { getViewer } from "@/lib/lens/viewer";
 
 export const dynamic = "force-dynamic";
-
-type Row = {
-  provider: string;
-  metric: string;
-  date: string;
-  value: number;
-  dimension: string | null;
-};
 
 function currentMonth() {
   return new Date().toISOString().slice(0, 7);
@@ -48,7 +45,12 @@ function monthLabel(month: string) {
   });
 }
 
-function sumRange(rows: Row[], metric: string, from: string, toNext: string) {
+function sumRange(
+  rows: MetricRow[],
+  metric: string,
+  from: string,
+  toNext: string,
+) {
   let total = 0;
   for (const r of rows) {
     if (
@@ -63,7 +65,12 @@ function sumRange(rows: Row[], metric: string, from: string, toNext: string) {
   return total;
 }
 
-function avgRange(rows: Row[], metric: string, from: string, toNext: string) {
+function avgRange(
+  rows: MetricRow[],
+  metric: string,
+  from: string,
+  toNext: string,
+) {
   const vals = rows.filter(
     (r) =>
       r.metric === metric && !r.dimension && r.date >= from && r.date < toNext,
@@ -73,7 +80,7 @@ function avgRange(rows: Row[], metric: string, from: string, toNext: string) {
 }
 
 function seriesRange(
-  rows: Row[],
+  rows: MetricRow[],
   metric: string,
   from: string,
   toNext: string,
@@ -95,7 +102,7 @@ function seriesRange(
     .map((date) => ({ date, value: byDate[date] }));
 }
 
-function dimRows(rows: Row[], metric: string) {
+function dimRows(rows: MetricRow[], metric: string) {
   return rows
     .filter((r) => r.metric === metric && r.dimension)
     .sort((a, b) => b.value - a.value);
@@ -111,7 +118,7 @@ function fmtSigned(n: number | null) {
   const rounded = Math.round(n);
   const label = Math.abs(rounded).toLocaleString("en-US");
   if (rounded > 0) return "+" + label;
-  if (rounded < 0) return "-" + label;
+  if (rounded < 0) return "−" + label;
   return "0";
 }
 
@@ -128,22 +135,49 @@ function fmtDuration(sec: number | null) {
   return m + "m " + s + "s";
 }
 
-function StatTable({
-  stats,
+function Kpi({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-line bg-gradient-to-br from-surface to-raised p-4">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-1 text-xl font-bold tracking-tight">{value}</p>
+    </div>
+  );
+}
+
+function SectionHeader({
+  icon,
+  title,
+  badge,
 }: {
-  stats: Array<{ label: string; value: string }>;
+  icon: string | null;
+  title: string;
+  badge: string;
 }) {
   return (
-    <table className="mt-4 w-full text-sm">
-      <tbody>
-        {stats.map((st) => (
-          <tr key={st.label} className="border-t border-line">
-            <td className="py-2 pr-4 text-muted">{st.label}</td>
-            <td className="py-2 text-right font-semibold">{st.value}</td>
-          </tr>
+    <div className="flex flex-wrap items-center gap-3">
+      {icon ? <img src={icon} alt="" className="h-8 w-8" /> : null}
+      <h2 className="text-xl font-bold tracking-tight">{title}</h2>
+      <Badge tone="brand">{badge}</Badge>
+    </div>
+  );
+}
+
+function AiPanel({ insights }: { insights: Insight[] }) {
+  if (insights.length === 0) return null;
+  return (
+    <div className="rounded-2xl border border-brand/30 bg-brand-soft/40 p-5">
+      <p className="flex items-center gap-2 text-sm font-bold text-brand-dark">
+        ✦ Lens AI suggestions
+      </p>
+      <ul className="mt-3 space-y-2.5">
+        {insights.map((i) => (
+          <li key={i.title} className="text-sm leading-relaxed">
+            <span className="font-semibold">{i.title}:</span>{" "}
+            <span className="text-muted">{i.detail}</span>
+          </li>
         ))}
-      </tbody>
-    </table>
+      </ul>
+    </div>
   );
 }
 
@@ -158,13 +192,13 @@ export default async function ReportsPage({
   }>;
 }) {
   const sp = await searchParams;
-  const viewer = await getViewer();
-  const canEdit = viewer.type !== "client";
   const nowMonth = currentMonth();
 
   const isDate = (s?: string) => Boolean(s && /^\d{4}-\d{2}-\d{2}$/.test(s));
   const custom =
-    isDate(sp.from) && isDate(sp.to) && (sp.from as string) <= (sp.to as string);
+    isDate(sp.from) &&
+    isDate(sp.to) &&
+    (sp.from as string) <= (sp.to as string);
   const month = custom
     ? (sp.from as string).slice(0, 7)
     : sp.month && /^\d{4}-\d{2}$/.test(sp.month)
@@ -174,9 +208,14 @@ export default async function ReportsPage({
   const periodEndNext = custom
     ? shiftDays(sp.to as string, 1)
     : shiftMonth(month, 1) + "-01";
-  const periodLabel = custom
-    ? sp.from + " → " + sp.to
-    : monthLabel(month);
+  const periodLabel = custom ? sp.from + " → " + sp.to : monthLabel(month);
+  const spanDays = Math.max(
+    1,
+    Math.round(
+      (Date.parse(periodEndNext) - Date.parse(periodStart)) / 86400000,
+    ),
+  );
+  const prevFrom = shiftDays(periodStart, -spanDays);
 
   if (isMockMode()) {
     return (
@@ -185,7 +224,7 @@ export default async function ReportsPage({
         <main className="px-6 py-8 lg:px-10">
           <Card>
             <p className="text-sm text-muted">
-              Monthly reports show live data when mock mode is off.
+              Reports show live data when mock mode is off.
             </p>
           </Card>
         </main>
@@ -205,7 +244,7 @@ export default async function ReportsPage({
   if (!client) {
     return (
       <>
-        <Topbar title="Reports" subtitle="Monthly client reports" />
+        <Topbar title="Reports" subtitle="Client reports" />
         <main className="px-6 py-8 lg:px-10">
           <Card>
             <CardTitle>Add a client first</CardTitle>
@@ -223,7 +262,7 @@ export default async function ReportsPage({
     .select("provider, metric, date, value, dimension")
     .eq("client_id", client.id)
     .limit(20000);
-  const rows: Row[] = (metricsRaw ?? []).map((r) => ({
+  const rows: MetricRow[] = (metricsRaw ?? []).map((r) => ({
     provider: String(r.provider ?? ""),
     metric: String(r.metric),
     date: String(r.date),
@@ -231,13 +270,7 @@ export default async function ReportsPage({
     dimension: r.dimension ? String(r.dimension) : null,
   }));
 
-  const notesStore = (client.report_notes ?? {}) as Record<
-    string,
-    { best_time?: string; notes?: string }
-  >;
-  const noteFor = (key: string) => notesStore[key] ?? {};
-
-  // ---------- Website analytics (GA4) ----------
+  // Website
   const ga4Rows = rows.filter((r) => r.provider === "ga4");
   const sessions = sumRange(ga4Rows, "sessions", periodStart, periodEndNext);
   const users = sumRange(ga4Rows, "users", periodStart, periodEndNext);
@@ -254,19 +287,22 @@ export default async function ReportsPage({
     periodStart,
     periodEndNext,
   );
-  const topPages = dimRows(ga4Rows, "top_pages").slice(0, 8);
-  const channels = dimRows(ga4Rows, "traffic_channel");
-  const socialTraffic = channels
-    .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
-    .reduce((acc, c) => acc + c.value, 0);
+  const topPages = dimRows(ga4Rows, "top_pages").slice(0, 6);
+  const channels = dimRows(ga4Rows, "traffic_channel").slice(0, 6);
   const sessionsSeries = seriesRange(
     ga4Rows,
     "sessions",
     periodStart,
     periodEndNext,
   );
+  const websiteAi = websiteInsights(
+    ga4Rows,
+    periodStart,
+    periodEndNext,
+    prevFrom,
+  );
 
-  // ---------- Search Console (GSC) ----------
+  // Search
   const gscRows = rows.filter((r) => r.provider === "gsc");
   const clicks = sumRange(gscRows, "clicks", periodStart, periodEndNext);
   const impressions = sumRange(
@@ -288,138 +324,69 @@ export default async function ReportsPage({
     periodStart,
     periodEndNext,
   );
-  const topQueries = dimRows(gscRows, "top_queries").slice(0, 10);
+  const topQueries = dimRows(gscRows, "top_queries").slice(0, 8);
+  const topCountries = dimRows(gscRows, "geo_clicks").slice(0, 6);
+  const searchAi = searchInsights(gscRows, periodStart, periodEndNext);
 
-  const geoMap = new Map<
-    string,
-    { clicks: number; impressions: number; position: number; ctr: number }
-  >();
-  for (const metric of [
-    "geo_clicks",
-    "geo_impressions",
-    "geo_position",
-    "geo_ctr",
-  ]) {
-    for (const r of dimRows(gscRows, metric)) {
-      const key = r.dimension as string;
-      const entry =
-        geoMap.get(key) ?? { clicks: 0, impressions: 0, position: 0, ctr: 0 };
-      if (metric === "geo_clicks") entry.clicks = r.value;
-      if (metric === "geo_impressions") entry.impressions = r.value;
-      if (metric === "geo_position") entry.position = r.value;
-      if (metric === "geo_ctr") entry.ctr = r.value;
-      geoMap.set(key, entry);
-    }
-  }
-  const geo = Array.from(geoMap.entries())
-    .sort((a, b) => b[1].clicks - a[1].clicks)
-    .slice(0, 10);
-
-  // ---------- Social platforms ----------
+  // Social
+  const socialMeta: Record<string, { name: string; icon: string }> = {
+    facebook: { name: "Facebook", icon: "/lens/icons/facebook.svg" },
+    instagram: { name: "Instagram", icon: "/lens/icons/instagram.svg" },
+    youtube: { name: "YouTube", icon: "/lens/icons/youtube.svg" },
+  };
   const platforms = ["facebook", "instagram", "youtube"]
     .map((provider) => {
-      const provRows = rows.filter((r) => r.provider === provider);
-      if (provRows.length === 0) return null;
-
-      const followerRows = provRows
+      const pr = rows.filter((r) => r.provider === provider);
+      if (pr.length === 0) return null;
+      const followerRows = pr
         .filter((r) => r.metric === "followers" && !r.dimension)
         .sort((a, b) => (a.date < b.date ? 1 : -1));
-      const followers =
-        followerRows.length > 0 ? followerRows[0].value : null;
-      const hasChange = provRows.some(
+      const followers = followerRows.length > 0 ? followerRows[0].value : null;
+      const netChange = pr.some(
         (r) => r.metric === "follower_change" && !r.dimension,
-      );
-      const netChange = hasChange
-        ? sumRange(provRows, "follower_change", periodStart, periodEndNext)
+      )
+        ? sumRange(pr, "follower_change", periodStart, periodEndNext)
         : null;
-      const followersStart =
-        followers != null && netChange != null ? followers - netChange : null;
-
-      const tops = dimRows(provRows, "top_post");
-      const topTypes = dimRows(provRows, "top_post_type");
-      const noteKey = month + ":" + provider;
-      const saved = noteFor(noteKey);
-
-      let name = "Facebook";
-      if (provider === "instagram") name = "Instagram";
-      if (provider === "youtube") name = "YouTube";
-
-      let stats: Array<{ label: string; value: string }>;
-      if (provider === "youtube") {
-        const views = sumRange(provRows, "views", periodStart, periodEndNext);
-        const watchMinutes = sumRange(
-          provRows,
-          "watch_minutes",
-          periodStart,
-          periodEndNext,
-        );
-        const engagements = sumRange(
-          provRows,
-          "engagements",
-          periodStart,
-          periodEndNext,
-        );
-        stats = [
-          {
-            label: "Subscribers at period start",
-            value: fmtNum(followersStart),
-          },
-          { label: "Current subscribers", value: fmtNum(followers) },
-          { label: "Net subscriber change", value: fmtSigned(netChange) },
-          { label: "Views", value: fmtNum(views) },
-          { label: "Watch time (minutes)", value: fmtNum(watchMinutes) },
-          {
-            label: "Engagements (likes, comments, shares)",
-            value: fmtNum(engagements),
-          },
-        ];
-      } else {
-        const reach = sumRange(provRows, "reach", periodStart, periodEndNext);
-        const impressionsSocial = sumRange(
-          provRows,
-          "impressions",
-          periodStart,
-          periodEndNext,
-        );
-        const engagements = sumRange(
-          provRows,
-          "engagements",
-          periodStart,
-          periodEndNext,
-        );
-        const profileViews = sumRange(
-          provRows,
-          "profile_views",
-          periodStart,
-          periodEndNext,
-        );
-        const denominator = reach > 0 ? reach : impressionsSocial;
-        const engagementRateSocial =
-          denominator > 0 ? (engagements / denominator) * 100 : null;
-        stats = [
-          {
-            label: "Followers at period start",
-            value: fmtNum(followersStart),
-          },
-          { label: "Current followers", value: fmtNum(followers) },
-          { label: "Net follower change", value: fmtSigned(netChange) },
-          { label: "Reach", value: fmtNum(reach) },
-          { label: "Impressions", value: fmtNum(impressionsSocial) },
-          { label: "Engagements", value: fmtNum(engagements) },
-          { label: "Engagement rate", value: fmtPct(engagementRateSocial) },
-          { label: "Profile views", value: fmtNum(profileViews) },
-        ];
-      }
-
+      const isYt = provider === "youtube";
+      const kpis = isYt
+        ? [
+            { label: "Subscribers", value: fmtNum(followers) },
+            { label: "Net change", value: fmtSigned(netChange) },
+            {
+              label: "Views",
+              value: fmtNum(sumRange(pr, "views", periodStart, periodEndNext)),
+            },
+            {
+              label: "Watch time (min)",
+              value: fmtNum(
+                sumRange(pr, "watch_minutes", periodStart, periodEndNext),
+              ),
+            },
+          ]
+        : [
+            { label: "Followers", value: fmtNum(followers) },
+            { label: "Net change", value: fmtSigned(netChange) },
+            {
+              label: "Reach",
+              value: fmtNum(sumRange(pr, "reach", periodStart, periodEndNext)),
+            },
+            {
+              label: "Engagements",
+              value: fmtNum(
+                sumRange(pr, "engagements", periodStart, periodEndNext),
+              ),
+            },
+          ];
+      const tops = dimRows(pr, "top_post");
+      const topTypes = dimRows(pr, "top_post_type");
       return {
         provider,
-        name,
-        stats,
+        ...socialMeta[provider],
+        isYt,
+        kpis,
         topPostLink: tops[0]?.dimension ?? null,
         topPostType: topTypes[0]?.dimension ?? null,
-        noteKey,
-        bestTime: String(saved.best_time ?? ""),
-        notes: String(saved.notes ?? ""),
+        ai: socialInsights(pr, provider, periodStart, periodEndNext),
       };
     })
     .filter((p) => p !== null);
@@ -427,60 +394,45 @@ export default async function ReportsPage({
   const prev = shiftMonth(month, -1);
   const next = shiftMonth(month, 1);
   const clientQuery = "&client=" + String(client.id);
-  const websiteNote = noteFor(month + ":website");
-  const searchNote = noteFor(month + ":gsc");
 
   const csvRows: string[][] = [["Section", "Metric", "Value"]];
   if (ga4Rows.length > 0) {
     csvRows.push(
       ["Website", "Period", periodLabel],
-      ["Website", "Total sessions", fmtNum(sessions)],
-      ["Website", "Total users", fmtNum(users)],
-      ["Website", "Page views", fmtNum(pageviews)],
+      ["Website", "Sessions", fmtNum(sessions)],
+      ["Website", "Users", fmtNum(users)],
+      ["Website", "Pageviews", fmtNum(pageviews)],
       ["Website", "Engagement rate", fmtPct(engagementRate)],
       ["Website", "Avg engagement time", fmtDuration(avgTime)],
-      ["Website", "Social media traffic (30d)", fmtNum(socialTraffic)],
     );
-    for (const p of topPages) {
-      csvRows.push(["Top pages (30d)", String(p.dimension), fmtNum(p.value)]);
-    }
     for (const c of channels) {
-      csvRows.push([
-        "Traffic by channel (30d)",
-        String(c.dimension),
-        fmtNum(c.value),
-      ]);
+      csvRows.push(["Traffic by channel", String(c.dimension), fmtNum(c.value)]);
+    }
+    for (const p of topPages) {
+      csvRows.push(["Top pages", String(p.dimension), fmtNum(p.value)]);
     }
   }
   if (gscRows.length > 0) {
     csvRows.push(
-      ["Search Console", "Total impressions", fmtNum(impressions)],
-      ["Search Console", "Total clicks", fmtNum(clicks)],
-      ["Search Console", "Average CTR", fmtPct(ctr)],
+      ["Search", "Clicks", fmtNum(clicks)],
+      ["Search", "Impressions", fmtNum(impressions)],
+      ["Search", "CTR", fmtPct(ctr)],
       [
-        "Search Console",
-        "Average position",
-        avgPosition == null ? "-" : avgPosition.toFixed(1),
+        "Search",
+        "Avg position",
+        avgPosition == null ? "—" : avgPosition.toFixed(1),
       ],
     );
     for (const q of topQueries) {
-      csvRows.push([
-        "Top keywords (30d)",
-        String(q.dimension),
-        fmtNum(q.value) + " clicks",
-      ]);
+      csvRows.push(["Top keywords", String(q.dimension), fmtNum(q.value)]);
     }
-    for (const [country, g] of geo) {
-      csvRows.push([
-        "Top countries (30d)",
-        country,
-        fmtNum(g.clicks) + " clicks",
-      ]);
+    for (const g of topCountries) {
+      csvRows.push(["Top countries", String(g.dimension), fmtNum(g.value)]);
     }
   }
   for (const p of platforms) {
-    for (const st of p.stats) {
-      csvRows.push([p.name, st.label, st.value]);
+    for (const k of p.kpis) {
+      csvRows.push([p.name, k.label, k.value]);
     }
   }
 
@@ -490,7 +442,7 @@ export default async function ReportsPage({
         title="Reports"
         subtitle={"Report for " + String(client.name ?? "client")}
       />
-      <main className="flex flex-col gap-8 px-6 py-8 lg:px-10">
+      <main className="flex flex-col gap-10 px-6 py-8 lg:px-10">
         <div className="flex flex-wrap items-center gap-3">
           <ClientSwitcher
             clients={clientList.map((c) => ({
@@ -537,248 +489,186 @@ export default async function ReportsPage({
           <div className="ml-auto flex items-center gap-2">
             <CsvButton
               rows={csvRows}
-              filename={"lens-report-" + (custom ? sp.from + "-" + sp.to : month) + ".csv"}
+              filename={
+                "lens-report-" +
+                (custom ? sp.from + "-" + sp.to : month) +
+                ".csv"
+              }
             />
             <PrintButton />
           </div>
         </div>
 
-        {/* Website analytics */}
         {ga4Rows.length > 0 ? (
-          <Card>
-            <div className="flex items-center justify-between gap-3">
-              <CardTitle>Website analytics</CardTitle>
-              <Badge tone="brand">{periodLabel}</Badge>
+          <section className="flex flex-col gap-5">
+            <SectionHeader
+              icon="/lens/icons/google-analytics.svg"
+              title="Website"
+              badge={periodLabel}
+            />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+              <Kpi label="Sessions" value={fmtNum(sessions)} />
+              <Kpi label="Users" value={fmtNum(users)} />
+              <Kpi label="Pageviews" value={fmtNum(pageviews)} />
+              <Kpi label="Engagement rate" value={fmtPct(engagementRate)} />
+              <Kpi label="Avg session time" value={fmtDuration(avgTime)} />
             </div>
-            <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div>
-                <StatTable
-                  stats={[
-                    { label: "Period", value: periodLabel },
-                    { label: "Total sessions", value: fmtNum(sessions) },
-                    { label: "Total users", value: fmtNum(users) },
-                    { label: "Page views", value: fmtNum(pageviews) },
-                    { label: "Engagement rate", value: fmtPct(engagementRate) },
-                    {
-                      label: "Avg engagement time per session",
-                      value: fmtDuration(avgTime),
-                    },
-                    {
-                      label: "Social media traffic (last 30 days)",
-                      value: fmtNum(socialTraffic),
-                    },
-                  ]}
-                />
-                {canEdit ? (
-                  <NotesEditor
-                    clientId={String(client.id)}
-                    noteKey={month + ":website"}
-                    initialBestTime={String(websiteNote.best_time ?? "")}
-                    initialNotes={String(websiteNote.notes ?? "")}
-                  />
-                ) : null}
-              </div>
-              <div className="flex flex-col gap-6">
-                {sessionsSeries.length > 1 ? (
-                  <div>
-                    <p className="text-sm font-semibold">Sessions</p>
-                    <div className="mt-2">
-                      <TrendChart data={sessionsSeries} />
-                    </div>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {sessionsSeries.length > 1 ? (
+                <Card>
+                  <CardTitle>Sessions over time</CardTitle>
+                  <div className="mt-3">
+                    <TrendChart data={sessionsSeries} />
                   </div>
-                ) : null}
-                <div>
-                  <p className="text-sm font-semibold">
-                    Top pages (last 30 days)
-                  </p>
-                  <table className="mt-2 w-full text-sm">
-                    <tbody>
-                      {topPages.map((p) => (
-                        <tr key={p.dimension} className="border-t border-line">
-                          <td className="max-w-0 truncate py-1.5 pr-4 text-muted">
-                            {p.dimension}
-                          </td>
-                          <td className="py-1.5 text-right font-semibold">
-                            {fmtNum(p.value)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold">
-                    Traffic by channel (last 30 days)
-                  </p>
-                  <div className="mt-2">
+                </Card>
+              ) : null}
+              {channels.length > 0 ? (
+                <Card>
+                  <CardTitle>Where traffic comes from</CardTitle>
+                  <div className="mt-4">
                     <BarList
-                      items={channels.slice(0, 6).map((c) => ({
+                      items={channels.map((c) => ({
                         label: String(c.dimension),
                         value: c.value,
                       }))}
                     />
                   </div>
-                </div>
-              </div>
+                </Card>
+              ) : null}
             </div>
-          </Card>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {topPages.length > 0 ? (
+                <Card>
+                  <CardTitle>Most visited pages</CardTitle>
+                  <ul className="mt-3 space-y-2">
+                    {topPages.map((p, i) => (
+                      <li
+                        key={String(p.dimension)}
+                        className="flex items-center gap-3 text-sm"
+                      >
+                        <span
+                          aria-hidden
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-black text-brand-dark"
+                        >
+                          {i + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-muted">
+                          {p.dimension}
+                        </span>
+                        <span className="font-semibold">
+                          {fmtNum(p.value)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              ) : null}
+              <AiPanel insights={websiteAi} />
+            </div>
+          </section>
         ) : null}
 
-        {/* Search Console */}
         {gscRows.length > 0 ? (
-          <Card>
-            <div className="flex items-center justify-between gap-3">
-              <CardTitle>Search Console</CardTitle>
+          <section className="flex flex-col gap-5">
+            <SectionHeader
+              icon="/lens/icons/search-console.svg"
+              title="Google Search"
+              badge={periodLabel}
+            />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Kpi label="Clicks" value={fmtNum(clicks)} />
+              <Kpi label="Impressions" value={fmtNum(impressions)} />
+              <Kpi label="CTR" value={fmtPct(ctr)} />
+              <Kpi
+                label="Avg position"
+                value={avgPosition == null ? "—" : avgPosition.toFixed(1)}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {clicksSeries.length > 1 ? (
+                <Card>
+                  <CardTitle>Clicks over time</CardTitle>
+                  <div className="mt-3">
+                    <TrendChart data={clicksSeries} />
+                  </div>
+                </Card>
+              ) : null}
+              {topQueries.length > 0 ? (
+                <Card>
+                  <CardTitle>Top keywords people search</CardTitle>
+                  <div className="mt-4">
+                    <BarList
+                      items={topQueries.map((q) => ({
+                        label: String(q.dimension),
+                        value: q.value,
+                      }))}
+                    />
+                  </div>
+                </Card>
+              ) : null}
+            </div>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {topCountries.length > 0 ? (
+                <Card>
+                  <CardTitle>Clicks by country</CardTitle>
+                  <div className="mt-4">
+                    <BarList
+                      items={topCountries.map((g) => ({
+                        label: String(g.dimension),
+                        value: g.value,
+                      }))}
+                    />
+                  </div>
+                </Card>
+              ) : null}
+              <AiPanel insights={searchAi} />
+            </div>
+          </section>
+        ) : null}
+
+        {platforms.length > 0 ? (
+          <section className="flex flex-col gap-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-xl font-bold tracking-tight">
+                Social media
+              </h2>
               <Badge tone="brand">{periodLabel}</Badge>
             </div>
-            <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div>
-                <StatTable
-                  stats={[
-                    { label: "Total impressions", value: fmtNum(impressions) },
-                    { label: "Total clicks", value: fmtNum(clicks) },
-                    { label: "Average CTR", value: fmtPct(ctr) },
-                    {
-                      label: "Average position",
-                      value:
-                        avgPosition == null ? "—" : avgPosition.toFixed(1),
-                    },
-                  ]}
-                />
-                {topQueries.length > 0 ? (
-                  <div className="mt-6">
-                    <p className="text-sm font-semibold">
-                      Top keywords (last 30 days)
-                    </p>
-                    <div className="mt-2">
-                      <BarList
-                        items={topQueries.map((q) => ({
-                          label: String(q.dimension),
-                          value: q.value,
-                        }))}
-                      />
-                    </div>
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+              {platforms.map((p) => (
+                <Card key={p.provider}>
+                  <div className="flex items-center gap-3">
+                    <img src={p.icon} alt="" className="h-7 w-7" />
+                    <CardTitle>{p.name}</CardTitle>
                   </div>
-                ) : null}
-                {canEdit ? (
-                  <NotesEditor
-                    clientId={String(client.id)}
-                    noteKey={month + ":gsc"}
-                    initialBestTime={String(searchNote.best_time ?? "")}
-                    initialNotes={String(searchNote.notes ?? "")}
-                  />
-                ) : null}
-              </div>
-              <div>
-                {clicksSeries.length > 1 ? (
-                  <div className="mb-6">
-                    <p className="text-sm font-semibold">Search clicks</p>
-                    <div className="mt-2">
-                      <TrendChart data={clicksSeries} />
-                    </div>
-                  </div>
-                ) : null}
-                <p className="text-sm font-semibold">
-                  Top countries (last 30 days)
-                </p>
-                <table className="mt-2 w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-xs text-muted">
-                      <th className="py-1.5 font-medium">Country</th>
-                      <th className="py-1.5 text-right font-medium">Clicks</th>
-                      <th className="py-1.5 text-right font-medium">Impr.</th>
-                      <th className="py-1.5 text-right font-medium">Pos.</th>
-                      <th className="py-1.5 text-right font-medium">CTR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {geo.map(([country, g]) => (
-                      <tr key={country} className="border-t border-line">
-                        <td className="py-1.5 pr-2 font-medium">{country}</td>
-                        <td className="py-1.5 text-right">
-                          {fmtNum(g.clicks)}
-                        </td>
-                        <td className="py-1.5 text-right">
-                          {fmtNum(g.impressions)}
-                        </td>
-                        <td className="py-1.5 text-right">
-                          {g.position.toFixed(1)}
-                        </td>
-                        <td className="py-1.5 text-right">
-                          {g.ctr.toFixed(2)}%
-                        </td>
-                      </tr>
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    {p.kpis.map((k) => (
+                      <Kpi key={k.label} label={k.label} value={k.value} />
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </Card>
-        ) : null}
-
-        {/* Social media */}
-        {platforms.length === 0 ? (
-          <Card>
-            <CardTitle>No social data for this period</CardTitle>
-            <p className="mt-2 text-sm text-muted">
-              Connect Facebook, Instagram or YouTube, then run a sync from the
-              Integrations page.
-            </p>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            {platforms.map((p) => (
-              <Card key={p.provider}>
-                <div className="flex items-center justify-between gap-3">
-                  <CardTitle>{p.name}</CardTitle>
-                  <Badge tone="brand">{periodLabel}</Badge>
-                </div>
-                <StatTable stats={p.stats} />
-                {p.topPostLink ? (
-                  <div className="mt-4">
-                    <p className="text-sm font-semibold">
-                      Top {p.provider === "youtube" ? "video" : "post"} (last
-                      30 days)
-                    </p>
-                    <a
-                      href={p.topPostLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-1 block truncate text-sm font-semibold text-brand underline"
-                    >
-                      {p.topPostLink}
-                    </a>
-                    {p.topPostType ? (
-                      <p className="mt-1 text-xs text-muted">
-                        {p.topPostType}
-                      </p>
-                    ) : null}
                   </div>
-                ) : null}
-                {canEdit ? (
-                  <NotesEditor
-                    clientId={String(client.id)}
-                    noteKey={p.noteKey}
-                    initialBestTime={p.bestTime}
-                    initialNotes={p.notes}
-                  />
-                ) : null}
-              </Card>
-            ))}
-          </div>
-        )}
-
-        <Card className="print:hidden">
-          <CardTitle>Data notes</CardTitle>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            Daily metrics cover up to 12 months for Google and YouTube.
-            Facebook and Instagram are limited by Meta to roughly the last 90
-            and 30 days, but every daily sync keeps adding to your stored
-            history. Lists like top pages, keywords and countries are 30-day
-            snapshots from the most recent sync. LinkedIn will appear here
-            automatically once connected.
-          </p>
-        </Card>
+                  {p.topPostLink ? (
+                    <div className="mt-4">
+                      <p className="text-sm font-semibold">
+                        Top {p.isYt ? "video" : "post"}
+                      </p>
+                      <a
+                        href={p.topPostLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1 block truncate text-sm font-semibold text-brand underline"
+                      >
+                        {p.topPostType ?? p.topPostLink}
+                      </a>
+                    </div>
+                  ) : null}
+                  <div className="mt-4">
+                    <AiPanel insights={p.ai} />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </main>
     </>
   );
