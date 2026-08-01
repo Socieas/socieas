@@ -26,17 +26,20 @@ export function Topbar({
   const [from, setFrom] = useState(searchParams.get("from") ?? "");
   const [to, setTo] = useState(searchParams.get("to") ?? "");
   const isDashboard = Boolean(pathname?.includes("/dashboard"));
+const viewParam = searchParams.get("view")
+  ? "&view=" + searchParams.get("view")
+  : "";
 
-  function setRange(days: number) {
-    setShowCustom(false);
-    router.push(`${pathname}?range=${days}`);
-  }
+function setRange(days: number) {
+  setShowCustom(false);
+  router.push(`${pathname}?range=${days}${viewParam}`);
+}
 
-  function applyCustom() {
-    if (!from || !to || from > to) return;
-    setShowCustom(false);
-    router.push(`${pathname}?from=${from}&to=${to}`);
-  }
+function applyCustom() {
+  if (!from || !to || from > to) return;
+  setShowCustom(false);
+  router.push(`${pathname}?from=${from}&to=${to}${viewParam}`);
+}
 
   return (
     <header className="flex flex-col gap-4 border-b border-line bg-surface px-6 py-5 lg:px-10">

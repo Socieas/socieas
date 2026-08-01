@@ -6,6 +6,8 @@ import { NotesEditor } from "@/components/lens/reports/NotesEditor";
 import { PrintButton } from "@/components/lens/reports/PrintButton";
 import { CsvButton } from "@/components/lens/reports/CsvButton";
 import { ClientSwitcher } from "@/components/lens/ClientSwitcher";
+import { TrendChart } from "@/components/lens/dashboard/TrendChart";
+import { BarList } from "@/components/lens/charts/BarList";
 import { isMockMode } from "@/lib/lens/utils";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
 import { getViewer } from "@/lib/lens/viewer";
@@ -56,6 +58,19 @@ function avgMonth(rows: Row[], metric: string, month: string) {
   );
   if (vals.length === 0) return null;
   return vals.reduce((acc, r) => acc + r.value, 0) / vals.length;
+}
+
+function seriesMonth(rows: Row[], metric: string, month: string) {
+  const byDate: Record<string, number> = {};
+  for (const r of rows) {
+    if (r.metric !== metric || r.dimension || !r.date.startsWith(month)) {
+      continue;
+    }
+    byDate[r.date] = (byDate[r.date] ?? 0) + r.value;
+  }
+  return Object.keys(byDate)
+    .sort()
+    .map((date) => ({ date, value: byDate[date] }));
 }
 
 function dimRows(rows: Row[], metric: string) {
@@ -162,7 +177,7 @@ export default async function ReportsPage({
     .from("metrics_daily")
     .select("provider, metric, date, value, dimension")
     .eq("client_id", client.id)
-    .limit(8000);
+    .limit(20000);
   const rows: Row[] = (metricsRaw ?? []).map((r) => ({
     provider: String(r.provider ?? ""),
     metric: String(r.metric),
@@ -187,8 +202,9 @@ export default async function ReportsPage({
   const topPages = dimRows(ga4Rows, "top_pages").slice(0, 8);
   const channels = dimRows(ga4Rows, "traffic_channel");
   const socialTraffic = channels
-    .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
-    .reduce((acc, c) => acc + c.value, 0);
+  .filter((c) => (c.dimension ?? "").toLowerCase().includes("social"))
+  .reduce((acc, c) => acc + c.value, 0);
+const sessionsSeries = seriesMonth(ga4Rows, "sessions", month);
 
   // ---------- Search Console (GSC) ----------
   const gscRows = rows.filter((r) => r.provider === "gsc");
@@ -196,6 +212,7 @@ export default async function ReportsPage({
   const impressions = sumMonth(gscRows, "impressions", month);
   const ctr = impressions > 0 ? (clicks / impressions) * 100 : null;
   const avgPosition = avgMonth(gscRows, "avg_position", month);
+const clicksSeries = seriesMonth(gscRows, "clicks", month);
 
   const geoMap = new Map<
     string,
@@ -440,11 +457,21 @@ for (const p of platforms) {
                   />
                 ) : null}
               </div>
-              <div className="flex flex-col gap-6">
-                <div>
-                  <p className="text-sm font-semibold">
-                    Top pages (last 30 days)
-                  </p>
+             <div className="flex flex-col gap-6">
+  {sessionsSeries.length > 1 ? (
+    <div>
+      <p className="text-sm font-semibold">
+        Sessions this month
+      </p>
+      <div className="mt-2">
+        <TrendChart data={sessionsSeries} />
+      </div>
+    </div>
+  ) : null}
+  <div>
+    <p className="text-sm font-semibold">
+      Top pages (last 30 days)
+    </p>
                   <table className="mt-2 w-full text-sm">
                     <tbody>
                       {topPages.map((p) => (
@@ -460,10 +487,20 @@ for (const p of platforms) {
                     </tbody>
                   </table>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold">
-                    Traffic by channel (last 30 days)
-                  </p>
+               <div>
+  {clicksSeries.length > 1 ? (
+    <div className="mb-6">
+      <p className="text-sm font-semibold">
+        Search clicks this month
+      </p>
+      <div className="mt-2">
+        <TrendChart data={clicksSeries} />
+      </div>
+    </div>
+  ) : null}
+  <p className="text-sm font-semibold">
+    Top countries (last 30 days)
+  </p>
                   <table className="mt-2 w-full text-sm">
                     <tbody>
                       {channels.map((c) => (
