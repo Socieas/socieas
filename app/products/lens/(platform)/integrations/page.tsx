@@ -5,6 +5,8 @@ import { SyncNowButton } from "@/components/lens/dashboard/SyncNowButton";
 import { AccountPicker } from "@/components/lens/integrations/AccountPicker";
 import { isMockMode } from "@/lib/lens/utils";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import { getViewer } from "@/lib/lens/viewer";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +50,11 @@ export default async function IntegrationsPage({
         </main>
       </>
     );
+  }
+
+  const viewer = await getViewer();
+  if (viewer.type === "client") {
+    redirect("/products/lens/clients/" + viewer.clientId);
   }
 
   const supabase = await createServerSupabase();

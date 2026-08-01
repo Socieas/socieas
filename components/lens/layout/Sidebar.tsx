@@ -13,19 +13,42 @@ import {
 import { LENS_BASE } from "@/lib/lens/routes";
 import { cn } from "@/lib/lens/utils";
 
-const lensNav = [
-  { href: `${LENS_BASE}/dashboard`, label: "Dashboard", icon: LayoutDashboard },
-  { href: `${LENS_BASE}/clients`, label: "Clients", icon: Users },
-  { href: `${LENS_BASE}/reports`, label: "Reports", icon: FileText },
-  { href: `${LENS_BASE}/integrations`, label: "Integrations", icon: Plug },
-];
-
-export function Sidebar() {
+export function Sidebar({
+  portal,
+  portalClientId,
+}: {
+  portal?: boolean;
+  portalClientId?: string;
+}) {
   const pathname = usePathname();
+
+  const nav =
+    portal && portalClientId
+      ? [
+          {
+            href: `${LENS_BASE}/clients/` + portalClientId,
+            label: "My dashboard",
+            icon: LayoutDashboard,
+          },
+          { href: `${LENS_BASE}/reports`, label: "Reports", icon: FileText },
+        ]
+      : [
+          {
+            href: `${LENS_BASE}/dashboard`,
+            label: "Dashboard",
+            icon: LayoutDashboard,
+          },
+          { href: `${LENS_BASE}/clients`, label: "Clients", icon: Users },
+          { href: `${LENS_BASE}/reports`, label: "Reports", icon: FileText },
+          { href: `${LENS_BASE}/integrations`, label: "Integrations", icon: Plug },
+        ];
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
-      <Link href={`${LENS_BASE}/dashboard`} className="px-3">
+      <Link
+        href={portal && portalClientId ? `${LENS_BASE}/clients/` + portalClientId : `${LENS_BASE}/dashboard`}
+        className="px-3"
+      >
         <span className="block text-2xl font-black tracking-tight">
           Socieas<span className="text-brand">.</span>
         </span>
@@ -36,7 +59,7 @@ export function Sidebar() {
       </Link>
 
       <nav className="mt-8 flex flex-1 flex-col gap-1">
-        {lensNav.map(({ href, label, icon: Icon }) => {
+        {nav.map(({ href, label, icon: Icon }) => {
           const active =
             pathname === href ||
             (href !== `${LENS_BASE}/dashboard` && pathname.startsWith(href));
@@ -58,13 +81,15 @@ export function Sidebar() {
         })}
       </nav>
 
-      <Link
-        href={`${LENS_BASE}/dashboard`}
-        className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition hover:bg-raised hover:text-ink"
-      >
-        <Settings className="h-4 w-4" />
-        Workspace settings
-      </Link>
+      {portal ? null : (
+        <Link
+          href={`${LENS_BASE}/dashboard`}
+          className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition hover:bg-raised hover:text-ink"
+        >
+          <Settings className="h-4 w-4" />
+          Workspace settings
+        </Link>
+      )}
     </aside>
   );
 }
