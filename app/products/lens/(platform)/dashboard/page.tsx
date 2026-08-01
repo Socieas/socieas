@@ -241,7 +241,7 @@ export default async function DashboardPage({
       return { ...s, cur, delta, goodWhenDown };
     });
 
-  const socialStats = (["facebook", "instagram"] as const)
+  const socialStats = (["facebook", "instagram", "youtube"] as const)
     .map((prov) => {
       const fRows = rows
         .filter(
@@ -251,7 +251,12 @@ export default async function DashboardPage({
         .sort((a, b) => (a.date < b.date ? 1 : -1));
       return {
         provider: prov,
-        label: prov === "facebook" ? "Facebook followers" : "Instagram followers",
+        label:
+  prov === "facebook"
+    ? "Facebook followers"
+    : prov === "instagram"
+      ? "Instagram followers"
+      : "YouTube subscribers",
         value: fRows.length > 0 ? fRows[0].value : null,
       };
     })

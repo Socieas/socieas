@@ -17,7 +17,7 @@ const catalog = [
   { key: "instagram", name: "Instagram", description: "Followers, reach and engagement.", available: true },
   { key: "facebook", name: "Facebook", description: "Page insights and audience growth.", available: true },
   { key: "linkedin", name: "LinkedIn", description: "Company page analytics.", available: false },
-  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: false },
+  { key: "youtube", name: "YouTube", description: "Views, watch time and subscribers.", available: true },
   { key: "google_ads", name: "Google Ads", description: "Campaign spend and performance.", available: false },
   { key: "meta_ads", name: "Meta Ads", description: "Ad performance across Meta.", available: false },
 ];
