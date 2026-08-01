@@ -34,13 +34,23 @@ export default async function PlatformLayout({
 
   return (
     <>
-      <Navbar />
-      <div className="flex min-h-screen pt-20">
-        <Sidebar portal={portal} portalClientId={portalClientId} />
-        <div className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</div>
+      <div className="print:hidden">
+        <Navbar />
       </div>
-      <MobileNav portal={portal} portalClientId={portalClientId} />
-      <Footer />
+      <div className="flex min-h-screen pt-20 print:min-h-0 print:pt-0">
+        <div className="print:hidden">
+          <Sidebar portal={portal} portalClientId={portalClientId} />
+        </div>
+        <div className="min-w-0 flex-1 pb-16 lg:pb-0 print:pb-0">
+          {children}
+        </div>
+      </div>
+      <div className="print:hidden">
+        <MobileNav portal={portal} portalClientId={portalClientId} />
+      </div>
+      <div className="print:hidden">
+        <Footer />
+      </div>
     </>
   );
-} 
+}

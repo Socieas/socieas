@@ -6,6 +6,7 @@ import { MetricCard } from "@/components/lens/dashboard/MetricCard";
 import { TrendChart } from "@/components/lens/dashboard/TrendChart";
 import { InsightCard } from "@/components/lens/dashboard/InsightCard";
 import { SyncNowButton } from "@/components/lens/dashboard/SyncNowButton";
+import { BarList } from "@/components/lens/charts/BarList";
 import { formatDelta, isMockMode } from "@/lib/lens/utils";
 import {
   mockClients,
@@ -17,7 +18,13 @@ import { createClient as createServerSupabase } from "@/lib/lens/supabase/server
 
 export const dynamic = "force-dynamic";
 
-type Row = { metric: string; date: string; value: number };
+type Row = {
+  provider: string;
+  metric: string;
+  date: string;
+  value: number;
+  dimension: string | null;
+};
 
 function isoDaysAgo(days: number) {
   const d = new Date();
@@ -34,7 +41,7 @@ function shiftDays(dateStr: string, days: number) {
 function sumRange(rows: Row[], metric: string, from: string, to: string) {
   let total = 0;
   for (const r of rows) {
-    if (r.metric === metric && r.date >= from && r.date < to) {
+    if (r.metric === metric && !r.dimension && r.date >= from && r.date < to) {
       total += r.value;
     }
   }
@@ -45,7 +52,7 @@ function avgRange(rows: Row[], metric: string, from: string, to: string) {
   let total = 0;
   let count = 0;
   for (const r of rows) {
-    if (r.metric === metric && r.date >= from && r.date < to) {
+    if (r.metric === metric && !r.dimension && r.date >= from && r.date < to) {
       total += r.value;
       count += 1;
     }
@@ -56,12 +63,21 @@ function avgRange(rows: Row[], metric: string, from: string, to: string) {
 function series(rows: Row[], metric: string, from: string, to: string) {
   const byDate: Record<string, number> = {};
   for (const r of rows) {
-    if (r.metric !== metric || r.date < from || r.date >= to) continue;
+    if (r.metric !== metric || r.dimension || r.date < from || r.date >= to)
+      continue;
     byDate[r.date] = (byDate[r.date] ?? 0) + r.value;
   }
   return Object.keys(byDate)
     .sort()
     .map((date) => ({ date, value: byDate[date] }));
+}
+
+function topDims(rows: Row[], metric: string, limit: number) {
+  return rows
+    .filter((r) => r.metric === metric && r.dimension)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, limit)
+    .map((r) => ({ label: String(r.dimension), value: r.value }));
 }
 
 const statConfig = [
@@ -179,12 +195,14 @@ export default async function DashboardPage({
 
   const { data: metricsRaw } = await supabase
     .from("metrics_daily")
-    .select("metric, date, value")
-    .limit(5000);
+    .select("provider, metric, date, value, dimension")
+    .limit(8000);
   const rows: Row[] = (metricsRaw ?? []).map((r) => ({
+    provider: String(r.provider ?? ""),
     metric: String(r.metric),
     date: String(r.date),
     value: Number(r.value ?? 0),
+    dimension: r.dimension ? String(r.dimension) : null,
   }));
 
   let fromDate: string;
@@ -208,7 +226,7 @@ export default async function DashboardPage({
   const prevFrom = shiftDays(fromDate, -spanDays);
 
   const stats = statConfig
-    .filter((s) => rows.some((r) => r.metric === s.metric))
+    .filter((s) => rows.some((r) => r.metric === s.metric && !r.dimension))
     .map((s) => {
       const cur =
         s.kind === "avg"
@@ -223,8 +241,27 @@ export default async function DashboardPage({
       return { ...s, cur, delta, goodWhenDown };
     });
 
+  const socialStats = (["facebook", "instagram"] as const)
+    .map((prov) => {
+      const fRows = rows
+        .filter(
+          (r) =>
+            r.provider === prov && r.metric === "followers" && !r.dimension,
+        )
+        .sort((a, b) => (a.date < b.date ? 1 : -1));
+      return {
+        provider: prov,
+        label: prov === "facebook" ? "Facebook followers" : "Instagram followers",
+        value: fRows.length > 0 ? fRows[0].value : null,
+      };
+    })
+    .filter((s) => s.value !== null);
+
   const sessionsTrend = series(rows, "sessions", fromDate, toNext);
   const clicksTrend = series(rows, "clicks", fromDate, toNext);
+  const channelBars = topDims(rows, "traffic_channel", 6);
+  const countryBars = topDims(rows, "geo_clicks", 6);
+  const pageBars = topDims(rows, "top_pages", 6);
   const hasData = rows.length > 0;
 
   return (
@@ -233,7 +270,7 @@ export default async function DashboardPage({
         title="Dashboard"
         subtitle="Everything that moved across your clients, in one lens."
       />
-      <main className="flex flex-col gap-8 px-6 py-8 lg:px-10">
+      <main className="flex flex-col gap-5 px-6 py-6 lg:px-10">
         {list.length === 0 ? (
           <Card className="flex flex-col items-start gap-3">
             <CardTitle>No clients yet</CardTitle>
@@ -260,17 +297,17 @@ export default async function DashboardPage({
           <>
             <section
               aria-label="Key metrics"
-              className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+              className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4"
             >
               {stats.map((s) => (
                 <Card key={s.label}>
-                  <p className="text-sm font-medium text-muted">{s.label}</p>
-                  <p className="mt-2 text-3xl font-bold tracking-tight">
+                  <p className="text-xs font-medium text-muted">{s.label}</p>
+                  <p className="mt-1 text-2xl font-bold tracking-tight">
                     {s.kind === "avg"
                       ? s.cur.toFixed(1)
                       : Math.round(s.cur).toLocaleString("en-US")}
                   </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
                     {s.delta !== null ? (
                       <span
                         className={
@@ -282,18 +319,27 @@ export default async function DashboardPage({
                         {`${s.delta >= 0 ? "+" : ""}${s.delta.toFixed(1)}%`}
                       </span>
                     ) : null}
-                    <span className="text-muted">
-                      {windowLabel} · {s.source}
-                    </span>
+                    <span className="text-muted">{s.source}</span>
+                  </div>
+                </Card>
+              ))}
+              {socialStats.map((s) => (
+                <Card key={s.provider}>
+                  <p className="text-xs font-medium text-muted">{s.label}</p>
+                  <p className="mt-1 text-2xl font-bold tracking-tight">
+                    {Math.round(s.value as number).toLocaleString("en-US")}
+                  </p>
+                  <div className="mt-1 text-[11px] text-muted">
+                    latest sync
                   </div>
                 </Card>
               ))}
             </section>
 
-            <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
               {sessionsTrend.length > 0 ? (
                 <Card>
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <CardTitle>Sessions — {windowLabel}</CardTitle>
                     <p className="mt-1 text-xs text-muted">
                       Google Analytics 4
@@ -304,7 +350,7 @@ export default async function DashboardPage({
               ) : null}
               {clicksTrend.length > 0 ? (
                 <Card>
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <CardTitle>Search clicks — {windowLabel}</CardTitle>
                     <p className="mt-1 text-xs text-muted">
                       Google Search Console
@@ -314,34 +360,66 @@ export default async function DashboardPage({
                 </Card>
               ) : null}
             </section>
+
+            <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {channelBars.length > 0 ? (
+                <Card>
+                  <CardTitle>Traffic by channel</CardTitle>
+                  <p className="mb-3 mt-1 text-xs text-muted">last 30 days</p>
+                  <BarList items={channelBars} />
+                </Card>
+              ) : null}
+              {countryBars.length > 0 ? (
+                <Card>
+                  <CardTitle>Search clicks by country</CardTitle>
+                  <p className="mb-3 mt-1 text-xs text-muted">last 30 days</p>
+                  <BarList items={countryBars} />
+                </Card>
+              ) : null}
+              {pageBars.length > 0 ? (
+                <Card>
+                  <CardTitle>Top pages</CardTitle>
+                  <p className="mb-3 mt-1 text-xs text-muted">last 30 days</p>
+                  <BarList items={pageBars} />
+                </Card>
+              ) : null}
+            </section>
           </>
         )}
 
         {list.length > 0 ? (
           <section>
-            <h2 className="mb-4 text-lg font-bold tracking-tight">Clients</h2>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-bold tracking-tight">Clients</h2>
+              <Link
+                href="/products/lens/clients"
+                className="rounded-xl bg-brand px-3 py-1.5 text-sm font-semibold text-white"
+              >
+                + Add client
+              </Link>
+            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-             {list.map((c) => (
-  <Link key={c.id} href={`/products/lens/clients/${c.id}`}>
-    <Card className="transition hover:shadow-glow">
-                  <div className="flex items-center gap-3">
-                    <span
-                      aria-hidden
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black text-white"
-                      style={{ backgroundColor: c.brand_color ?? "#7C3AED" }}
-                    >
-                      {String(c.name ?? "?").slice(0, 1)}
-                    </span>
-                    <div>
-                      <p className="font-bold">{c.name}</p>
-                      <p className="text-xs text-muted">
-                                {counts[c.id] ?? 0} platforms connected
-        </p>
-      </div>
-    </div>
-    </Card>
-  </Link>
-))}
+              {list.map((c) => (
+                <Link key={c.id} href={`/products/lens/clients/${c.id}`}>
+                  <Card className="transition hover:shadow-glow">
+                    <div className="flex items-center gap-3">
+                      <span
+                        aria-hidden
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black text-white"
+                        style={{ backgroundColor: c.brand_color ?? "#7C3AED" }}
+                      >
+                        {String(c.name ?? "?").slice(0, 1)}
+                      </span>
+                      <div>
+                        <p className="font-bold">{c.name}</p>
+                        <p className="text-xs text-muted">
+                          {counts[c.id] ?? 0} platforms connected
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
             </div>
           </section>
         ) : null}
