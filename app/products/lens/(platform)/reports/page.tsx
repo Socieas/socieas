@@ -5,6 +5,7 @@ import { Badge } from "@/components/lens/ui/badge";
 import { NotesEditor } from "@/components/lens/reports/NotesEditor";
 import { isMockMode } from "@/lib/lens/utils";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import { getViewer } from "@/lib/lens/viewer";
 
 export const dynamic = "force-dynamic";
 
@@ -108,6 +109,8 @@ export default async function ReportsPage({
   searchParams: Promise<{ month?: string }>;
 }) {
   const sp = await searchParams;
+  const viewer = await getViewer();
+  const canEdit = viewer.type !== "client";
   const nowMonth = currentMonth();
   const month =
     sp.month && /^\d{4}-\d{2}$/.test(sp.month) ? sp.month : nowMonth;
@@ -327,12 +330,14 @@ export default async function ReportsPage({
                     },
                   ]}
                 />
-                <NotesEditor
-                  clientId={String(client.id)}
-                  noteKey={month + ":website"}
-                  initialBestTime={String(websiteNote.best_time ?? "")}
-                  initialNotes={String(websiteNote.notes ?? "")}
-                />
+                {canEdit ? (
+                  <NotesEditor
+                    clientId={String(client.id)}
+                    noteKey={month + ":website"}
+                    initialBestTime={String(websiteNote.best_time ?? "")}
+                    initialNotes={String(websiteNote.notes ?? "")}
+                  />
+                ) : null}
               </div>
               <div className="flex flex-col gap-6">
                 <div>
@@ -399,12 +404,14 @@ export default async function ReportsPage({
                     },
                   ]}
                 />
-                <NotesEditor
-                  clientId={String(client.id)}
-                  noteKey={month + ":gsc"}
-                  initialBestTime={String(searchNote.best_time ?? "")}
-                  initialNotes={String(searchNote.notes ?? "")}
-                />
+                {canEdit ? (
+                  <NotesEditor
+                    clientId={String(client.id)}
+                    noteKey={month + ":gsc"}
+                    initialBestTime={String(searchNote.best_time ?? "")}
+                    initialNotes={String(searchNote.notes ?? "")}
+                  />
+                ) : null}
               </div>
               <div>
                 <p className="text-sm font-semibold">
@@ -497,12 +504,14 @@ export default async function ReportsPage({
                     </tr>
                   </tbody>
                 </table>
-                <NotesEditor
-                  clientId={String(client.id)}
-                  noteKey={p.noteKey}
-                  initialBestTime={p.bestTime}
-                  initialNotes={p.notes}
-                />
+                {canEdit ? (
+                  <NotesEditor
+                    clientId={String(client.id)}
+                    noteKey={p.noteKey}
+                    initialBestTime={p.bestTime}
+                    initialNotes={p.notes}
+                  />
+                ) : null}
               </Card>
             ))}
           </div>

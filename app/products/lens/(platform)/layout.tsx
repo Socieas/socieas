@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/lens/layout/Sidebar";
 import { createClient as createServerSupabase } from "@/lib/lens/supabase/server";
+import { getViewer } from "@/lib/lens/viewer";
 import { redirect } from "next/navigation";
 
 /**
@@ -26,11 +27,16 @@ export default async function PlatformLayout({
     redirect(`/products/lens/login`);
   }
 
+  const viewer = await getViewer();
+
   return (
     <>
       <Navbar />
       <div className="flex min-h-screen pt-20">
-        <Sidebar />
+        <Sidebar
+          portal={viewer.type === "client"}
+          portalClientId={viewer.type === "client" ? viewer.clientId : undefined}
+        />
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       <Footer />
