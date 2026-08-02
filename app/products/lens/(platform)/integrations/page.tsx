@@ -168,7 +168,7 @@ export default async function IntegrationsPage({
                     <p className="mt-2 text-sm text-muted">{p.description}</p>
                     {conn ? (
                       <>
-                        {p.key === "ga4" || p.key === "gsc" ? (
+                        {p.key === "ga4" || p.key === "gsc" || p.key === "facebook" || p.key === "instagram" ? (
                           <AccountPicker
                             provider={p.key}
                             clientId={client.id}

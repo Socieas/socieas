@@ -45,7 +45,7 @@ export function AuthForm({ initialMode }: { initialMode: Mode }) {
         setError("Wrong email or password. Please try again.");
         return;
       }
-      router.push(`${LENS_BASE}/dashboard`);
+      router.push(`${LENS_BASE}/clients`);
       router.refresh();
       return;
     }
@@ -61,7 +61,7 @@ export function AuthForm({ initialMode }: { initialMode: Mode }) {
       return;
     }
     if (data.session) {
-      router.push(`${LENS_BASE}/dashboard`);
+      router.push(`${LENS_BASE}/clients`);
       router.refresh();
       return;
     }

@@ -5,6 +5,17 @@ import {
   refreshAccessToken,
 } from "@/lib/lens/integrations/google-oauth";
 
+const GRAPH_URL = "https://graph.facebook.com/v23.0";
+
+type MetaPageOption = {
+  id: string;
+  name?: string;
+  instagram_business_account?: {
+    id: string;
+    username?: string;
+  };
+};
+
 async function getAccessToken(conn: {
   refresh_token_enc: string | null;
   access_token_enc: string;
@@ -82,6 +93,48 @@ export async function GET(
         id: s.siteUrl,
         label: s.siteUrl,
       }));
+    } else if (provider === "facebook" || provider === "instagram") {
+      const qs = new URLSearchParams({
+        access_token: token,
+        fields: "id,name,instagram_business_account{id,username}",
+      });
+      const res = await fetch(GRAPH_URL + "/me/accounts?" + qs.toString());
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          json?.error?.message ?? "Could not list Meta accounts",
+        );
+      }
+      const pages = (json.data ?? []) as MetaPageOption[];
+      if (provider === "facebook") {
+        options = pages.map((p) => ({
+          id: p.id,
+          label: p.name ?? p.id,
+        }));
+        if (options.length === 0) {
+          throw new Error(
+            "No Facebook Pages found on this Meta login. Reconnect and grant page access.",
+          );
+        }
+      } else {
+        for (const p of pages) {
+          const ig = p.instagram_business_account;
+          if (!ig) continue;
+          options.push({
+            id: ig.id,
+            label:
+              (ig.username ? "@" + ig.username : ig.id) +
+              " (" +
+              (p.name ?? "page") +
+              ")",
+          });
+        }
+        if (options.length === 0) {
+          throw new Error(
+            "No Instagram business account is linked to your Facebook Pages. Link one in Meta Business settings, then reconnect.",
+          );
+        }
+      }
     } else {
       return NextResponse.json(
         { error: "Provider not supported" },
