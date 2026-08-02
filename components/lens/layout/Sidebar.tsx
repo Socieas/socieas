@@ -33,12 +33,12 @@ export function Sidebar({
           { href: `${LENS_BASE}/reports`, label: "Reports", icon: FileText },
         ]
       : [
+          { href: `${LENS_BASE}/clients`, label: "Clients", icon: Users },
           {
             href: `${LENS_BASE}/dashboard`,
             label: "Dashboard",
             icon: LayoutDashboard,
           },
-          { href: `${LENS_BASE}/clients`, label: "Clients", icon: Users },
           { href: `${LENS_BASE}/reports`, label: "Reports", icon: FileText },
           { href: `${LENS_BASE}/integrations`, label: "Integrations", icon: Plug },
         ];
@@ -46,7 +46,7 @@ export function Sidebar({
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
       <Link
-        href={portal && portalClientId ? `${LENS_BASE}/clients/` + portalClientId : `${LENS_BASE}/dashboard`}
+        href={portal && portalClientId ? `${LENS_BASE}/clients/` + portalClientId : `${LENS_BASE}/clients`}
         className="px-3"
       >
         <span className="block text-2xl font-black tracking-tight">
