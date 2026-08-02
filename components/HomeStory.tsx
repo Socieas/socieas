@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, useInView, useScroll, type Variants } from "framer-motion";
@@ -602,25 +601,6 @@ function Problem() {
             </motion.div>
           ))}
         </motion.div>
-
-        <motion.div
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewportSoft}
-          className="relative mt-10"
-        >
-          <div className="relative overflow-hidden rounded-[40px] border border-slate-200 shadow-[0_30px_80px_rgba(15,23,42,0.12)]">
-            <Image
-              src="/images/home/visibility-compoundsv2.webp"
-              alt="How founder visibility compounds over time"
-              width={1600}
-              height={900}
-              priority={false}
-              className="h-auto w-full object-cover transition duration-700 hover:scale-[1.01]"
-            />
-          </div>
-        </motion.div>
       </div>
     </section>
   );
@@ -851,7 +831,6 @@ function Method() {
             viewport={viewportOnce}
             className="absolute left-0 top-6 hidden h-1 w-full origin-left rounded-full bg-violet-600 lg:block"
           />
-
           <motion.div
             variants={listVariants}
             initial="hidden"
@@ -902,7 +881,6 @@ function YearSlider() {
               Slide me
             </span>
           </div>
-
           <input
             type="range"
             min={1}
@@ -912,14 +890,12 @@ function YearSlider() {
             aria-label="Month of your first year"
             className="mt-4 w-full accent-violet-600"
           />
-
           <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200">
             <div
               className="h-full rounded-full bg-violet-600 transition-all duration-300"
               style={barStyle}
             />
           </div>
-
           <motion.p
             key={stageForMonth(month)}
             variants={fadeVariants}
@@ -1330,7 +1306,6 @@ function NinetyDays() {
               viewport={viewportSoft}
               className="absolute bottom-2 left-2 top-2 w-1 origin-top rounded-full bg-violet-600 md:left-3"
             />
-
             <motion.div
               variants={listVariants}
               initial="hidden"
