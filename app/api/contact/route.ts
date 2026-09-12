@@ -21,6 +21,15 @@ async function sendEmail(to: string, subject: string, html: string) {
   return res.json();
 }
 
+async function sendEmailSafe(to: string, subject: string, html: string) {
+  try {
+    return await sendEmail(to, subject, html);
+  } catch (e) {
+    console.error("Confirmation email failed:", e);
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -29,6 +38,16 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Required fields missing" },
         { status: 400 }
+      );
+    }
+
+    const missing = ["RESEND_API_KEY", "RESEND_FROM_EMAIL", "CONTACT_RECEIVER"].filter(
+      (k) => !process.env[k]
+    );
+    if (missing.length) {
+      return NextResponse.json(
+        { error: "Email not configured", missing },
+        { status: 500 }
       );
     }
 
@@ -104,7 +123,7 @@ export async function POST(req: Request) {
     );
 
     // USER CONFIRMATION EMAIL
-    await sendEmail(
+    await sendEmailSafe(
       email,
       "Thanks for reaching out to Socieas!",
       `<!DOCTYPE html>
@@ -191,7 +210,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Contact form error:", error);
     return NextResponse.json(
-      { error: "Failed to send email" },
+      { error: "Failed to send email", detail: String(error) },
       { status: 500 }
     );
   }
