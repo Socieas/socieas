@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["nodemailer"],
   experimental: {
     cpus: 1,
+    turbopackPluginRuntimeStrategy: "workerThreads",
   },
   images: {
     remotePatterns: [
